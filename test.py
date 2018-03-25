@@ -1,2 +1,4 @@
-# Runs the server
 from discow.client.discowclient import *
+
+# Runs the server
+runDiscow()

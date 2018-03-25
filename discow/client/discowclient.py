@@ -10,7 +10,9 @@ class DiscowClientClass(discord.Client):
         yield from discow.handlers.on_message(self, message)
 
 Discow = DiscowClientClass()
-Discow.run(_getkey.key())
+
+def runDiscow():
+    Discow.run(_getkey.key())
 
 if __name__ == "__main__":
     print("Auth key is %s" % _getkey.key())
