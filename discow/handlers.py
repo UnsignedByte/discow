@@ -2,7 +2,7 @@ message_handlers = {}
 
 # Add modules here
 import discow.test_functions
-import discow.gunn_schedule
+import discow.gunn_schedule.schedule
 
 import asyncio
 discow_prefix = "&"
@@ -17,7 +17,6 @@ def get_command(cont):
             return trim[:i]
     return trim
 
-
 @asyncio.coroutine
 def on_message(Discow, msg):
     if msg.content[:len(discow_prefix)] != discow_prefix:
@@ -26,4 +25,6 @@ def on_message(Discow, msg):
     try:
         yield from message_handlers[get_command(msg.content)](Discow, msg)
     except KeyError:
-        tmp = yield from Discow.send_message(msg.channel, "Unknown command **%s**." % get_command(msg.content))
+        yield from Discow.send_message(msg.channel, "Unknown command **%s**." % get_command(msg.content))
+    except Exception as e:
+        yield from Discow.send_message(msg.channel, "An unknown error occurred in command **%s**. Trace:\n%s" % (get_command(msg.content), e))

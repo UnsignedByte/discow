@@ -23,3 +23,11 @@ def parse_command(msg, num=-1):
             return cont[:num]+[' '.join(cont[num:])]
     else:
         return cont
+
+def strip_command(cont):
+    trim = cont[len(discow_prefix):]
+
+    for i, c in enumerate(trim):
+        if c in whitespace:
+            return trim[i:]
+    return ""

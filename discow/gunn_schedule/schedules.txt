@@ -1,0 +1,342 @@
+$$3/25/18
+Default
+$$3/26/18
+!e [Period A] (8:25-9:25)
+!e [Brunch] (9:25-9:45)
+!e [Flex] (9:45-11:45)
+!e [Period B] (11:55-12:50)
+!e [Lunch] (12:50-1:30)
+!e [Period F](1:30-2:25)
+#!e [Staff Collaboration] (2:35-3:35)
+$$3/27/18
+!e [Period C] (8:25-9:25)
+!e [Brunch] (9:25-9:45)
+!e [Flex] (9:45-11:45)
+!e [Period D] (11:55-12:50)
+!e [Lunch] (12:50-1:30)
+!e [Period G] (1:30-2:25)
+#!e [Staff Collaboration] (2:35-3:35)
+$$3/28/18
+!e [Flex] (8:25-10:00)
+!e [Brunch] (10:00-10:15)
+!e [Flex] (10:15-12:15)
+#!e [Staff Collaboration] (12:55-3:30)
+$$3/29/18
+!e [Period E] (8:25-9:25)
+!e [Brunch] (9:25-9:40)     
+!e [Period B] (9:40-10:55)
+!e [Period C] (11:05-12:20)
+!e [Lunch] (12:20-1:00)
+!e [Period A] (1:00-2:15)
+!e [Period G] (2:25-3:40)
+$$3/30/18
+!e [Period D] (8:25-9:45)
+!e [Brunch] (9:45-10:00)
+!e [Period E] (10:00-11:15)
+!e [Period F] (11:25-12:40)
+$$3/31/18
+None
+$$4/1/18
+None
+$$4/2/18
+None
+$$4/3/18
+None
+$$4/4/18
+None
+$$4/5/18
+None
+$$4/6/18
+None
+$$4/7/18
+None
+$$4/8/18
+None
+$$4/9/18
+None
+$$4/10/18
+!e [Period D] (8:25-9:45)
+!e [Brunch] (9:45-10:00)
+!e [Period E] (10:00-11:15)
+!e [Period B] (11:25-12:25)
+!e [Lunch] (12:25-1:05)
+!e [Period A] (1:05-2:05)
+!e [Period G] (2:15-3:30)
+$$4/11/18
+!e [Period C] (8:25-9:30)
+!e [Brunch] (9:30-9:45)
+!e [Assembly] (9:45-10:45)
+!e [SELF] (10:55-11:55)
+!e [Flex] (12:05-1:05)
+!e [Lunch] (1:05-1:45)
+!e [Period F] (1:45-2:45)
+$$4/12/18
+!e [Period D] (8:25-9:30)
+!e [Brunch] (9:30-9:45)
+!e [Period E] (9:45-10:45)
+!e [Period B] (10:55-12:05)
+!e [Lunch] (12:05-12:45)
+!e [Period A] (12:45-1:55)
+!e [Period G] (2:05-3:05)
+$$4/13/18
+Default
+$$4/14/18
+Default
+$$4/15/18
+Default
+$$4/16/18
+Default
+$$4/17/18
+Default
+$$4/18/18
+Default
+$$4/19/18
+Default
+$$4/20/18
+Default
+$$4/21/18
+Default
+$$4/22/18
+Default
+$$4/23/18
+Default
+$$4/24/18
+Default
+$$4/25/18
+Default
+$$4/26/18
+Default
+$$4/27/18
+Default
+$$4/28/18
+Default
+$$4/29/18
+Default
+$$4/30/18
+Default
+$$5/1/18
+Default
+$$5/2/18
+Default
+$$5/3/18
+Default
+$$5/4/18
+Default
+$$5/5/18
+Default
+$$5/6/18
+Default
+$$5/7/18
+Default
+$$5/8/18
+Default
+$$5/9/18
+Default
+$$5/10/18
+Default
+$$5/11/18
+Default
+$$5/12/18
+Default
+$$5/13/18
+Default
+$$5/14/18
+Default
+$$5/15/18
+Default
+$$5/16/18
+Default
+$$5/17/18
+Default
+$$5/18/18
+Default
+$$5/19/18
+Default
+$$5/20/18
+Default
+$$5/21/18
+Default
+$$5/22/18
+Default
+$$5/23/18
+Default
+$$5/24/18
+Default
+$$5/25/18
+Default
+$$5/26/18
+Default
+$$5/27/18
+Default
+$$5/28/18
+None
+$$5/29/18
+!e [Period A] (8:25-9:17)
+!e [Period B] (9:27-10:14)
+!e [Brunch] (10:14-10:29)
+!e [Period C] (10:29-11:16)
+!e [Period D] (11:26-12:13)
+!e [Lunch] (12:13-12:57)
+!e [Period E] (12:57-1:44)
+!e [Period F] (1:54-2:41)
+!e [Period G] (2:51-3:38)
+$$5/30/18
+!e [Period B Final] (8:30-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period D Final] (10:30-12:10)
+!e [Break] (12:10-12:40)
+!e [Zero & H Period Finals] (12:45-2:25)
+$$5/31/18
+!e [Period A Final] (8:30-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period C Final] (10:30-12:10)
+!e [Lunch] (12:10-12:40)
+!e [Period G Final] (12:45-2:25)
+$$6/1/18
+!e [Period E Final] (8:30-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period F Final] (10:30-12:10)
+$$6/2/18
+None
+$$6/3/18
+None
+$$6/4/18
+None
+$$6/5/18
+None
+$$6/6/18
+None
+$$6/7/18
+None
+$$6/8/18
+None
+$$6/9/18
+None
+$$6/10/18
+None
+$$6/11/18
+None
+$$6/12/18
+None
+$$6/13/18
+None
+$$6/14/18
+None
+$$6/15/18
+None
+$$6/16/18
+None
+$$6/17/18
+None
+$$6/18/18
+None
+$$6/19/18
+None
+$$6/20/18
+None
+$$6/21/18
+None
+$$6/22/18
+None
+$$6/23/18
+None
+$$6/24/18
+None
+$$6/25/18
+None
+$$6/26/18
+None
+$$6/27/18
+None
+$$6/28/18
+None
+$$6/29/18
+None
+$$6/30/18
+None
+$$7/1/18
+None
+$$7/2/18
+None
+$$7/3/18
+None
+$$7/4/18
+None
+$$7/5/18
+None
+$$7/6/18
+None
+$$7/7/18
+None
+$$7/8/18
+None
+$$7/9/18
+None
+$$7/10/18
+None
+$$7/11/18
+None
+$$7/12/18
+None
+$$7/13/18
+None
+$$7/14/18
+None
+$$7/15/18
+None
+$$7/16/18
+None
+$$7/17/18
+None
+$$7/18/18
+None
+$$7/19/18
+None
+$$7/20/18
+None
+$$7/21/18
+None
+$$7/22/18
+None
+$$7/23/18
+None
+$$7/24/18
+None
+$$7/25/18
+None
+$$7/26/18
+None
+$$7/27/18
+None
+$$7/28/18
+None
+$$7/29/18
+None
+$$7/30/18
+None
+$$7/31/18
+None
+$$8/1/18
+None
+$$8/2/18
+None
+$$8/3/18
+None
+$$8/4/18
+None
+$$8/5/18
+None
+$$8/6/18
+None
+$$8/7/18
+None
+$$8/8/18
+None
+$$8/9/18
+None
+$$8/10/18
+None
+$$8/11/18
+None
+$$8/12/18
+None
