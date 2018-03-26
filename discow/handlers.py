@@ -2,20 +2,9 @@ message_handlers = {}
 
 # Add modules here
 import discow.test_functions
+from discow.utils import *
 
 import asyncio
-discow_prefix = "&"
-
-whitespace = [' ', '\t', '\n']
-
-def get_command(cont):
-    trim = cont[len(discow_prefix):]
-
-    for i, c in enumerate(trim):
-        if c in whitespace:
-            return trim[:i]
-    return trim
-
 
 @asyncio.coroutine
 def on_message(Discow, msg):
@@ -23,6 +12,7 @@ def on_message(Discow, msg):
         return
 
     try:
-        yield from message_handlers[get_command(msg.content)](Discow, msg)
+        print(parse_command(msg)[0])
+        yield from message_handlers[parse_command(msg)[0]](Discow, msg)
     except KeyError:
-        tmp = yield from Discow.send_message(msg.channel, "Unknown command **%s**." % get_command(msg.content))
+        tmp = yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg)[0])
