@@ -93,7 +93,7 @@ def calendar(Discow, msg):
 
     parsed = parsed.date()
 
-    out = "**__Schedule for "+str(parsed)+"__**"
+    out = "__**Events on "+str(parsed)+"**__"
     hasevent = False
 
     g = open('discow/gunn_schedule/calendar.ics','rb')
@@ -101,11 +101,14 @@ def calendar(Discow, msg):
     for component in gcal.walk():
         if component.name == "VEVENT":
             if component.get("dtstart").dt == parsed:
-                out+="\n\n***"+component.get("summary")+"***"
-                out+="\n\n"+component.get("description")
-                hasevent = True
+                out+="\n\n**"+component.get("summary")+"**"
+                if component.get("description").strip():
+                    out+="\n\n"+component.get("description")
+                if 'Schedule (see below)' in component.get("summary"):
+                    hasevent = True
     g.close()
     if not hasevent:
+        out+="\n\n**Default Schedule**\n"
         relev  = defaults[str(parsed.weekday())]
         for event in relev:
             out+="\n"+event.format()
