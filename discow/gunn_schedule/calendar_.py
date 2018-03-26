@@ -94,11 +94,10 @@ def tomarkdown(string):
     string = string.replace("<br>", "\n")
     return string
 
-
 @asyncio.coroutine
 def calendar(Discow, msg):
     try:
-        time = discow.utils.parse_command(msg, 1)
+        time = discow.utils.parse_command(msg.content, 1)
     except IndexError:
         time = "today"
     parsed = specialParseDate(time)

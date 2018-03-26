@@ -11,7 +11,7 @@ def hi(Discow, msg):
 def rps(Discow, msg):
     valid = ["rock", "paper", "scissors"]
     mine = valid[randint(0, 2)]
-    yours = parse_command(msg, 1)[1]
+    yours = parse_command(msg.content, 1)[1]
     result = ""
     if mine == yours:
         result = "It's a tie!"
@@ -28,7 +28,7 @@ def rps(Discow, msg):
 
 @asyncio.coroutine
 def purge(Discow, msg):
-    num = max(1,min(100,int(parse_command(msg, 1)[1])))
+    num = max(1,min(100,int(parse_command(msg.content, 1)[1])))
     msgs = yield from Discow.logs_from(msg.channel, limit=num)
     msgs = list(msgs)
     if num == 1:
@@ -39,7 +39,7 @@ def purge(Discow, msg):
 
 @asyncio.coroutine
 def reaction(Discow, msg):
-    num = int(parse_command(msg, 1)[1])
+    num = int(parse_command(msg.content, 1)[1])
     msgs = yield from Discow.logs_from(msg.channel, limit=num)
     for e in Discow.get_all_emojis():
         for m in msgs:
