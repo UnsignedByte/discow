@@ -3,7 +3,7 @@ import os
 _keyfile = "discow/client/data/key.txt"
 
 def readKey():
-    return open(_keyfile, 'r').read()
+    return open(_keyfile, 'r').read().replace('\n', '')
 
 _keyvalue = None
 
