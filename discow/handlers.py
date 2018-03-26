@@ -1,4 +1,6 @@
 message_handlers = {}
+reaction_handlers = []
+unreaction_handlers = []
 
 # Add modules here
 import discow.test_functions
@@ -21,3 +23,13 @@ def on_message(Discow, msg):
         yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg.content)[0])
     except Exception as e:
         yield from Discow.send_message(msg.channel, "An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg)[0], e))
+
+@asyncio.coroutine
+def on_reaction(Discow, reaction, user):
+    for handler in reaction_handlers:
+        yield from handler(Discow, reaction, user)
+
+@asyncio.coroutine
+def on_unreaction(Discow, reaction, user):
+    for handler in reaction_handlers:
+        yield from handler(Discow, reaction, user)
