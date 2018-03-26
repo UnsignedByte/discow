@@ -1,3 +1,6 @@
+whitespace = [' ', '\t', '\n']
+discow_prefix = "&"
+
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
         message = kwargs["_msg"]
@@ -10,3 +13,13 @@ def format_response(string, **kwargs):
         kwargs["_mention"] = author.mention
 
     return string.format(**kwargs)
+
+def parse_command(msg, num=-1):
+    cont = msg.content[len(discow_prefix):].split(" ")
+    if num >= 0:
+        if len(cont)<num+1:
+            raise IndexError("Not enough inputs")
+        else:
+            return cont[:num]+[' '.join(cont[num:])]
+    else:
+        return cont
