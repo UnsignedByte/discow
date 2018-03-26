@@ -225,6 +225,7 @@ message_handlers["weekschedule"] = week_schedule
 message_handlers["week_schedule"] = week_schedule
 message_handlers["week-schedule"] = week_schedule
 
+
 reaction_handlers.append(schedule_react)
 unreaction_handlers.append(schedule_react)
 reaction_handlers.append(week_schedule_react)
