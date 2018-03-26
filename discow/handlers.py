@@ -13,5 +13,7 @@ def on_message(Discow, msg):
 
     try:
         yield from message_handlers[parse_command(msg)[0]](Discow, msg)
+    except IndexError:
+        tmp = yield from Discow.send_message(msg.channel, "Not enough inputs provided for **%s**." % parse_command(msg)[0])
     except KeyError:
         tmp = yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg)[0])
