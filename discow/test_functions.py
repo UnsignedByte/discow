@@ -12,8 +12,17 @@ def rps(Discow, msg):
     valid = ["rock", "paper", "scissors"]
     mine = valid[randint(0, 2)]
     yours = parse_command(msg, 1)[1]
+    result = ""
+    if mine == yours:
+        result = "It's a tie!"
+    else:
+        comb = mine+yours
+        if comb == "rockpaper" or "scissorsrock" or "paperscissors":
+            result = "{_mention} wins!"
+        else:
+            result = "I win!"
     if yours in valid:
-        yield from Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**.", yours=yours, mine=mine, _msg = msg))
+        yield from Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
     else:
         yield from Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
 
