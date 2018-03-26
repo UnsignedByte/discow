@@ -10,4 +10,3 @@ def format_response(string, **kwargs):
         kwargs["_mention"] = author.mention
 
     return string.format(**kwargs)
-
