@@ -9,6 +9,14 @@ class DiscowClientClass(discord.Client):
     def on_message(self, message):
         yield from discow.handlers.on_message(self, message)
 
+    @asyncio.coroutine
+    def on_reaction_add(self, reaction, user):
+        yield from discow.handlers.on_reaction(self, reaction, user)
+
+    @asyncio.coroutine
+    def on_reaction_remove(self, reaction, user):
+        yield from discow.handlers.on_unreaction(self, reaction, user)
+
 Discow = DiscowClientClass()
 
 def runDiscow():

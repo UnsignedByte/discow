@@ -136,7 +136,7 @@ old_week_schedule_messages = []
 
 class ScheduleMessage:
     def __init__(self, msg, stamp, timef):
-        self.msg = msg
+        self.id = msg.id
         self.stamp = stamp
         self.time = timef
         self.beingmodified = False
@@ -174,13 +174,11 @@ def schedule_react(Discow, reaction, user):
     if user == Discow.user or reaction.message.author != Discow.user:
         return
 
-    msg = ScheduleMessage(reaction.message, None, None)
-
     for c in old_schedule_messages:
-        if c.msg.id == msg.msg.id:
+        if c.id == reaction.message.id:
             c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else 1))
-            yield from Discow.edit_message(c.msg, "Calculating schedule...")
-            yield from Discow.edit_message(c.msg, formatSchedule(c.time))
+            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
+            yield from Discow.edit_message(reaction.message, formatSchedule(c.time))
             return
 
 @asyncio.coroutine
@@ -188,17 +186,15 @@ def week_schedule_react(Discow, reaction, user):
     if user == Discow.user or reaction.message.author != Discow.user:
         return
 
-    msg = ScheduleMessage(reaction.message, None, None)
-
     for c in old_week_schedule_messages:
-        if c.msg.id == msg.msg.id:
+        if c.id == reaction.message.id:
             c.time += datetime.timedelta(days=(-7 if (reaction.emoji == leftarrow) else 7))
-            yield from Discow.edit_message(c.msg, "Calculating schedule...")
+            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
 
             parsed = c.time
             daf = (parsed.weekday() + 1) % 7
 
-            yield from Discow.edit_message(c.msg, '\n'.join(
+            yield from Discow.edit_message(reaction.message, '\n'.join(
                 formatSchedule(parsed + datetime.timedelta(days=x)) for x in range(-daf, 7 - daf)))
             return
 
