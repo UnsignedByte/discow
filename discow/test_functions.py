@@ -15,4 +15,4 @@ def rps(Discow, msg):
         tmp = yield from Discow.send_message(msg.channel, "Please provide an input.")
 
 message_handlers["test"] = test_message
-message_handlers["rps"] = test_heart
+message_handlers["rps"] = rps
