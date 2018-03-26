@@ -12,7 +12,6 @@ def on_message(Discow, msg):
         return
 
     try:
-        print(parse_command(msg)[0])
         yield from message_handlers[parse_command(msg)[0]](Discow, msg)
     except KeyError:
         tmp = yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg)[0])

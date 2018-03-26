@@ -9,11 +9,14 @@ def test_message(Discow, msg):
 
 @asyncio.coroutine
 def rps(Discow, msg):
-
     try:
-        mine = "rock"
+        valid = ["rock", "paper", "scissors"]
+        mine = valid[randint(0, 2)]
         yours = parse_command(msg, 1)[1]
-        tmp = yield from Discow.send_message(msg.channel, format_response("**{_mention}** chooses **%s**, while I choose **%s**." % (yours, mine), _msg = msg))
+        if yours in valid:
+            tmp = yield from Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**.", yours=yours, mine=mine, _msg = msg))
+        else:
+            tmp = yield from Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
     except IndexError:
         tmp = yield from Discow.send_message(msg.channel, "Please provide an input.")
 
