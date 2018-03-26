@@ -2,6 +2,7 @@ message_handlers = {}
 
 # Add modules here
 import discow.test_functions
+import discow.gunn_schedule
 
 import asyncio
 discow_prefix = "&"
