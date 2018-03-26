@@ -5,6 +5,7 @@ unreaction_handlers = []
 # Add modules here
 import discow.test_functions
 import discow.gunn_schedule.calendar_
+import discow.gunn_schedule.schedule
 from discow.utils import *
 
 import asyncio
