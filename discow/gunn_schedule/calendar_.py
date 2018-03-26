@@ -36,16 +36,20 @@ def calendar(Discow, msg):
 
     parsed = parsed.date()
 
-    out = "**Schedule for "+str(parsed)+"**"
+    out = "**__Schedule for "+str(parsed)+"__**"
+    hasevent = False
 
     g = open('discow/gunn_schedule/calendar.ics','rb')
     gcal = Calendar.from_ical(g.read())
     for component in gcal.walk():
         if component.name == "VEVENT":
             if component.get("dtstart").dt == parsed:
-                print(component.get("summary"))
-                out+="\n"+component.get("summary")
+                out+="\n\n***"+component.get("summary")+"***"
+                out+="\n\n"+component.get("description")
+                hasevent = True
     g.close()
+    if not hasevent:
+        out+="\nNo events scheduled for today."
     yield from Discow.send_message(msg.channel, out)
 
-message_handlers["calendar"] = calendar
+message_handlers["cal"] = calendar
