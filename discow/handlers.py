@@ -2,7 +2,7 @@ message_handlers = {}
 
 # Add modules here
 import discow.test_functions
-import discow.gunn_schedule.schedule
+import discow.gunn_schedule.calendar_
 
 import asyncio
 discow_prefix = "&"
@@ -23,9 +23,9 @@ def on_message(Discow, msg):
         return
 
     try:
-        yield from message_handlers[parse_command(msg)[0]](Discow, msg)
+        yield from message_handlers[get_command(msg.content)](Discow, msg)
     except IndexError:
-        tmp = yield from Discow.send_message(msg.channel, "Not enough inputs provided for **%s**." % parse_command(msg)[0]
+        tmp = yield from Discow.send_message(msg.channel, "Not enough inputs provided for **%s**." % get_command(msg.conteent))
     except KeyError:
         yield from Discow.send_message(msg.channel, "Unknown command **%s**." % get_command(msg.content))
     except Exception as e:
