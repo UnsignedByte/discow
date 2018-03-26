@@ -1,21 +1,10 @@
+message_handlers = {}
+
+# Add modules here
+import discow.test_functions
+
 import asyncio
-
-@asyncio.coroutine
-def test_message(Discow, msg):
-    tmp = yield from Discow.send_message(msg.channel, "Hi **%s**! I'm Discow." % msg.author.name)
-
-@asyncio.coroutine
-def test_heart(Discow, msg):
-    tmp = yield from Discow.send_message(msg.channel, "I love you too, **%s**! :heart:" % msg.author.name)
-
-message_handlers = {
-    # Format is (command, function)
-    "test": test_message,
-    "ily" : test_heart
-}
-
 discow_prefix = "&"
-
 
 whitespace = [' ', '\t', '\n']
 
