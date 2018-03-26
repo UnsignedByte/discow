@@ -18,7 +18,7 @@ def rps(Discow, msg):
     else:
         comb = mine+yours
         if comb == "rockpaper" or "scissorsrock" or "paperscissors":
-            result = "{_mention} wins!"
+            result = format_response("{_mention} wins!", _msg=msg)
         else:
             result = "I win!"
     if yours in valid:

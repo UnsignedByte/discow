@@ -81,10 +81,26 @@ for sched in raw_defaults:
                                                name, None))
 defaults[curr_day_text] = curr_schedule.copy()
 
+def tomarkdown(string):
+    string = string.replace("<p>", "")
+    string = string.replace("</p>", "\n")
+    string = string.replace("<span>", "")
+    string = string.replace("</span>", "")
+    string = string.replace("<i>", "*")
+    string = string.replace("</i>", "*")
+    string = string.replace("<u>", "__")
+    string = string.replace("</u>", "__")
+    string = string.replace("&nbsp;", "")
+    string = string.replace("<br>", "\n")
+    return string
+
 
 @asyncio.coroutine
 def calendar(Discow, msg):
-    time = discow.utils.strip_command(msg.content)
+    try:
+        time = discow.utils.parse_command(msg, 1)
+    except IndexError:
+        time = "today"
     parsed = specialParseDate(time)
 
     if not parsed:
@@ -102,17 +118,20 @@ def calendar(Discow, msg):
         if component.name == "VEVENT":
             if component.get("dtstart").dt == parsed:
                 out+="\n\n**"+component.get("summary")+"**"
-                if component.get("description").strip():
-                    out+="\n\n"+component.get("description")
                 if 'Schedule (see below)' in component.get("summary"):
                     hasevent = True
+                elif component.get("description").strip():
+                    out+="\n\n"+tomarkdown(component.get("description"))
     g.close()
     if not hasevent:
-        out+="\n\n**Default Schedule**\n"
         relev  = defaults[str(parsed.weekday())]
-        for event in relev:
-            out+="\n"+event.format()
+        if parsed.weekday() not in [5, 6]:
+            out+="\n\n**Default Schedule**\n"
+            for event in relev:
+                out+="\n"+event.format()
+        else:
+            out+="\nNo school on "+str(parsed)+"."
 
-    yield from Discow.send_message(msg.channel, out)
+    yield from Discow.send_message(msg.channel, out.strip())
 
 message_handlers["cal"] = calendar
