@@ -96,10 +96,9 @@ def tomarkdown(string):
 
 @asyncio.coroutine
 def calendar(Discow, msg):
-    try:
-        time = discow.utils.parse_command(msg.content, 1)
-    except IndexError:
-        time = "today"
+
+    time = discow.utils.parse_command(msg.content, 1)[1]
+    print(time)
     parsed = specialParseDate(time)
 
     if not parsed:
@@ -119,7 +118,7 @@ def calendar(Discow, msg):
                 out+="\n\n**"+component.get("summary")+"**"
                 if 'Schedule (see below)' in component.get("summary"):
                     hasevent = True
-                elif component.get("description").strip():
+                if component.get("description").strip():
                     out+="\n\n"+tomarkdown(component.get("description"))
     g.close()
     if not hasevent:

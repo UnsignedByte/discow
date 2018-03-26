@@ -1,9 +1,11 @@
-from discow.handlers import message_handlers
+from discow.handlers import message_handlers,reaction_handlers,unreaction_handlers
 import asyncio
 import discow.utils
 import dateparser as cf
 import datetime
 import re
+import calendar
+import time
 
 dateparser = cf.DateDataParser(["en"])
 def parseDate(string):
@@ -123,17 +125,35 @@ def formatSchedule(date):
     except:
         return "Schedule for %s unknown." % date.isoformat()
     if not sched:
-        return """No school on %s.""" % date.isoformat()
-    table = """Schedule for %s:\n\n""" % date.isoformat()
+        return """No school on %s (%s).""" % (date.isoformat(), calendar.day_name[date.weekday()])
+    table = """Schedule for %s (%s):\n\n""" % (date.isoformat(), calendar.day_name[date.weekday()])
     for event in sched:
         table += (event.format()) + '\n'
     return table
 
+old_schedule_messages = []
+old_week_schedule_messages = []
+
+class ScheduleMessage:
+    def __init__(self, msg, stamp, timef):
+        self.id = msg.id
+        self.stamp = stamp
+        self.time = timef
+        self.beingmodified = False
+
+    def __eq__(self, other):
+        return self.msg == other.msg
+
+leftarrow = "\U00002B05"
+rightarrow = "\U000027A1"
+
 @asyncio.coroutine
 def schedule(Discow, msg):
 
-    time = discow.utils.strip_command(msg.content)
-    parsed = specialParseDate(time)
+    timef = discow.utils.strip_command(msg.content)
+    if timef == '':
+        timef = "today"
+    parsed = specialParseDate(timef)
 
     if not parsed:
         yield from Discow.send_message(msg.channel, "Unknown date.")
@@ -141,7 +161,71 @@ def schedule(Discow, msg):
 
     parsed = parsed.date()
 
-    yield from Discow.send_message(msg.channel, formatSchedule(parsed))
+    msg = yield from Discow.send_message(msg.channel, formatSchedule(parsed))
 
+    yield from Discow.add_reaction(msg, leftarrow)
+    yield from Discow.add_reaction(msg, rightarrow)
+
+    old_schedule_messages.append(ScheduleMessage(msg, time.gmtime(), parsed))
+
+
+@asyncio.coroutine
+def schedule_react(Discow, reaction, user):
+    if user == Discow.user or reaction.message.author != Discow.user:
+        return
+
+    for c in old_schedule_messages:
+        if c.id == reaction.message.id:
+            c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else 1))
+            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
+            yield from Discow.edit_message(reaction.message, formatSchedule(c.time))
+            return
+
+@asyncio.coroutine
+def week_schedule_react(Discow, reaction, user):
+    if user == Discow.user or reaction.message.author != Discow.user:
+        return
+
+    for c in old_week_schedule_messages:
+        if c.id == reaction.message.id:
+            c.time += datetime.timedelta(days=(-7 if (reaction.emoji == leftarrow) else 7))
+            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
+
+            parsed = c.time
+            daf = (parsed.weekday() + 1) % 7
+
+            yield from Discow.edit_message(reaction.message, '\n'.join(
+                formatSchedule(parsed + datetime.timedelta(days=x)) for x in range(-daf, 7 - daf)))
+            return
+
+@asyncio.coroutine
+def week_schedule(Discow, msg):
+
+    timef = discow.utils.strip_command(msg.content)
+    if timef == '':
+        timef = "today"
+
+    parsed = specialParseDate(timef)
+    if not parsed:
+        yield from Discow.send_message(msg.channel, "Unknown date.")
+        return
+
+    parsed = parsed.date()
+    daf = (parsed.weekday() + 1) % 7
+
+    frp = yield from Discow.send_message(msg.channel, '\n'.join(formatSchedule(parsed + datetime.timedelta(days=x)) for x in range(-daf, 7-daf)))
+
+    yield from Discow.add_reaction(frp, leftarrow)
+    yield from Discow.add_reaction(frp, rightarrow)
+
+    old_week_schedule_messages.append(ScheduleMessage(frp, time.gmtime(), parsed))
 
 message_handlers["schedule"] = schedule
+message_handlers["weekschedule"] = week_schedule
+message_handlers["week_schedule"] = week_schedule
+message_handlers["week-schedule"] = week_schedule
+
+reaction_handlers.append(schedule_react)
+unreaction_handlers.append(schedule_react)
+reaction_handlers.append(week_schedule_react)
+unreaction_handlers.append(week_schedule_react)
