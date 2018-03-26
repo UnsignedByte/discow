@@ -1,0 +1,42 @@
+$$6
+None
+$$0
+!e [A Period] (8:25-9:45)
+!e [Brunch] (9:45-10:00)
+!e [B Period] (10:00-11:15)
+!e [C Period] (11:25-12:40)
+!e [Lunch] (12:40-1:20)
+!e [F Period] (1:20-2:35)
+$$1
+!e [D Period] (8:25-9:45)
+!e [Brunch] (9:45-10:00)
+!e [Flex / SEL] (10:00-10:50)
+!e [E Period] (11:00-12:15)
+!e [Lunch] (12:15-12:55)
+!e [A Period] (12:55-2:15)
+!e [G Period] (2:25-3:40)
+$$2
+!e [B Period] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [C Period] (10:05-11:25)
+!e [D Period] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [F Period] (1:35-2:55)
+$$3
+!e [E Period] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Flex / SEL] (10:05-10:55)
+!e [B Period] (11:05-12:15)
+!e [Lunch] (12:15-12:55)
+!e [A Period] (12:55-2:05)
+!e [G Period] (2:15-3:35)
+$$4
+!e [C Period] (8:25-9:40)
+!e [Brunch] (9:40-9:55)
+!e [D Period] (9:55-11:05)
+!e [E Period] (11:15-12:25)
+!e [Lunch] (12:25-1:05)
+!e [F Period] (1:05-2:15)
+!e [G Period] (2:25-2:35)
+$$5
+None

@@ -1,5 +1,5 @@
 whitespace = [' ', '\t', '\n']
-discow_prefix = "&"
+discow_prefix = "cow "
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -16,7 +16,7 @@ def format_response(string, **kwargs):
 
 def parse_command(msg, num=-1):
     cont = msg.content[len(discow_prefix):].split(" ")
-    if num >= 0:
+    if num == -1:
         if len(cont)<num+1:
             raise IndexError("Not enough inputs")
         else:

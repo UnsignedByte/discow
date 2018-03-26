@@ -1,5 +1,4 @@
 .idea/**
-venv/
 discow/client/data/**
 
 # Byte-compiled / optimized / DLL files
