@@ -1,5 +1,3 @@
-import os
-
 _keyfile = "discow/client/data/key.txt"
 
 def readKey():
