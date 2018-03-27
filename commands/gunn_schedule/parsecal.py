@@ -8,7 +8,7 @@ from pytz import timezone
 
 cal = "https://calendar.google.com/calendar/ical/u5mgb2vlddfj70d7frf3r015h0%40group.calendar.google.com/public/basic.ics"
 
-with urllib.request.urlopen(cal) as response, open('discow/gunn_schedule/calendar.ics', 'wb') as out_file:
+with urllib.request.urlopen(cal) as response, open('commands/gunn_schedule/calendar.ics', 'wb') as out_file:
     shutil.copyfileobj(response, out_file)
 
 #Adds REVIEW if string might need reviewing (for weird html, etc)
@@ -20,7 +20,7 @@ def review(string):
     return False
 events = {}
 
-g = open('discow/gunn_schedule/calendar.ics','rb')
+g = open('commands/gunn_schedule/calendar.ics','rb')
 gcal = Calendar.from_ical(g.read())
 for component in gcal.walk():
     if component.name == "VEVENT":
@@ -45,7 +45,7 @@ for component in gcal.walk():
                 component.get("description")))
 g.close()
 
-with open('discow/gunn_schedule/schedules_temp.txt', 'w') as f:
+with open('commands/gunn_schedule/schedules_temp.txt', 'w') as f:
     out = ""
     for yr in sorted(events.keys()):
         out+="!Y:"+yr+"\n"

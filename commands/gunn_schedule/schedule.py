@@ -27,10 +27,10 @@ def specialParseDate(string):
         return parseDate(string[4:]) + datetime.timedelta(7)
 
 schedules = {}
-raw_schedules = open("discow/gunn_schedule/schedules.txt").read().split('\n')
+raw_schedules = open("commands/gunn_schedule/schedules.txt").read().split('\n')
 
 defaults = {}
-raw_defaults = open("discow/gunn_schedule/defaults.txt").read().split('\n')
+raw_defaults = open("commands/gunn_schedule/defaults.txt").read().split('\n')
 
 curr_day = None
 curr_day_text = None
