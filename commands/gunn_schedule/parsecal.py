@@ -3,7 +3,7 @@ import shutil
 
 import datetime
 from icalendar import Calendar, Event
-from commands.gunn_schedule.scheduleutils import *
+from scheduleutils import *
 from pytz import timezone
 
 cal = "https://calendar.google.com/calendar/ical/u5mgb2vlddfj70d7frf3r015h0%40group.calendar.google.com/public/basic.ics"
@@ -55,18 +55,27 @@ with open('commands/gunn_schedule/schedules_temp.txt', 'w') as f:
                 out+="!D:"+d+"\n"
                 for ev in events[yr][m][d]:
                     t = parsestr(ev.format())
-                    out+="!e:"+t
-                    if (review(t)):
-                        out+=" REVIEW"
-                    out+="\n"
-                    desc = parsestr(ev.getDesc()).strip().split("\n")
-                    if len(desc) > 0:
-                        for ln in desc:
-                            ln = parsestr(ln)
-                            out+="~d:"+ln
-                            if (review(ln)):
+                    if "See Below" in t or "Alternate Schedule" in t:
+                        ev2 = parsestr(ev.getDesc()).strip().split("\n")
+                        for el in ev2:
+                            el = parsestr(el)
+                            out+="!e:"+el
+                            if (review(el)):
                                 out+=" REVIEW"
                             out+="\n"
+                    else:
+                        out+="!e:"+t
+                        if (review(t)):
+                            out+=" REVIEW"
+                        out+="\n"
+                        desc = parsestr(ev.getDesc()).strip().split("\n")
+                        if len(desc) > 0:
+                            for ln in desc:
+                                ln = parsestr(ln)
+                                out+="~d:"+ln
+                                if (review(ln)):
+                                    out+=" REVIEW"
+                                out+="\n"
     f.write(out)
 
 f.close()

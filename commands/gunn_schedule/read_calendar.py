@@ -1,8 +1,8 @@
-from commands.gunn_schedule.scheduleutils import *
+from scheduleutils import *
 import dateparser
 import re
 
-raw_calendar = open("schedules_temp.txt").read().split('\n')
+raw_calendar = open("commands/gunn_schedule/schedules_temp.txt").read().split('\n')
 
 current_year = -1
 current_month = -1
@@ -22,7 +22,6 @@ def get_times(string):
 
 
 for i,line in enumerate(raw_calendar):
-    print("line %s" % i)
     if line.startswith("!Y:"):
         if cr_event_class.name:
             current_day_schedule.append(cr_event_class.copy())
@@ -61,4 +60,4 @@ for i,line in enumerate(raw_calendar):
         if defc:
             cr_event_class.desc += defc + '\n'
 
-print(schedules[datetime.date(2009, 8, 17)])
+print(schedules[datetime.date(2018, 3, 26)])
