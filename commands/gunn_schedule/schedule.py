@@ -6,7 +6,7 @@ import datetime
 import re
 import calendar
 import time
-from scheduleutils import *
+from commands.gunn_schedule.scheduleutils import *
 
 dateparser = cf.DateDataParser(["en"])
 def parseDate(string):
