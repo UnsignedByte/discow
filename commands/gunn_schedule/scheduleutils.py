@@ -1,4 +1,8 @@
-import datetime
+import datetime,dateparser,copy
+
+dateparserF = dateparser.DateDataParser(["en"])
+def parseDate(string):
+    return dateparserF.get_date_data(string)["date_obj"]
 
 # credit to https://stackoverflow.com/a/13756038
 def td_format(td_object):
@@ -33,6 +37,15 @@ class ScheduleEvent:
                                              self.end.time().strftime("%I:%M %p")) + "(%s)" % (td_format(self.end-self.start))
     def getDesc(self):
         return self.desc
+
+    def copy(self):
+        return ScheduleEvent(copy.copy(self.start), copy.copy(self.end), copy.copy(self.name), copy.copy(self.desc))
+
+    def __str__(self):
+        return "start: %s, end: %s, name: %s, desc: %s" % (self.start, self.end, self.name, self.desc)
+
+    def __repr__(self):
+        return self.__str__()
 
 def parsestr(s):
     s = s.strip()

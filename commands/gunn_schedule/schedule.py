@@ -1,4 +1,4 @@
-from discow.handlers import message_handlers,reaction_handlers,unreaction_handlers
+from discow.handlers import *
 import asyncio
 import discow.utils
 import dateparser as cf
@@ -6,7 +6,7 @@ import datetime
 import re
 import calendar
 import time
-from scheduleutils import *
+from commands.gunn_schedule.scheduleutils import *
 
 dateparser = cf.DateDataParser(["en"])
 def parseDate(string):
@@ -190,13 +190,12 @@ def week_schedule(Discow, msg):
 
     old_week_schedule_messages.append(ScheduleMessage(frp, time.gmtime(), parsed))
 
-message_handlers["schedule"] = schedule
-message_handlers["weekschedule"] = week_schedule
-message_handlers["week_schedule"] = week_schedule
-message_handlers["week-schedule"] = week_schedule
+add_message_handler(schedule, "schedule")
+add_message_handler(week_schedule, "weekschedule")
+add_message_handler(week_schedule, "week-schedule")
+add_message_handler(week_schedule, "week_schedule")
 
-
-reaction_handlers.append(schedule_react)
-unreaction_handlers.append(schedule_react)
-reaction_handlers.append(week_schedule_react)
-unreaction_handlers.append(week_schedule_react)
+add_reaction_handler(schedule_react, "sch_react")
+add_unreaction_handler(schedule_react, "sch_react")
+add_reaction_handler(week_schedule_react, "wsch_react")
+add_unreaction_handler(week_schedule_react, "wsch_react")

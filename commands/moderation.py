@@ -1,6 +1,6 @@
 import asyncio
 from discow.utils import *
-from discow.handlers import message_handlers
+from discow.handlers import *
 from random import randint
 
 @asyncio.coroutine
@@ -45,7 +45,7 @@ def reaction(Discow, msg):
         for m in msgs:
             tmp = yield from Discow.add_reaction(m, e)
 
-message_handlers["hi"] = hi
-message_handlers["rps"] = rps
-message_handlers["reaction"] = reaction
-message_handlers["purge"] = purge
+add_message_handler(hi, "hi")
+add_message_handler(rps, "rps")
+add_message_handler(reaction, "reaction")
+add_message_handler(purge, "purge")
