@@ -20,4 +20,4 @@ Prefix: `cow`
 |:-:|:-:|:-:|:-:|
 |schedule|`cow schedule [day]`|Tells you the schedule for a given day|`schedule`|
 |weekschedule|`cow weekschedule [week]`|Tells you the schedule for a given week|`weekschedule`, `week-schedule`, `week_schedule`|
-|cal|`cow cal [day]`|Tells you the schedule for a given day|`cal`|
+|cal|`cow cal [day]`|Tells you all events in a given day|`cal`|
