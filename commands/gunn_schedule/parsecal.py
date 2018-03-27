@@ -55,18 +55,27 @@ with open('commands/gunn_schedule/schedules_temp.txt', 'w') as f:
                 out+="!D:"+d+"\n"
                 for ev in events[yr][m][d]:
                     t = parsestr(ev.format())
-                    out+="!e:"+t
-                    if (review(t)):
-                        out+=" REVIEW"
-                    out+="\n"
-                    desc = parsestr(ev.getDesc()).strip().split("\n")
-                    if len(desc) > 0:
-                        for ln in desc:
-                            ln = parsestr(ln)
-                            out+="~d:"+ln
-                            if (review(ln)):
+                    if "See Below" in t or "Alternate Schedule" in t:
+                        ev2 = parsestr(ev.getDesc()).strip().split("\n")
+                        for el in ev2:
+                            el = parsestr(el)
+                            out+="!e:"+el
+                            if (review(el)):
                                 out+=" REVIEW"
                             out+="\n"
+                    else:
+                        out+="!e:"+t
+                        if (review(t)):
+                            out+=" REVIEW"
+                        out+="\n"
+                        desc = parsestr(ev.getDesc()).strip().split("\n")
+                        if len(desc) > 0:
+                            for ln in desc:
+                                ln = parsestr(ln)
+                                out+="~d:"+ln
+                                if (review(ln)):
+                                    out+=" REVIEW"
+                                out+="\n"
     f.write(out)
 
 f.close()
