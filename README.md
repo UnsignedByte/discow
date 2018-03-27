@@ -1,1 +1,15 @@
-**discow**: This is a Python3 bot for Discord using discord.py. No JS here! Only Python3!
+# Discow
+A Python3 bot for Discord using discord.py
+## Commands
+Prefix: `cow`
+
+----------------
+### Moderation Commands
+##### `purge` and `clear`
+
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|Purge|`cow purge [n]`|Clears the last `n` messages|`clear`, `purge`|
+
+### Fun Commands
+### Calendar Parser
