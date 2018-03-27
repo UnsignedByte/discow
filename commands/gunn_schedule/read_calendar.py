@@ -1,4 +1,7 @@
-from commands.gunn_schedule.scheduleutils import *
+try:
+    from scheduleutils import *
+except:
+    from commands.gunn_schedule.scheduleutils import *
 import dateparser
 import re
 
