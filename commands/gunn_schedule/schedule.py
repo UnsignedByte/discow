@@ -6,6 +6,7 @@ import datetime
 import re
 import calendar
 import time
+from scheduleutils import *
 
 dateparser = cf.DateDataParser(["en"])
 def parseDate(string):
@@ -26,46 +27,15 @@ def specialParseDate(string):
         return parseDate(string[4:]) + datetime.timedelta(7)
 
 schedules = {}
-raw_schedules = open("discow/gunn_schedule/schedules.txt").read().split('\n')
+raw_schedules = open("commands/gunn_schedule/schedules.txt").read().split('\n')
 
 defaults = {}
-raw_defaults = open("discow/gunn_schedule/defaults.txt").read().split('\n')
+raw_defaults = open("commands/gunn_schedule/defaults.txt").read().split('\n')
 
 curr_day = None
 curr_day_text = None
 curr_schedule = []
 
-# credit to https://stackoverflow.com/a/13756038
-def td_format(td_object):
-    seconds = int(td_object.total_seconds())
-    periods = [
-        ('year',        60*60*24*365),
-        ('month',       60*60*24*30),
-        ('day',         60*60*24),
-        ('hour',        60*60),
-        ('minute',      60),
-        ('second',      1)
-    ]
-
-    strings=[]
-    for period_name, period_seconds in periods:
-        if seconds >= period_seconds:
-            period_value , seconds = divmod(seconds, period_seconds)
-            has_s = 's' if period_value > 1 else ''
-            strings.append("%s %s%s" % (period_value, period_name, has_s))
-
-    return ", ".join(strings)
-
-class ScheduleEvent:
-    def __init__(self, starttime, endtime, name, desc):
-        self.start = starttime
-        self.end = endtime
-        self.name = name
-        self.desc = desc
-    def format(self, tfhour = False, showlengths = True):
-        return "%s: **%s** - **%s** " % (self.name,
-                                             self.start.time().strftime("%I:%M"),
-                                             self.end.time().strftime("%I:%M")) + "(%s)" % (td_format(self.end-self.start))
 
 getName = re.compile('\[(.+)\]')
 getTime = re.compile('\((.+)\)')
