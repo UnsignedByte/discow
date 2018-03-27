@@ -4,6 +4,7 @@ import shutil
 import datetime
 from icalendar import Calendar, Event
 from scheduleutils import *
+from pytz import timezone
 
 cal = "https://calendar.google.com/calendar/ical/u5mgb2vlddfj70d7frf3r015h0%40group.calendar.google.com/public/basic.ics"
 
@@ -32,8 +33,8 @@ for component in gcal.walk():
             events[year][month][day] = []
         if isinstance(component.get("dtstart").dt, datetime.datetime) and component.get("dtend") is not None:
             events[year][month][day].append(
-                ScheduleEvent(component.get("dtstart").dt,
-                component.get("dtend").dt,
+                ScheduleEvent(component.get("dtstart").dt.astimezone(timezone('US/Pacific')),
+                component.get("dtend").dt.astimezone(timezone('US/Pacific')),
                 component.get("summary"),
                 component.get("description")))
         else:
@@ -59,12 +60,13 @@ with open('discow/gunn_schedule/schedules_temp.txt', 'w') as f:
                         out+=" REVIEW"
                     out+="\n"
                     desc = parsestr(ev.getDesc()).strip().split("\n")
-                    for ln in desc:
-                        ln = parsestr(ln)
-                        out+="~d:"+ln
-                        if (review(ln)):
-                            out+=" REVIEW"
-                        out+="\n"
+                    if len(desc) > 0:
+                        for ln in desc:
+                            ln = parsestr(ln)
+                            out+="~d:"+ln
+                            if (review(ln)):
+                                out+=" REVIEW"
+                            out+="\n"
     f.write(out)
 
 f.close()
