@@ -3,7 +3,6 @@ A Python3 bot for Discord using discord.py
 ## Commands
 Prefix: `cow`
 
-----------------
 ### Moderation Commands
 ##### `purge` and `clear`
 
