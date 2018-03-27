@@ -5648,7 +5648,7 @@
 ~d:
 !D:23
 !e:Unity Day (Wear Orange!): **12:00 AM** - **12:00 AM** (1 day)
-~d:This event has a Google Hangouts video call.
+~d:This event has a Google Hangouts video call.C
 ~d:Join: https://hangouts.google.com/hangouts/_/pausd.org/unity-day-wear?hceid=dTVtZ2IydmxkZGZqNzBkN2ZyZjNyMDE1aDBAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ.rjpsnjn9ntks9i5uvlrj7sk8e0&hs=121
 !e:Home Groups: **02:37 PM** - **03:35 PM** (58 minutes)
 ~d:This event has a Google Hangouts video call.

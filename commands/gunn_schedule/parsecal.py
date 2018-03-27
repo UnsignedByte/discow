@@ -3,7 +3,7 @@ import shutil
 
 import datetime
 from icalendar import Calendar, Event
-from scheduleutils import *
+from commands.gunn_schedule.scheduleutils import *
 from pytz import timezone
 
 cal = "https://calendar.google.com/calendar/ical/u5mgb2vlddfj70d7frf3r015h0%40group.calendar.google.com/public/basic.ics"

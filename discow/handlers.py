@@ -2,8 +2,26 @@ message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
 
+persistent_variables = {}
+
+def add_message_handler(handler, keyword):
+    message_handlers[keyword] = handler
+
+def add_reaction_handler(handler, name):
+    name += "$reaction_handler"
+    if name not in persistent_variables:
+        reaction_handlers.append(handler)
+        persistent_variables[name] = True
+
+def add_unreaction_handler(handler, name):
+    name += "$unreaction_handler"
+    if name not in persistent_variables:
+        unreaction_handlers.append(handler)
+        persistent_variables[name] = True
+
 # Add modules here
-from commands import *
+import commands.moderation
+import commands.gunn_schedule.schedule
 from discow.utils import *
 
 import asyncio

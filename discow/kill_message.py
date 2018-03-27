@@ -1,5 +1,5 @@
 import asyncio
-from discow.handlers import reaction_handlers,unreaction_handlers
+from discow.handlers import *
 
 killer_emoji = "\U00002620"
 
@@ -15,4 +15,4 @@ def destroy_message_on_reaction(Discow, reaction, user):
     if reaction.emoji == killer_emoji:
         yield from Discow.delete_message(reaction.message)
 
-reaction_handlers.append(destroy_message_on_reaction)
+add_reaction_handler(destroy_message_on_reaction, "destroy_message")
