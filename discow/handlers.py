@@ -20,7 +20,7 @@ def add_unreaction_handler(handler, name):
         persistent_variables[name] = True
 
 # Add modules here
-import commands.moderation
+from commands import moderation, fun
 import commands.gunn_schedule.schedule
 from discow.utils import *
 
