@@ -43,7 +43,13 @@ Brunch (10:10-10:25)
 Period E (10:25-11:10)
 Period F (11:20-12:05)
 Period G (12:15-1:00)
-$$9/5/17
+Monday
+September 4
+HOLIDAY
+
+Tuesday
+September 5
+4-day-week schedule
 Period A (8:25-9:50)
 Brunch (9:50-10:05)
 Period B (10:05-11:25)
@@ -106,7 +112,14 @@ FlexTime (10:05-11:25)
 Period E (11:35-12:55)
 Lunch (12:55-1:35)
 Period G (1:35-2:55)
-$$10/9/17
+Friday
+October 6
+STAFF DEV.
+(no students)
+
+Monday
+October 9
+4-day-week schedule
 Period A (8:25-9:50)
 Brunch (9:50-10:05)
 Period B (10:05-11:25)
@@ -167,7 +180,15 @@ FlexTime (10:05-11:25)
 Period E (11:35-12:55)
 Lunch (12:55-1:35)
 Period G (1:35-2:55)
-$$11/16/17
+Friday
+November 10
+HOLIDAY
+
+Thursday
+November 16
+Turkey Feast
+extended lunch
+
 Period E (8:25-9:56)
 Brunch (9:56-10:11)
 FlexTime (10:11-10:57)
@@ -175,7 +196,13 @@ Period B (11:07-12:13)
 Extended Lunch (12:13-1:13)
 Period A (1:13-2:19)
 Period G (2:29-3:35)
-$$12/7/17
+Monday-Friday
+November 20-24
+THANKSGIVING HOLIDAY
+
+Thursday
+December 7
+Extended lunch for Holiday staff luncheon
 Period E (8:25-9:46)
 Brunch (9:56-10:11)
 FlexTime (10:11-10:57)
@@ -199,6 +226,15 @@ $$12/21/17
 Period E Final (8:30-10:10)
 Brunch (10:10-10:20)
 Period F Final (10:30-12:10)
+Friday-Monday
+Dec 22-Jan 8
+WINTER BREAK
+
+Monday
+January 8
+Teacher work day
+(no students)
+
 Tuesday
 January 9
 4-day-week schedule
@@ -237,6 +273,10 @@ FlexTime (10:05-11:25)
 Period E (11:35-12:55)
 Lunch (12:55-1:35)
 Period G (1:35-2:55)
+Monday
+January 15
+MLK HOLIDAY
+
 Tuesday
 January 16
 4-day-week schedule
@@ -324,6 +364,14 @@ FlexTime (10:05-11:25)
 Period E (11:35-12:55)
 Lunch (12:55-1:35)
 Period G (1:35-2:55)
+Friday
+February 16
+Staff Development Day (no students)
+
+Monday
+February 19
+PRESIDENTS' DAY HOLIDAY
+
 Tuesday
 February 20
 4-day-week schedule
@@ -412,6 +460,10 @@ Period B (10:05-11:25)
 Period C (11:35-12:55)
 Lunch (12:55-1:35)
 Period F (1:35-2:55)
+Monday
+March 12
+LOCAL HOLIDAY
+
 Tuesday
 March 13
 4-day-week schedule
@@ -460,6 +512,10 @@ Brunch (10:10-10:25)
 Period E (10:25-11:10)
 Period F (11:20-12:05)
 Period G (12:15-1:00)
+Mon-Fri.
+April 2-6
+SPRING BREAK
+
 Thursday
 May 17
 Extended Lunch schedule for Staff-Volunteer Luncheon
@@ -470,6 +526,10 @@ Period B (11:07-12:13)
 Extended Lunch (12:13-1:13)
 Period A (1:13-2:19)
 Period G (2:29-3:35)
+Monday
+May 28
+MEMORIAL DAY HOLIDAY
+
 Tuesday
 May 29
 7-period day schedule
