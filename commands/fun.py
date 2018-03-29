@@ -37,6 +37,20 @@ def reaction(Discow, msg):
     for i in range(0, min(len(e), num, 20-len(m.reactions))):
         yield from Discow.add_reaction(m, e[i])
 
+@asyncio.coroutine
+def easteregg(Discow, msg):
+    msgs = [
+        "Nice!",
+        "I agree",
+        format_response("{_mention} is right, obviously", _msg=msg),
+        "Hello!",
+        "Eggs are superior",
+        "I think it's almost Easter!",
+        "Google \"do a barrel roll\"",
+        "I'm sorry, what are we talking about again?"
+    ]
+    yield from Discow.send_message(msg.channel, msgs[randint(0,len(msgs)-1)])
+
 add_message_handler(hi, "hi")
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")

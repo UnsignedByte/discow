@@ -1,3 +1,5 @@
+from random import randint
+
 message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
@@ -31,6 +33,11 @@ whitespace = [' ', '\t', '\n']
 @asyncio.coroutine
 def on_message(Discow, msg):
     if msg.content[:len(discow_prefix)] != discow_prefix:
+        if randint(1, 50) == 1:
+            e = msg.server.emojis
+            yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
+        if randint(1, 100) == 1:
+            yield from fun.easteregg(Discow, msg)
         return
     try:
         yield from message_handlers[parse_command(msg.content)[0]](Discow, msg)
