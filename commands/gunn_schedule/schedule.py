@@ -6,6 +6,7 @@ import datetime
 import re
 import calendar
 import time
+from discord import Embed
 from commands.gunn_schedule.scheduleutils import *
 
 dateparser = cf.DateDataParser(["en"])
@@ -60,7 +61,6 @@ print("Parsing schedules")
 
 i = 1
 for sched in raw_schedules:
-    print(i)
     i += 1
     if sched.startswith("$$"):
         schedules[curr_day] = curr_schedule.copy()
@@ -93,16 +93,18 @@ def getSchedule(date):
     return schedules[date]
 
 def formatSchedule(date):
+    em = Embed(title="Schedule for %s (%s)" % (date.isoformat(), calendar.day_name[date.weekday()]), colour=0x12AA24)
     try:
         sched = getSchedule(date)
     except:
-        return "Schedule for %s unknown." % date.isoformat()
+        em.description = "unknown"
+        return em
     if not sched:
-        return """No school on %s (%s).""" % (date.isoformat(), calendar.day_name[date.weekday()])
-    table = """Schedule for %s (%s):\n\n""" % (date.isoformat(), calendar.day_name[date.weekday()])
+        em.description = "No school"
+        return em
     for event in sched:
-        table += (event.format()) + '\n'
-    return table
+        em.add_field(name=event.name.title(), value=event.getT(), inline=False)
+    return em
 
 old_schedule_messages = []
 old_week_schedule_messages = []
@@ -134,7 +136,7 @@ def schedule(Discow, msg):
 
     parsed = parsed.date()
 
-    msg = yield from Discow.send_message(msg.channel, formatSchedule(parsed))
+    msg = yield from Discow.send_message(msg.channel, embed=formatSchedule(parsed))
 
     yield from Discow.add_reaction(msg, leftarrow)
     yield from Discow.add_reaction(msg, rightarrow)
@@ -150,8 +152,8 @@ def schedule_react(Discow, reaction, user):
     for c in old_schedule_messages:
         if c.id == reaction.message.id:
             c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else 1))
-            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
-            yield from Discow.edit_message(reaction.message, formatSchedule(c.time))
+            yield from Discow.edit_message(reaction.message, embed=Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
+            yield from Discow.edit_message(reaction.message, embed=formatSchedule(c.time))
             return
 
 @asyncio.coroutine
