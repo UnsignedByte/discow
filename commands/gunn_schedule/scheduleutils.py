@@ -32,8 +32,9 @@ class ScheduleEvent:
         self.name = name
         self.desc = desc
     def format(self, tfhour = False, showlengths = True):
-        return "%s: **%s** - **%s** " % (self.name.title(),
-                                             self.start.time().strftime("%I:%M %p"),
+        return "%s: %s " % (self.name.title(),self.getT(tfhour=tfhour, showlengths=showlengths))
+    def getT(self, tfhour = False, showlengths = True):
+        return "**%s** - **%s** " % (self.start.time().strftime("%I:%M %p"),
                                              self.end.time().strftime("%I:%M %p")) + "(%s)" % (td_format(self.end-self.start))
     def getDesc(self):
         return self.desc
