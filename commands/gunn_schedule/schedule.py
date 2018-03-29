@@ -58,7 +58,10 @@ defaults[curr_day_text] = curr_schedule.copy()
 
 print("Parsing schedules")
 
+i = 1
 for sched in raw_schedules:
+    print(i)
+    i += 1
     if sched.startswith("$$"):
         schedules[curr_day] = curr_schedule.copy()
         curr_day_text = sched[2:]
