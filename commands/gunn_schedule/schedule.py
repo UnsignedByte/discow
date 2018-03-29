@@ -94,6 +94,7 @@ def getSchedule(date):
 
 def formatSchedule(date):
     em = Embed(title="Schedule for %s (%s)" % (date.isoformat(), calendar.day_name[date.weekday()]), colour=0x12AA24)
+    em.set_footer(text="Taken from the Gunn Website.")
     try:
         sched = getSchedule(date)
     except:
@@ -102,8 +103,14 @@ def formatSchedule(date):
     if not sched:
         em.description = "No school"
         return em
+    n = ""
+    t = ""
     for event in sched:
-        em.add_field(name=event.name.title(), value=event.getT(), inline=False)
+        n+="**"+event.name.title()+"**\n"
+        t+=event.getT()+"\n"
+        #em.add_field(name=event.name.title(), value=event.getT(), inline=False)
+    em.add_field(name="Periods", value=n)
+    em.add_field(name="Times", value=t)
     return em
 
 old_schedule_messages = []
@@ -119,8 +126,10 @@ class ScheduleMessage:
     def __eq__(self, other):
         return self.msg == other.msg
 
-leftarrow = "\U00002B05"
-rightarrow = "\U000027A1"
+leftarrow = "\U000025C0"
+rightarrow = "\U000025B6"
+rewind = "\U000023EA"
+fastforward = "\U000023E9"
 
 @asyncio.coroutine
 def schedule(Discow, msg):
@@ -138,8 +147,10 @@ def schedule(Discow, msg):
 
     msg = yield from Discow.send_message(msg.channel, embed=formatSchedule(parsed))
 
+    yield from Discow.add_reaction(msg, rewind)
     yield from Discow.add_reaction(msg, leftarrow)
     yield from Discow.add_reaction(msg, rightarrow)
+    yield from Discow.add_reaction(msg, fastforward)
 
     old_schedule_messages.append(ScheduleMessage(msg, time.gmtime(), parsed))
 
@@ -151,7 +162,7 @@ def schedule_react(Discow, reaction, user):
 
     for c in old_schedule_messages:
         if c.id == reaction.message.id:
-            c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else 1))
+            c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else (1 if reaction.emoji == rightarrow else -7 if reaction.emoji == rewind else 7)))
             yield from Discow.edit_message(reaction.message, embed=Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
             yield from Discow.edit_message(reaction.message, embed=formatSchedule(c.time))
             return
