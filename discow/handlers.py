@@ -39,7 +39,7 @@ def on_message(Discow, msg):
     except KeyError:
         yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg.content)[0])
     except Exception as e:
-        yield from Discow.send_message(msg.channel, "An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg)[0], e))
+        yield from Discow.send_message(msg.channel, "An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e))
 
 @asyncio.coroutine
 def on_reaction(Discow, reaction, user):

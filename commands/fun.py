@@ -1,7 +1,7 @@
 import asyncio
 from discow.utils import *
 from discow.handlers import *
-from random import randint
+from random import randint, shuffle
 
 @asyncio.coroutine
 def hi(Discow, msg):
@@ -29,10 +29,13 @@ def rps(Discow, msg):
 @asyncio.coroutine
 def reaction(Discow, msg):
     num = int(parse_command(msg.content, 1)[1])
-    msgs = yield from Discow.logs_from(msg.channel, limit=num)
-    for m in msgs:
-        for e in Discow.get_all_emojis():
-            tmp = yield from Discow.add_reaction(m, e)
+    e = msg.server.emojis
+    shuffle(e)
+    yield from Discow.delete_message(msg)
+    m = yield from Discow.logs_from(msg.channel, limit=1)
+    m = list(m)[0]
+    for i in range(0, min(len(e), num, 20-len(m.reactions))):
+        yield from Discow.add_reaction(m, e[i])
 
 add_message_handler(hi, "hi")
 add_message_handler(rps, "rps")
