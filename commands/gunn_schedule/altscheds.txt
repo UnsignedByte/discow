@@ -1,567 +1,707 @@
 $$8/15/17
-Period D (8:25-9:57)
-Brunch (9:57-10:12)
-FlexTime (10:12-10:50)
-Period E (11:00-12:15)
-Lunch (12:15-12:55)
-Period A (12:55-2:15)
-Period G (2:25-3:40)
+!e [Period D] (8:25-9:57)
+!e [Brunch] (9:57-10:12)
+!e [FlexTime] (10:12-10:50)
+!e [Period E] (11:00-12:15)
+!e [Lunch] (12:15-12:55)
+!e [Period A] (12:55-2:15)
+!e [Period G] (2:25-3:40)
+$$8/16/17
+Default
+$$8/17/17
+Default
+$$8/18/17
+Default
+$$8/19/17
+Default
+$$8/20/17
+Default
+$$8/21/17
+Default
+$$8/22/17
+Default
+$$8/23/17
+Default
+$$8/24/17
+Default
+$$8/25/17
+Default
+$$8/26/17
+Default
+$$8/27/17
+Default
 $$8/28/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
 $$8/29/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
 $$8/30/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
 $$8/31/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-BACK TO SCHOOL NIGHT (18:00-21:00)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+!e [BACK TO SCHOOL NIGHT] (18:00-21:00)
 $$9/1/17
-Period C (8:25-9:15)
-Period D (9:25-10:10)
-Brunch (10:10-10:25)
-Period E (10:25-11:10)
-Period F (11:20-12:05)
-Period G (12:15-1:00)
-Monday
-September 4
-HOLIDAY
-
-Tuesday
-September 5
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
+!e [Period C] (8:25-9:15)
+!e [Period D] (9:25-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period E] (10:25-11:10)
+!e [Period F] (11:20-12:05)
+!e [Period G] (12:15-1:00)
+$$9/2/17
+Default
+$$9/3/17
+Default
+$$9/4/17
+None
+$$9/5/17
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
 $$9/6/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
 $$9/7/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. Meeting (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. Meeting] (3:05-3:40)
 $$9/8/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-Assembly for 9th/10th graders in Titan Gym (10:05-10:40)
-11th/12th graders to FlexTime
-Assembly for 11th/12th graders in Titan Gym (10:50-11:25)
-9th/10th graders to FlexTime
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Assembly for 9th/10th graders in Titan Gym] (10:05-10:40)
+!e [11th/12th graders to FlexTime
+!e [Assembly for 11th/12th graders in Titan Gym] (10:50-11:25)
+!e [9th/10th graders to FlexTime
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$9/9/17
+Default
+$$9/10/17
+Default
+$$9/11/17
+Default
+$$9/12/17
+Default
+$$9/13/17
+Default
+$$9/14/17
+Default
+$$9/15/17
+Default
+$$9/16/17
+Default
+$$9/17/17
+Default
+$$9/18/17
+Default
+$$9/19/17
+Default
+$$9/20/17
+Default
+$$9/21/17
+Default
+$$9/22/17
+Default
+$$9/23/17
+Default
+$$9/24/17
+Default
+$$9/25/17
+Default
+$$9/26/17
+Default
+$$9/27/17
+Default
+$$9/28/17
+Default
+$$9/29/17
+Default
+$$9/30/17
+Default
+$$10/1/17
+Default
 $$10/2/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
 $$10/3/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
 $$10/4/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
 $$10/5/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Friday
-October 6
-STAFF DEV.
-(no students)
-
-Monday
-October 9
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$10/6/17
+None
+$$10/7/17
+Default
+$$10/8/17
+Default
+$$10/9/17
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
 $$10/10/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
 $$10/11/17
-Staff Collaboration (1:00-3:45)
+!e [Staff Collaboration] (1:00-3:45)
 $$10/12/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
 $$10/13/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$10/14/17
+Default
+$$10/15/17
+Default
+$$10/16/17
+Default
+$$10/17/17
+Default
+$$10/18/17
+Default
+$$10/19/17
+Default
+$$10/20/17
+Default
+$$10/21/17
+Default
+$$10/22/17
+Default
+$$10/23/17
+Default
+$$10/24/17
+Default
+$$10/25/17
+Default
+$$10/26/17
+Default
+$$10/27/17
+Default
+$$10/28/17
+Default
+$$10/29/17
+Default
+$$10/30/17
+Default
+$$10/31/17
+Default
+$$11/1/17
+Default
+$$11/2/17
+Default
+$$11/3/17
+Default
+$$11/4/17
+Default
+$$11/5/17
+Default
 $$11/6/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
 $$11/7/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
 $$11/8/17
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meetings (3:05-3:40)
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meetings] (3:05-3:40)
 $$11/9/17
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Friday
-November 10
-HOLIDAY
-
-Thursday
-November 16
-Turkey Feast
-extended lunch
-
-Period E (8:25-9:56)
-Brunch (9:56-10:11)
-FlexTime (10:11-10:57)
-Period B (11:07-12:13)
-Extended Lunch (12:13-1:13)
-Period A (1:13-2:19)
-Period G (2:29-3:35)
-Monday-Friday
-November 20-24
-THANKSGIVING HOLIDAY
-
-Thursday
-December 7
-Extended lunch for Holiday staff luncheon
-Period E (8:25-9:46)
-Brunch (9:56-10:11)
-FlexTime (10:11-10:57)
-Period B (11:07-12:13)
-Extended Lunch (12:13-1:13)
-Period A (1:13-2:19)
-Period G (2:29-3:35)
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$11/10/17
+None
+$$11/16/17
+!e [Period E] (8:25-9:56)
+!e [Brunch] (9:56-10:11)
+!e [FlexTime] (10:11-10:57)
+!e [Period B] (11:07-12:13)
+!e [Extended Lunch] (12:13-1:13)
+!e [Period A] (1:13-2:19)
+!e [Period G] (2:29-3:35)
+$$11/20/17
+None
+$$11/21/17
+None
+$$11/22/17
+None
+$$11/23/17
+None
+$$11/24/17
+None
+$$11/25/17
+Default
+$$11/26/17
+Default
+$$11/27/17
+Default
+$$11/28/17
+Default
+$$11/29/17
+Default
+$$11/30/17
+Default
+$$12/1/17
+Default
+$$12/2/17
+Default
+$$12/3/17
+Default
+$$12/4/17
+Default
+$$12/5/17
+Default
+$$12/6/17
+Default
+$$12/7/17
+!e [Period E] (8:25-9:46)
+!e [Brunch] (9:56-10:11)
+!e [FlexTime] (10:11-10:57)
+!e [Period B] (11:07-12:13)
+!e [Extended Lunch] (12:13-1:13)
+!e [Period A] (1:13-2:19)
+!e [Period G] (2:29-3:35)
 $$12/19/17
-Period B Final (8:30-10:10)
-Brunch (10:10-10:25)
-Period D Final (10:30-12:10)
-Break (12:10-12:45)
-Zero & H Period Finals (12:45-2:25)
+!e [Period B Final] (8:30-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period D Final] (10:30-12:10)
+!e [Break] (12:10-12:45)
+!e [Zero & H Period Finals] (12:45-2:25)
 $$12/20/17
-Period A Final (8:30-10:10)
-Brunch (10:10-10:20)
-Period C Final (10:30-12:10)
-Lunch (12:10-12:45)
-Period G Final (12:45-2:25)
+!e [Period A Final] (8:30-10:10)
+!e [Brunch] (10:10-10:20)
+!e [Period C Final] (10:30-12:10)
+!e [Lunch] (12:10-12:45)
+!e [Period G Final] (12:45-2:25)
 $$12/21/17
-Period E Final (8:30-10:10)
-Brunch (10:10-10:20)
-Period F Final (10:30-12:10)
-Friday-Monday
-Dec 22-Jan 8
-WINTER BREAK
-
-Monday
-January 8
-Teacher work day
-(no students)
-
-Tuesday
-January 9
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
-Wednesday
-January 10
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Thursday
-January 11
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
-Friday
-January 12
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Monday
-January 15
-MLK HOLIDAY
-
-Tuesday
-January 16
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
-Wednesday
-January 17
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Thursday
-January 18
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
-Friday
-January 19
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Wednesday
-February 7
-AMC math test schedule
-
-
-AMC Math Test for test-takers only (8:25-9:50)
-Period B (10:00-11:08)
-Period C (11:18-12:26)
-Lunch (12:26-1:09)
-Period D (1:09-2:17)
-Period F (2:27-3:35)
-Monday
-February 12
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
-Tuesday
-February 13
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Wednesday
-February 14
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
-Thursday
-February 15
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Friday
-February 16
-Staff Development Day (no students)
-
-Monday
-February 19
-PRESIDENTS' DAY HOLIDAY
-
-Tuesday
-February 20
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
-Wednesday
-February 21
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Thursday
-February 22
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
-Friday
-February 23
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Monday
-February 26
-RISE assembly schedule
-Period A (freshmen at assembly) (8:25-9:10)
-Period B (freshmen at assembly) (9:20-10:00)
-Brunch (10:00-10:15)
-Period C (seniors at assembly) (10:15-10:55)
-Period D (seniors at assembly) (11:05-11:45)
-Lunch (11:45-12:25)
-Period F (juniors at assembly) (12:25-1:05)
-Period G (juniors at assembly) (1:15-1:55)
-Staff Collaboration (2:15-3:30)
-Tuesday
-February 27
-RISE assembly schedule
-Period E (sophomores at assembly) (8:25-9:10)
-FlexTime (sophomores at assembly) (9:20-10:00)
-Brunch (10:00-10:15)
-Period D (10:15-11:35)
-Lunch (11:35-12:15)
-Period A (12:15-1:35)
-Period G (1:45-3:05)
-Wednesday
-February 28
-Alternate schedule
-Period B (8:25-9:50)
-Brunch (9:50-10:05)
-Period C (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Meeting (3:05-3:45)
-Thursday
-March 1
-Alternate schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-Double FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Friday
-March 2
-Alternate schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Monday
-March 12
-LOCAL HOLIDAY
-
-Tuesday
-March 13
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff Collaboration (3:05-3:40)
-Wednesday
-March 14
-Clash of the Titans &
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:00)
-Period E (11:10-12:30)
-Clash of the Titans extended lunch (12:30-1:35)
-Period G (1:35-2:55)
-Thursday
-March 15
-4-day-week schedule
-Period A (8:25-9:50)
-Brunch (9:50-10:05)
-Period B (10:05-11:25)
-Period C (11:35-12:55)
-Lunch (12:55-1:35)
-Period F (1:35-2:55)
-Staff/Dept. meeting (3:05-3:40)
-Friday
-March 16
-4-day-week schedule
-Period D (8:25-9:50)
-Brunch (9:50-10:05)
-FlexTime (10:05-11:25)
-Period E (11:35-12:55)
-Lunch (12:55-1:35)
-Period G (1:35-2:55)
-Friday
-March 30
-Minimum Day schedule
-Period C (8:25-9:15)
-Period D (9:25-10:10)
-Brunch (10:10-10:25)
-Period E (10:25-11:10)
-Period F (11:20-12:05)
-Period G (12:15-1:00)
-Mon-Fri.
-April 2-6
-SPRING BREAK
-
-Thursday
-May 17
-Extended Lunch schedule for Staff-Volunteer Luncheon
-Period E (8:25-9:56)
-Brunch (9:56-10:11)
-FlexTime (10:11-10:57)
-Period B (11:07-12:13)
-Extended Lunch (12:13-1:13)
-Period A (1:13-2:19)
-Period G (2:29-3:35)
-Monday
-May 28
-MEMORIAL DAY HOLIDAY
-
-Tuesday
-May 29
-7-period day schedule
-Period A (8:25-9:17)
-Period B (9:27-10:14)
-Brunch (10:14-10:29)
-Period C (10:29-11:16)
-Period D (11:26-12:13)
-Lunch (12:13-12:57)
-Period E (12:57-1:44)
-Period F (1:54-2:41)
-Period G (2:51-3:38)
-Wednesday
-May 30
-Final Exam schedule
-Period B Final (8:30-10:10)
-Brunch (10:10-10:20)
-Period D Final (10:30-12:10)
-Break with NO LUNCH SERVED (12:10-12:45)
-Zero & H Period Finals (12:45-2:25)
-Thursday
-May 31
-Final Exam schedule
-Period A Final (8:30-10:10)
-Brunch (10:10-10:20)
-Period C Final (10:30-12:10)
-Lunch (12:10-12:45)
-Period G Final (12:45-2:25)
-Friday
-June 1
-Final Exam schedule
-LAST DAY OF SCHOOL
-Period E Final (8:30-10:10)
-Brunch (10:10-10:20)
-Period F Final (10:30-12:10)
+!e [Period E Final] (8:30-10:10)
+!e [Brunch] (10:10-10:20)
+!e [Period F Final] (10:30-12:10)
+$$12/22/17
+None
+$$12/23/17
+None
+$$12/24/17
+None
+$$12/25/17
+None
+$$12/26/17
+None
+$$12/27/17
+None
+$$12/28/17
+None
+$$12/29/17
+None
+$$12/30/17
+None
+$$12/31/17
+None
+$$1/1/18
+None
+$$1/2/18
+None
+$$1/3/18
+None
+$$1/4/18
+None
+$$1/5/18
+None
+$$1/6/18
+None
+$$1/7/18
+None
+$$1/8/18
+None
+$$1/9/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
+$$1/10/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$1/11/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
+$$1/12/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$1/16/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
+$$1/17/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$1/18/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
+$$1/19/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$1/20/18
+Default
+$$1/21/18
+Default
+$$1/22/18
+Default
+$$1/23/18
+Default
+$$1/24/18
+Default
+$$1/25/18
+Default
+$$1/26/18
+Default
+$$1/27/18
+Default
+$$1/28/18
+Default
+$$1/29/18
+Default
+$$1/30/18
+Default
+$$1/31/18
+Default
+$$2/1/18
+Default
+$$2/2/18
+Default
+$$2/3/18
+Default
+$$2/4/18
+Default
+$$2/5/18
+Default
+$$2/6/18
+Default
+$$2/7/18
+!e [AMC Math Test for test-takers only] (8:25-9:50)
+!e [Period B] (10:00-11:08)
+!e [Period C] (11:18-12:26)
+!e [Lunch] (12:26-1:09)
+!e [Period D] (1:09-2:17)
+!e [Period F] (2:27-3:35)
+$$2/8/18
+Default
+$$2/9/18
+Default
+$$2/10/18
+Default
+$$2/11/18
+Default
+$$2/12/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
+$$2/13/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$2/14/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
+$$2/15/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$2/16/18
+None
+$$2/17/18
+Default
+$$2/18/18
+Default
+$$2/19/18
+None
+$$2/20/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
+$$2/21/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$2/22/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
+$$2/23/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$2/24/18
+Default
+$$2/25/18
+Default
+$$2/26/18
+!e (8:25-9:10) [Period A (freshmen at assembly)]
+!e (9:20-10:00) [Period B (freshmen at assembly)]
+!e [Brunch] (10:00-10:15)
+!e (10:15-10:55) [Period C (seniors at assembly)]
+!e (11:05-11:45) [Period D (seniors at assembly)]
+!e [Lunch] (11:45-12:25)
+!e (12:25-1:05) [Period F (juniors at assembly)]
+!e (1:15-1:55) [Period G (juniors at assembly)]
+!e [Staff Collaboration] (2:15-3:30)
+$$2/27/18
+!e (8:25-9:10) [Period E (sophomores at assembly)]
+!e (9:20-10:00) [FlexTime (sophomores at assembly)]
+!e [Brunch] (10:00-10:15)
+!e [Period D] (10:15-11:35)
+!e [Lunch] (11:35-12:15)
+!e [Period A] (12:15-1:35)
+!e [Period G] (1:45-3:05)
+$$2/28/18
+!e [Period B] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period C] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Meeting] (3:05-3:45)
+$$3/1/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Double FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$3/2/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+$$3/3/18
+Default
+$$3/4/18
+Default
+$$3/5/18
+Default
+$$3/6/18
+Default
+$$3/7/18
+Default
+$$3/8/18
+Default
+$$3/9/18
+Default
+$$3/10/18
+Default
+$$3/11/18
+Default
+$$3/12/18
+None
+$$3/13/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff Collaboration] (3:05-3:40)
+$$3/14/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:00)
+!e [Period E] (11:10-12:30)
+!e [Clash of the Titans extended lunch] (12:30-1:35)
+!e [Period G] (1:35-2:55)
+$$3/15/18
+!e [Period A] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [Period B] (10:05-11:25)
+!e [Period C] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period F] (1:35-2:55)
+!e [Staff/Dept. meeting] (3:05-3:40)
+$$3/16/18
+!e [Period D] (8:25-9:50)
+!e [Brunch] (9:50-10:05)
+!e [FlexTime] (10:05-11:25)
+!e [Period E] (11:35-12:55)
+!e [Lunch] (12:55-1:35)
+!e [Period G] (1:35-2:55)
+$$3/17/18
+Default
+$$3/18/18
+Default
+$$3/19/18
+Default
+$$3/20/18
+Default
+$$3/21/18
+Default
+$$3/22/18
+Default
+$$3/23/18
+Default
+$$3/24/18
+Default
+$$3/25/18
+Default
+$$3/26/18
+Default
+$$3/27/18
+Default
+$$3/28/18
+Default
+$$3/29/18
+Default
+$$3/30/18
+!e [Period C] (8:25-9:15)
+!e [Period D] (9:25-10:10)
+!e [Brunch] (10:10-10:25)
+!e [Period E] (10:25-11:10)
+!e [Period F] (11:20-12:05)
+!e [Period G] (12:15-1:00)
