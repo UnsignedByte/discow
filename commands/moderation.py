@@ -1,7 +1,6 @@
 import asyncio
 from discow.utils import *
 from discow.handlers import *
-from random import randint
 
 @asyncio.coroutine
 def purge(Discow, msg):
