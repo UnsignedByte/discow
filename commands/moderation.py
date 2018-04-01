@@ -1,7 +1,7 @@
 import asyncio
 import pickle
 from discow.utils import *
-from discow.handlers import add_message_handler, closing, command_settings
+from discow.handlers import add_message_handler, begin_shutdown, command_settings
 from discord import Embed
 
 @asyncio.coroutine
@@ -19,11 +19,10 @@ def purge(Discow, msg):
 def shutdown(Discow, msg):
     em = Embed(title="Shutting down...", description="Saving...", colour=0xd32323)
     msg = yield from Discow.send_message(msg.channel, embed=em)
-    global closing
-    closing = True;
+    begin_shutdown()
     with open("discow/client/data/settings.txt", "wb") as f:
         pickle.dump(command_settings, f)
-    yield from asyncio.sleep(5);
+    yield from asyncio.sleep(1);
     em.description = "Complete!"
     msg = yield from Discow.edit_message(msg, embed=em)
     yield from Discow.logout()

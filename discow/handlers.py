@@ -9,6 +9,11 @@ command_settings = {}
 
 persistent_variables = {}
 
+def begin_shutdown():
+    global closing
+    closing = True
+    print(closing)
+
 def add_message_handler(handler, keyword):
     message_handlers[keyword] = handler
 
