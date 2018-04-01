@@ -4,10 +4,16 @@ message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
 
+closing = False
+command_settings = {}
+
 persistent_variables = {}
 
 def add_message_handler(handler, keyword):
     message_handlers[keyword] = handler
+
+def add_settings_handler(handler, keyword):
+    command_settings[keyword] = handler
 
 def add_reaction_handler(handler, name):
     name += "$reaction_handler"
@@ -22,7 +28,7 @@ def add_unreaction_handler(handler, name):
         persistent_variables[name] = True
 
 # Add modules here
-from commands import moderation, fun
+from commands import moderation, fun, settings
 import commands.gunn_schedule.schedule
 from discow.utils import *
 
@@ -39,8 +45,16 @@ def on_message(Discow, msg):
         if randint(1, 100) == 1:
             yield from fun.easteregg(Discow, msg)
         return
+    print(closing)
+    if closing:
+        yield from Discow.send_message(msg.channel, "Not accepting commands, bot is shutting down.")
+        return
     try:
-        yield from message_handlers[parse_command(msg.content)[0]](Discow, msg)
+        cmd = parse_command(msg.content)[0]
+        if cmd in command_settings and msg.channel in command_settings[cmd]:
+            yield from Discow.send_message(msg.channel, "I'm sorry, but the command {_cmd} cannot be used in {_channel}.", _cmd = cmd, _channel = msg.channel)
+        else:
+            yield from message_handlers[cmd](Discow, msg)
     except IndexError:
         tmp = yield from Discow.send_message(msg.channel, "Not enough inputs provided for **%s**." % parse_command(msg.content)[0])
     except KeyError:
