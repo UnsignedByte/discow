@@ -126,13 +126,7 @@ class ScheduleMessage:
         return self.msg == other.msg
 
 old_schedule_messages = []
-if os.path.isfile("discow/client/data/old_schedule_messages.txt"):
-    with open("discow/client/data/old_schedule_messages.txt", "rb") as f:
-        old_schedule_messages = pickle.load(f)
 old_week_schedule_messages = []
-if os.path.isfile("discow/client/data/old_week_schedule_messages.txt"):
-    with open("discow/client/data/old_week_schedule_messages.txt", "rb") as f:
-        old_week_schedule_messages = pickle.load(f)
 
 leftarrow = "\U000025C0"
 rightarrow = "\U000025B6"

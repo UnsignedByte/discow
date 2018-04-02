@@ -1,6 +1,6 @@
 import asyncio
 from discow.utils import *
-from discow.handlers import command_settings, add_message_handler, is_command, message_handlers
+from discow.handlers import enable_command, disable_command, add_message_handler, is_command, message_handlers
 from discord import Embed
 
 settings_handlers = {}
@@ -8,7 +8,6 @@ settings_handlers = {}
 @asyncio.coroutine
 def settings(Discow, msg):
     newmsg = strip_command(msg.content).split(" ")
-    yield from Discow.send_message(msg.channel, newmsg)
     try:
         yield from settings_handlers[newmsg[0]](Discow, msg, newmsg)
     except KeyError:
@@ -21,10 +20,7 @@ def settings(Discow, msg):
 def disable(Discow, msg, newmsg):
     if is_command(newmsg[1]):
         cmdname = message_handlers[newmsg[1]].__name__
-        if cmdname in command_settings:
-            command_settings[cmdname].extend(msg.channel_mentions)
-        else:
-            command_settings[cmdname] = msg.channel_mentions
+        disable_command(cmdname, msg.channel_mentions)
         em = Embed(title="Command Disabled", colour=0x12AA24)
         em.description = cmdname+" has now been disabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
         yield from Discow.send_message(msg.channel, embed=em)
@@ -36,8 +32,7 @@ def disable(Discow, msg, newmsg):
 def enable(Discow, msg, newmsg):
     if is_command(newmsg[1]):
         cmdname = message_handlers[newmsg[1]].__name__
-        if cmdname in command_settings:
-            command_settings[cmdname] = list(x for x in command_settings[cmdname] if x not in msg.channel_mentions)
+        enable_command(cmdname, msg.channel_mentions)
         em = Embed(title="Command Enabled", colour=0x12AA24)
         em.description = cmdname+" has now been enabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
         yield from Discow.send_message(msg.channel, embed=em)
