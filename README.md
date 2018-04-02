@@ -4,16 +4,24 @@ A Python3 bot for Discord using discord.py
 Prefix: `cow`
 
 ### Moderation Commands
-##### `purge` and `clear`
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |Purge|`cow purge [n]`|Clears the last `n` messages|`clear`, `purge`|
 
+### Settings Subcommands
+
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|Disable|`cow settings disable [cmd] [channel(s)]`|Disables a command in the specified channels|`disable`|
+|Enable|`cow settings enable [cmd] [channel(s)]`|Enables a command in the specified channels|`enable`|
+
 ### Fun Commands
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |rps|`cow rps [item]`|Plays rock paper scissors!|`rps`|
+|easteregg|`cow easteregg`|Sends a random message!|`easteregg`|
+
 ### Calendar Parser
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
