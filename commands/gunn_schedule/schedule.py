@@ -139,6 +139,9 @@ rightarrow = "\U000025B6"
 rewind = "\U000023EA"
 fastforward = "\U000023E9"
 
+def get_old_messages():
+    return [old_schedule_messages, old_week_schedule_messages]
+
 @asyncio.coroutine
 def schedule(Discow, msg):
 

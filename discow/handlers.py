@@ -12,6 +12,18 @@ persistent_variables = {}
 def begin_shutdown():
     global closing
     closing = True
+def command_data():
+    return command_settings
+def disable_command(cmd, channels):
+    global command_settings
+    if cmd in command_settings:
+        command_settings[cmd].extend(channels)
+    else:
+        command_settings[cmd] = channels
+def enable_command(cmd, channels):
+    global command_settings
+    if cmd in command_settings:
+        command_settings[cmd] = list(x for x in command_settings[cmd] if x not in channels)
 def is_command(cmd):
     return cmd in message_handlers
 def allowed_command(cmd, channel):
@@ -58,7 +70,7 @@ def on_message(Discow, msg):
                 yield from fun.easteregg(Discow, msg)
         return
     if closing:
-        em = discord.Embed(title="ERROR", description="Not accepting commands, bot is shutting down.", colour=0xd32323)
+        em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is shutting down.", colour=0xd32323)
         yield from Discow.send_message(msg.channel, embed=em)
         return
     try:

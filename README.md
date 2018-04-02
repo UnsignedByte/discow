@@ -1,5 +1,8 @@
 # Discow
-A Python3 bot for Discord using discord.py
+A Python3 bot for Discord using discord.py.
+
+Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https://github.com/anematode) and licensed under [The MIT License](https://en.wikipedia.org/wiki/MIT_License).
+
 ## Commands
 Prefix: `cow`
 
@@ -8,6 +11,7 @@ Prefix: `cow`
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |Purge|`cow purge [n]`|Clears the last `n` messages|`clear`, `purge`|
+|Settings|`cow settings [args]`|Look at *Settings Subcommands* (below)|`settings`|
 
 ### Settings Subcommands
 
