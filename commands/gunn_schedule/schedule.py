@@ -4,6 +4,8 @@ import discow.utils
 import dateparser as cf
 import datetime
 import re
+import os
+import pickle
 import calendar
 import time
 from discord import Embed
@@ -113,9 +115,6 @@ def formatSchedule(date):
     em.add_field(name="Times", value=t)
     return em
 
-old_schedule_messages = []
-old_week_schedule_messages = []
-
 class ScheduleMessage:
     def __init__(self, msg, stamp, timef):
         self.id = msg.id
@@ -125,6 +124,15 @@ class ScheduleMessage:
 
     def __eq__(self, other):
         return self.msg == other.msg
+
+old_schedule_messages = []
+if os.path.isfile("discow/client/data/old_schedule_messages.txt"):
+    with open("discow/client/data/old_schedule_messages.txt", "rb") as f:
+        old_schedule_messages = pickle.load(f)
+old_week_schedule_messages = []
+if os.path.isfile("discow/client/data/old_week_schedule_messages.txt"):
+    with open("discow/client/data/old_week_schedule_messages.txt", "rb") as f:
+        old_week_schedule_messages = pickle.load(f)
 
 leftarrow = "\U000025C0"
 rightarrow = "\U000025B6"

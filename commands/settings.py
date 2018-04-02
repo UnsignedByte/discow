@@ -1,13 +1,50 @@
 import asyncio
 from discow.utils import *
-from discow.handlers import *
+from discow.handlers import command_settings, add_message_handler, is_command, message_handlers
+from discord import Embed
 
 settings_handlers = {}
 
 @asyncio.coroutine
 def settings(Discow, msg):
-    yield from Discow.send_message(msg.channel, strip_command(msg.content))
-    print(strip_command(msg.content))
+    newmsg = strip_command(msg.content).split(" ")
+    yield from Discow.send_message(msg.channel, newmsg)
+    try:
+        yield from settings_handlers[newmsg[0]](Discow, msg, newmsg)
+    except KeyError:
+        em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
 
 
+#SUBCOMMANDS DEFINED HERE
+@asyncio.coroutine
+def disable(Discow, msg, newmsg):
+    if is_command(newmsg[1]):
+        cmdname = message_handlers[newmsg[1]].__name__
+        if cmdname in command_settings:
+            command_settings[cmdname].extend(msg.channel_mentions)
+        else:
+            command_settings[cmdname] = msg.channel_mentions
+        em = Embed(title="Command Disabled", colour=0x12AA24)
+        em.description = cmdname+" has now been disabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
+        yield from Discow.send_message(msg.channel, embed=em)
+    else:
+        em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
+
+@asyncio.coroutine
+def enable(Discow, msg, newmsg):
+    if is_command(newmsg[1]):
+        cmdname = message_handlers[newmsg[1]].__name__
+        if cmdname in command_settings:
+            command_settings[cmdname] = list(x for x in command_settings[cmdname] if x not in msg.channel_mentions)
+        em = Embed(title="Command Enabled", colour=0x12AA24)
+        em.description = cmdname+" has now been enabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
+        yield from Discow.send_message(msg.channel, embed=em)
+    else:
+        em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
+
+settings_handlers["disable"] = disable
+settings_handlers["enable"] = enable
 add_message_handler(settings, "settings")
