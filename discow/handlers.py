@@ -4,10 +4,26 @@ message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
 
+closing = False
+command_settings = {}
+
 persistent_variables = {}
 
+def begin_shutdown():
+    global closing
+    closing = True
+def is_command(cmd):
+    return cmd in message_handlers
+def allowed_command(cmd, channel):
+    if cmd not in command_settings:
+        return True
+    else:
+        return channel not in command_settings[cmd]
 def add_message_handler(handler, keyword):
     message_handlers[keyword] = handler
+
+def add_settings_handler(handler, keyword):
+    command_settings[keyword] = handler
 
 def add_reaction_handler(handler, name):
     name += "$reaction_handler"
@@ -22,9 +38,10 @@ def add_unreaction_handler(handler, name):
         persistent_variables[name] = True
 
 # Add modules here
-from commands import moderation, fun
+from commands import moderation, fun, settings
 import commands.gunn_schedule.schedule
 from discow.utils import *
+import discord
 
 import asyncio
 
@@ -32,21 +49,38 @@ whitespace = [' ', '\t', '\n']
 
 @asyncio.coroutine
 def on_message(Discow, msg):
-    if msg.content[:len(discow_prefix)] != discow_prefix:
-        if randint(1, 50) == 1:
-            e = msg.server.emojis
-            yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
-        if randint(1, 100) == 1:
-            yield from fun.easteregg(Discow, msg)
+    if msg.content[:len(discow_prefix)].lower() != discow_prefix:
+        if allowed_command("easteregg", msg.channel):
+            if randint(1, 50) == 1:
+                e = msg.server.emojis
+                yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
+            if randint(1, 100) == 1:
+                yield from fun.easteregg(Discow, msg)
+        return
+    if closing:
+        em = discord.Embed(title="ERROR", description="Not accepting commands, bot is shutting down.", colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
         return
     try:
-        yield from message_handlers[parse_command(msg.content)[0]](Discow, msg)
+        cmd = parse_command(msg.content)[0]
+        if cmd in command_settings and msg.channel in command_settings[cmd]:
+            em = discord.Embed(title="Command Disabled", colour=0xd32323)
+            em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."
+            yield from Discow.send_message(msg.channel, embed=em)
+        else:
+            yield from message_handlers[cmd](Discow, msg)
     except IndexError:
-        tmp = yield from Discow.send_message(msg.channel, "Not enough inputs provided for **%s**." % parse_command(msg.content)[0])
+        em = discord.Embed(title="ERROR", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
     except KeyError:
-        yield from Discow.send_message(msg.channel, "Unknown command **%s**." % parse_command(msg.content)[0])
+        em = discord.Embed(title="ERROR", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
+    except discord.Forbidden:
+        em = discord.Embed(title="ERROR", description="Discow is missing permissions to perform this task.", colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
     except Exception as e:
-        yield from Discow.send_message(msg.channel, "An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e))
+        em = discord.Embed(title="ERROR", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
+        yield from Discow.send_message(msg.channel, embed=em)
 
 @asyncio.coroutine
 def on_reaction(Discow, reaction, user):

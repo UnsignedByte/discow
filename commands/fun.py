@@ -54,3 +54,4 @@ def easteregg(Discow, msg):
 add_message_handler(hi, "hi")
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")
+add_message_handler(easteregg, "easteregg")
