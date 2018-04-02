@@ -1,11 +1,17 @@
 import asyncio
 from discow.utils import *
-from discow.handlers import *
+from discow.handlers import add_message_handler
 from random import randint, shuffle
 
 @asyncio.coroutine
 def hi(Discow, msg):
-    yield from Discow.send_message(msg.channel, format_response("Hi **{_name}**, I'm Discow! Here's a tag: {_mention}", _msg = msg))
+    yield from Discow.send_message(msg.channel, format_response("Hi **{_name}**, I'm Discow! Tag me! {mymention}", _msg = msg, mymention=Discow.user.mention))
+
+@asyncio.coroutine
+def invite(Discow, msg):
+    inv = yield from Discow.create_invite(msg.channel, max_age=60, max_uses=0, unique=False)
+    outstr = "You have been invited to "+msg.server.name+"!\nJoin with this link:\n"+inv.url
+    yield from Discow.send_message(msg.channel, outstr)
 
 @asyncio.coroutine
 def rps(Discow, msg):
@@ -55,3 +61,4 @@ add_message_handler(hi, "hi")
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")
 add_message_handler(easteregg, "easteregg")
+add_message_handler(invite, "invite")
