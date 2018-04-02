@@ -1,7 +1,5 @@
 import discord
 import asyncio
-import pickle
-import os
 import logging
 
 import discow.client.getkey as _getkey
@@ -25,10 +23,6 @@ class DiscowClientClass(discord.Client):
     def on_reaction_remove(self, reaction, user):
         yield from discow.handlers.on_unreaction(self, reaction, user)
 Discow = DiscowClientClass()
-
-if os.path.isfile("discow/client/data/settings.txt"):
-    with open("discow/client/data/settings.txt", "rb") as f:
-        discow.handlers.command_settings = pickle.load(f)
 
 def runDiscow():
     Discow.run(_getkey.key())
