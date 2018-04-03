@@ -62,7 +62,7 @@ def add_unreaction_handler(handler, name):
 
 
 # Add modules here
-from commands import moderation, fun, settings, economy
+from commands import *
 import commands.gunn_schedule.schedule
 from discow.utils import *
 import discord

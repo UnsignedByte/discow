@@ -5,16 +5,18 @@ Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https
 ## Commands
 Prefix: `cow`
 
+Necessary arguments: `[var]`  
 Optional arguments: `<var>`  
-Necessary arguments: `[var]`
+Remember to delete `[]` and `<>`.
 
-### Moderation Commands
+### Utilities
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |close|`cow close`|Shut down the bot and save all data.|`close`, `shutdown`|
 |settings|`cow settings [args]`|Look at [Settings Subcommands](#settings).|`settings`|
 |purge|`cow purge [n]`|Clears the last `n` messages|`clear`, `purge`|
+|quote|`cow quote [id] <channel>`|Quotes a message given an id and an optional channel|`quote`|
 
 ### Settings Subcommands <a name="settings"></a>
 
@@ -23,7 +25,7 @@ Necessary arguments: `[var]`
 |disable|`cow settings disable [cmd] [channel(s)]`|Disables a command in the specified channels|`disable`|
 |enable|`cow settings enable [cmd] [channel(s)]`|Enables a command in the specified channels|`enable`|
 
-### Fun Commands
+### Fun
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |rps|`cow rps [item]`|Plays rock paper scissors!|`rps`|
