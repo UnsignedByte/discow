@@ -8,9 +8,9 @@ from discord import Embed
 def info(Discow, msg):
     myinfo = yield from Discow.application_info()
     me = yield from Discow.get_user_info(myinfo.id)
-    em = Embed(title="My info", colour=0x9542f4)
-    em.description = "Hi, I'm discow, a discord bot created by <@418827664304898048> and <@418667403396775936>."
-    em.add_field(name="Features", value="For information about features do `cow help` or take a look at our readme!\nhttps://github.com/UnsignedByte/discow/blob/master/README.md")
+    em = Embed(title="Who am I?", colour=0x9542f4)
+    em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048> and <@418667403396775936>."
+    em.add_field(name="Features", value="For information about my features do `cow help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
     txt = "Created by "+me.display_name+" on "+get_localized_time(msg.server)+"."
     em.set_footer(text=txt, icon_url=myinfo.icon_url)
     yield from Discow.send_message(msg.channel, embed=em)

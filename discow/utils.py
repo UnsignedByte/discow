@@ -32,7 +32,7 @@ def strip_command(msg):
     return parse_command(msg, 1)[1]
 
 def get_localized_time(serv):
-    return convertTime(datetime.datetime.utcnow())
+    return convertTime(datetime.datetime.utcnow(), serv)
 
 def convertTime(time, serv):
     timezones = {

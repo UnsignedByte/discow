@@ -22,10 +22,16 @@ def daily(Discow, msg):
 
 @asyncio.coroutine
 def money(Discow, msg):
-    if msg.author.id in user_data:
-        yield from Discow.send_message(msg.channel, "You currently have $%s, %s." % (user_data[msg.author.id]["money"], msg.author.mention))
+    if len(msg.mentions) == 0:
+        if msg.author.id in user_data:
+            yield from Discow.send_message(msg.channel, "You currently have $%s, %s." % (user_data[msg.author.id]["money"], msg.author.mention))
+        else:
+            yield from Discow.send_message(msg.channel, "You have no money. Do `cow daily` to recieve your daily reward!")
     else:
-        yield from Discow.send_message(msg.channel, "You have no money. Do `cow daily` to recieve your daily reward!")
+        if msg.mentions[0].id in user_data:
+            yield from Discow.send_message(msg.channel, "%s currently has $%s." % (msg.mentions[0].mention, user_data[msg.mentions[0].id]["money"]))
+        else:
+            yield from Discow.send_message(msg.channel, "%s is new and currently has no money." % msg.mentions[0].mention)
 
 @asyncio.coroutine
 def slots(Discow, msg):
