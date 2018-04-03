@@ -1,7 +1,7 @@
 import asyncio
 import pickle
 from discow.utils import *
-from discow.handlers import add_message_handler, begin_shutdown, get_data
+from discow.handlers import add_message_handler, flip_shutdown, get_data
 from discord import Embed
 
 @asyncio.coroutine
@@ -21,7 +21,7 @@ def quote(Discow, msg):
     em = Embed(colour=0x3b7ce5)
     em.title = "Message Quoted by "+msg.author.display_name+":"
     desc = m.content
-    log = yield from Discow.logs_from(m.channel, limit=10, after=m)
+    log = yield from Discow.logs_from(m.channel, limit=20, after=m)
     log = reversed(list(log))
     for a in log:
         if a.author == m.author:
@@ -60,13 +60,13 @@ def purge(Discow, msg):
     yield from Discow.delete_message(m)
 
 @asyncio.coroutine
-def shutdown(Discow, msg):
+def save(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
     yield from Discow.delete_message(msg)
     if perms.manage_server:
-        em = Embed(title="Shutting down...", description="Saving...", colour=0xd32323)
+        em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
         msg = yield from Discow.send_message(msg.channel, embed=em)
-        begin_shutdown()
+        flip_shutdown()
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
             pickle.dump(data[0], f)
@@ -74,16 +74,22 @@ def shutdown(Discow, msg):
             pickle.dump(data[1], f)
         yield from asyncio.sleep(1);
         em.description = "Complete!"
+        flip_shutdown()
         msg = yield from Discow.edit_message(msg, embed=em)
-        yield from Discow.logout()
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         yield from Discow.send_message(msg.channel, embed=em)
+
+@asyncio.coroutine
+def shutdown(Discow, msg):
+    yield from save(Discow, msg)
+    yield from Discow.logout()
 
 
 add_message_handler(info, "info")
 add_message_handler(shutdown, "close")
 add_message_handler(shutdown, "shutdown")
+add_message_handler(save, "save")
 add_message_handler(purge, "purge")
 add_message_handler(purge, "clear")
 add_message_handler(quote, "quote")

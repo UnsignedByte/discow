@@ -19,9 +19,9 @@ if os.path.isfile("discow/client/data/user_data.txt"):
 
 persistent_variables = {}
 
-def begin_shutdown():
+def flip_shutdown():
     global closing
-    closing = True
+    closing = not closing
 def get_data():
     return [command_settings, user_data]
 def disable_command(cmd, channels):
@@ -86,7 +86,7 @@ def on_message(Discow, msg):
                     yield from fun.easteregg(Discow, msg)
             return
         if closing:
-            em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is shutting down.", colour=0xd32323)
+            em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is saving data.", colour=0xd32323)
             yield from Discow.send_message(msg.channel, embed=em)
             return
         try:

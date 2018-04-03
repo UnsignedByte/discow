@@ -14,6 +14,7 @@ Remember to delete `[]` and `<>`.
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |close|`cow close`|Shut down the bot and save all data.|`close`, `shutdown`|
+|save|`cow save`|Save all data.|`save`|
 |settings|`cow settings [args]`|Look at [Settings Subcommands](#settings).|`settings`|
 |purge|`cow purge [n]`|Clears the last `n` messages|`clear`, `purge`|
 |quote|`cow quote [id] <channel>`|Quotes a message given an id and an optional channel|`quote`|
@@ -43,4 +44,3 @@ Remember to delete `[]` and `<>`.
 |:-:|:-:|:-:|:-:|
 |schedule|`cow schedule [day]`|Tells you the schedule for a given day|`schedule`|
 |weekschedule|`cow weekschedule [week]`|Tells you the schedule for a given week|`weekschedule`, `week-schedule`, `week_schedule`|
-|cal|`cow cal [day]`|Tells you all events in a given day|`cal`|
