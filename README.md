@@ -42,6 +42,7 @@ Remember to delete `{}` and `()`.
 |:-:|:-:|:-:|:-:|
 |daily|`cow daily`|Gives you your daily money!|`daily`|
 |money|`cow money (mention)`|Displays your money or someone else's money.|`money`|
+|stock|`cow slots {stock}`|View realtime stock information from the nasdaq website.|`stock`|
 |slots|`cow slots {amount}`|Gamble for money!|`slots`, `gamble`|
 
 ### Calendar Parser
