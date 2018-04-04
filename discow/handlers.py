@@ -98,16 +98,16 @@ def on_message(Discow, msg):
             else:
                 yield from message_handlers[cmd](Discow, msg)
         except IndexError:
-            em = discord.Embed(title="ERROR", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
+            em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from Discow.send_message(msg.channel, embed=em)
         except KeyError:
-            em = discord.Embed(title="ERROR", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
+            em = discord.Embed(title="Unknown Command", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from Discow.send_message(msg.channel, embed=em)
         except discord.Forbidden:
-            em = discord.Embed(title="ERROR", description="Discow is missing permissions to perform this task.", colour=0xd32323)
+            em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
             yield from Discow.send_message(msg.channel, embed=em)
         except Exception as e:
-            em = discord.Embed(title="ERROR", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
+            em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
             yield from Discow.send_message(msg.channel, embed=em)
 
 @asyncio.coroutine

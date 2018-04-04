@@ -67,12 +67,12 @@ def save(Discow, msg):
         em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
         msg = yield from Discow.send_message(msg.channel, embed=em)
         flip_shutdown()
+        yield from asyncio.sleep(1)
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
             pickle.dump(data[0], f)
         with open("discow/client/data/user_data.txt", "wb") as f:
             pickle.dump(data[1], f)
-        yield from asyncio.sleep(1);
         em.description = "Complete!"
         flip_shutdown()
         msg = yield from Discow.edit_message(msg, embed=em)
