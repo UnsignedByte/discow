@@ -21,7 +21,7 @@ Remember to delete `{}` and `()`.
 |purge|`cow purge {n}`|Clears the last `n` messages.|`clear`, `purge`|
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
 
-### Settings Subcommands
+#### Settings Subcommands
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
@@ -42,8 +42,15 @@ Remember to delete `{}` and `()`.
 |:-:|:-:|:-:|:-:|
 |daily|`cow daily`|Gives you your daily money!|`daily`|
 |money|`cow money (mention)`|Displays your money or someone else's money.|`money`|
-|stock|`cow slots {stock}`|View realtime stock information from the nasdaq website.|`stock`|
+|stock|`cow stock {subcommand} {name}`|View, buy, and sell stocks using realtime stock information from the nasdaq website. For more info look at Stock Subcommands.|`stock`|
 |slots|`cow slots {amount}`|Gamble for money!|`slots`, `gamble`|
+
+#### Stock Subcommands
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|buy|`cow stock buy {name}`|Buy virtual stocks|`buy`, `invest`|
+|sell|`cow stock sell {name}`|Sell virtual stocks.|`sell`|
+|get|`cow stock get {name}`|View realtime stock information from the nasdaq website.|`get`, `info`|
 
 ### Calendar Parser
 | **Name** | **Usage** | **Description** | **Aliases** |

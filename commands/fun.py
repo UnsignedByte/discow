@@ -225,7 +225,7 @@ def thesaurus(Discow, msg):
         newsentence.append(lets)
 
     em.set_field_at(1, name="Output Sentence", value=' '.join(newsentence), inline=False)
-    yield from send_embed(Discow, msg, em)
+    yield from edit_embed(Discow, m, em)
 
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")
