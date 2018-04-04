@@ -87,28 +87,28 @@ def on_message(Discow, msg):
             return
         if closing:
             em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is saving data.", colour=0xd32323)
-            yield from Discow.send_message(msg.channel, embed=em)
+            yield from send_embed(Discow, msg, em)
             return
         try:
             cmd = parse_command(msg.content)[0]
             if cmd in command_settings and msg.channel in command_settings[cmd]:
                 em = discord.Embed(title="Command Disabled", colour=0xd32323)
                 em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."
-                yield from Discow.send_message(msg.channel, embed=em)
+                yield from send_embed(Discow, msg, em)
             else:
                 yield from message_handlers[cmd](Discow, msg)
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
-            yield from Discow.send_message(msg.channel, embed=em)
+            yield from send_embed(Discow, msg, em)
         except KeyError:
             em = discord.Embed(title="Unknown Command", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
-            yield from Discow.send_message(msg.channel, embed=em)
+            yield from send_embed(Discow, msg, em)
         except discord.Forbidden:
             em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
-            yield from Discow.send_message(msg.channel, embed=em)
+            yield from send_embed(Discow, msg, em)
         except Exception as e:
             em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
-            yield from Discow.send_message(msg.channel, embed=em)
+            yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def on_reaction(Discow, reaction, user):

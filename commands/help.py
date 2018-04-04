@@ -38,7 +38,6 @@ for key, value in helpvals.items():
     else:
         stoadd = "\n\n# "+key+'\n\n'+'\n'.join(value)
         if len(desc)+len(stoadd) >= 1000:
-            print(desc)
             helpembed.add_field(name="\a", value=desc+'```')
             desc = "```markdown"+stoadd
         else:
@@ -48,9 +47,6 @@ print("Finished Parsing")
 
 @asyncio.coroutine
 def gethelp(Discow, msg):
-    myinfo = yield from Discow.application_info()
-    me = yield from Discow.get_user_info(myinfo.id)
-    helpembed.set_footer(text="Created by "+me.display_name+" on "+get_localized_time(msg.server)+".", icon_url=myinfo.icon_url)
-    yield from Discow.send_message(msg.channel, embed=helpembed)
+    yield from send_embed(Discow, msg, helpembed)
 
 add_message_handler(gethelp, "help")

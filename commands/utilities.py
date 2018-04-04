@@ -6,14 +6,10 @@ from discord import Embed
 
 @asyncio.coroutine
 def info(Discow, msg):
-    myinfo = yield from Discow.application_info()
-    me = yield from Discow.get_user_info(myinfo.id)
     em = Embed(title="Who am I?", colour=0x9542f4)
     em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048> and <@418667403396775936>."
     em.add_field(name="Features", value="For information about my features do `cow help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
-    txt = "Created by "+me.display_name+" on "+get_localized_time(msg.server)+"."
-    em.set_footer(text=txt, icon_url=myinfo.icon_url)
-    yield from Discow.send_message(msg.channel, embed=em)
+    yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def quote(Discow, msg):
@@ -44,7 +40,7 @@ def quote(Discow, msg):
         avatarurl = m.author.default_avatar_url
     em.set_footer(text=txt, icon_url=avatarurl)
     yield from Discow.delete_message(msg)
-    yield from Discow.send_message(msg.channel, embed=em)
+    yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def purge(Discow, msg):
@@ -65,7 +61,7 @@ def save(Discow, msg):
     yield from Discow.delete_message(msg)
     if perms.manage_server:
         em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
-        msg = yield from Discow.send_message(msg.channel, embed=em)
+        msg = yield from send_embed(Discow, msg, em)
         flip_shutdown()
         yield from asyncio.sleep(1)
         data = get_data()
@@ -75,10 +71,10 @@ def save(Discow, msg):
             pickle.dump(data[1], f)
         em.description = "Complete!"
         flip_shutdown()
-        msg = yield from Discow.edit_message(msg, embed=em)
+        msg = yield from edit_embed(Discow, msg, embed=em)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        yield from Discow.send_message(msg.channel, embed=em)
+        yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def shutdown(Discow, msg):

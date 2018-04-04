@@ -190,7 +190,7 @@ def thesaurus(Discow, msg):
     em.add_field(name="Input Sentence", value=sentence, inline=False)
     em.add_field(name="Output Sentence", value="Converting...", inline=False)
 
-    m = yield from Discow.send_message(msg.channel, embed=em)
+    m = yield from send_embed(Discow, msg, em)
 
     for k in sorted(contractions, key=len, reverse=True): # Through keys sorted by length
         sentence = sentence.replace(k, choice(contractions[k]))
@@ -225,7 +225,7 @@ def thesaurus(Discow, msg):
         newsentence.append(lets)
 
     em.set_field_at(1, name="Output Sentence", value=' '.join(newsentence), inline=False)
-    yield from Discow.edit_message(m, embed=em)
+    yield from send_embed(Discow, msg, em)
 
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")

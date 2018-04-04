@@ -4,6 +4,8 @@ from discord import ServerRegion
 import datetime
 from pytz import timezone
 import pytz
+import itertools
+import asyncio
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -54,5 +56,33 @@ def convertTime(time, serv):
     zone = timezone(timezones[serv.region])
     time_naive = time.replace(tzinfo=pytz.utc)
     loctime = time_naive.astimezone(zone)
-    fmt = '%Y-%m-%d at %H:%M:%S %Z%z'
+    fmt = '%Y-%m-%d at %H:%M:%S %Z'
     return loctime.strftime(fmt)
+
+@asyncio.coroutine
+def send_embed(Discow, msg, embed):
+    myinfo = yield from Discow.application_info()
+    me = yield from Discow.get_user_info(myinfo.id)
+    txt = "Created by "+me.display_name+" on "+get_localized_time(msg.server)+"."
+    embed.set_footer(text=txt, icon_url=myinfo.icon_url)
+    m = yield from Discow.send_message(msg.channel, embed=embed)
+    return m
+
+@asyncio.coroutine
+def edit_embed(Discow, msg, embed):
+    myinfo = yield from Discow.application_info()
+    me = yield from Discow.get_user_info(myinfo.id)
+    txt = "Edited by "+me.display_name+" on "+get_localized_time(msg.server)+"."
+    embed.set_footer(text=txt, icon_url=myinfo.icon_url)
+    m = yield from Discow.edit_message(msg, embed=embed)
+    return m
+
+def group(lst, n):
+  return list(zip(*[itertools.islice(lst, i, None, n) for i in range(n)]))
+
+def isInteger(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False

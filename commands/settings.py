@@ -23,10 +23,10 @@ def disable(Discow, msg, newmsg):
         disable_command(cmdname, msg.channel_mentions)
         em = Embed(title="Command Disabled", colour=0x12AA24)
         em.description = cmdname+" has now been disabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
-        yield from Discow.send_message(msg.channel, embed=em)
+        yield from send_embed(Discow, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        yield from Discow.send_message(msg.channel, embed=em)
+        yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def enable(Discow, msg, newmsg):
@@ -35,10 +35,10 @@ def enable(Discow, msg, newmsg):
         enable_command(cmdname, msg.channel_mentions)
         em = Embed(title="Command Enabled", colour=0x12AA24)
         em.description = cmdname+" has now been enabled in "+','.join(map(lambda x:x.mention, msg.channel_mentions))+"."
-        yield from Discow.send_message(msg.channel, embed=em)
+        yield from send_embed(Discow, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        yield from Discow.send_message(msg.channel, embed=em)
+        yield from send_embed(Discow, msg, em)
 
 settings_handlers["disable"] = disable
 settings_handlers["enable"] = enable
