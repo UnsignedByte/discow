@@ -58,7 +58,6 @@ def purge(Discow, msg):
 @asyncio.coroutine
 def save(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
-    yield from Discow.delete_message(msg)
     if perms.manage_server:
         em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
         msg = yield from send_embed(Discow, msg, em)

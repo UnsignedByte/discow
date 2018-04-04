@@ -147,7 +147,7 @@ def schedule(Discow, msg):
 
     parsed = parsed.date()
 
-    msg = yield from Discow.send_message(msg.channel, embed=formatSchedule(parsed))
+    msg = yield from send_embed(Discow, msg, formatSchedule(parsed))
 
     yield from Discow.add_reaction(msg, rewind)
     yield from Discow.add_reaction(msg, leftarrow)
@@ -165,8 +165,8 @@ def schedule_react(Discow, reaction, user):
     for c in old_schedule_messages:
         if c.id == reaction.message.id:
             c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else (1 if reaction.emoji == rightarrow else -7 if reaction.emoji == rewind else 7)))
-            yield from Discow.edit_message(reaction.message, embed=Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
-            yield from Discow.edit_message(reaction.message, embed=formatSchedule(c.time))
+            yield from edit_embed(Discow, reaction.message, Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
+            yield from edit_embed(Discow, reaction.message, formatSchedule(c.time))
             return
 
 @asyncio.coroutine

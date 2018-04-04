@@ -14,6 +14,7 @@ def daily(Discow, msg):
     if msg.author.id in user_data:
         if (round(time.time())-user_data[msg.author.id]["daily"]) > 86400:
             user_data[msg.author.id]["money"]+=addedmoney
+            user_data[msg.author.id]["daily"]=round(time.time())
             yield from Discow.send_message(msg.channel, "Added $"+str(addedmoney/100)+" to your balance, "+msg.author.mention+"!")
         else:
             seconds = 86400-(round(time.time())-user_data[msg.author.id]["daily"])
@@ -26,16 +27,25 @@ def daily(Discow, msg):
 
 @asyncio.coroutine
 def money(Discow, msg):
+    em = Embed(title=msg.author.display_name+"'s money",colour=0xffd747)
     if len(msg.mentions) == 0:
-        if msg.author.id in user_data:
-            yield from Discow.send_message(msg.channel, "You currently have $%s, %s." % (user_data[msg.author.id]["money"]/100, msg.author.mention))
-        else:
-            yield from Discow.send_message(msg.channel, "You have no money. Do `cow daily` to recieve your daily reward!")
+        user = msg.author
     else:
-        if msg.mentions[0].id in user_data:
-            yield from Discow.send_message(msg.channel, "%s currently has $%s." % (msg.mentions[0].mention, user_data[msg.mentions[0].id]["money"]/100))
-        else:
-            yield from Discow.send_message(msg.channel, "%s is new and currently has no money." % msg.mentions[0].mention)
+        user = msg.mentions[0]
+    if user.id in user_data:
+        em.description = "%s currently has $%s." % (user.mention, user_data[user.id]["money"]/100)
+        if "stock" in user_data[user.id]:
+            name = msg.author.display_name+"'s owned stocks"
+            desc = ""
+            for k,v in user_data[user.id]["stock"].items():
+                if v > 0:
+                    desc+="**Stock name:** "+k+"\t**Number of shares owned:** "+str(v)+".\n"
+            if desc:
+                em.add_field(name=name, value=desc)
+    else:
+        em.description = "%s is new and currently has no money." % user.mention
+
+    yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def slots(Discow, msg):
@@ -116,6 +126,7 @@ def stock(Discow, msg):
                     return 'cancel'
                 return isInteger(s) and int(s) <= len(el) and int(s) > 0
             stock = yield from Discow.wait_for_message(author=msg.author, check=check)
+            yield from Discow.delete_message(stock)
             if stock == 'cancel':
                 em = Embed(title="Stock Information", description="Canceled!", colour=0xffd747)
                 stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
@@ -151,6 +162,7 @@ def stock(Discow, msg):
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
                     num = yield from Discow.wait_for_message(author=msg.author, check=check)
+                    yield from Discow.delete_message(num)
                     num = int(num.content)
                     if num*float(data[0][1:])*100 > user_data[msg.author.id]["money"]:
                         em.description = "How many shares would you like to buy? Input an integer.\n\nCannot buy "+str(num)+" shares, you do not have enough money!"
@@ -184,12 +196,12 @@ def stock(Discow, msg):
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
                     num = yield from Discow.wait_for_message(author=msg.author, check=check)
+                    yield from Discow.delete_message(num)
                     num = int(num.content)
                     if num > user_data[msg.author.id]["stock"][stock[0]]:
                         em.description = "How many shares would you like to sell? Input an integer.\n\nCannot sell "+str(num)+" shares, you do not own that many!"
                     else:
                         break
-
                 user_data[msg.author.id]["money"]+=num*float(data[0][1:])*100
                 user_data[msg.author.id]["stock"][stock[0]]-=num
                 em.title = "Shares sold."
