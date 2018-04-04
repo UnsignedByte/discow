@@ -14,6 +14,7 @@ Remember to delete `{}` and `()`.
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |help|`cow help`|Displays help information.|`help`|
+|info|`cow info`|Displays general information about the bot.|`info`, `hi`|
 |close|`cow close`|Shut down the bot and save all data.|`close`, `shutdown`|
 |save|`cow save`|Save all data.|`save`|
 |settings|`cow settings {args}`|Look at Settings Subcommands.|`settings`|
@@ -30,7 +31,10 @@ Remember to delete `{}` and `()`.
 ### Fun
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
+|invite|`cow invite`|Creates an invite link for the server!|`invite`|
+|thesaurus|`cow thesaurus`|Thesaurus-ifies a sentence.|`thesaurus`|
 |rps|`cow rps {item}`|Plays rock paper scissors!|`rps`|
+|reaction|`cow reaction {num}`|Adds random reactions to the last message.|`reaction`|
 |easteregg|`cow easteregg`|Sends a random message!|`easteregg`|
 
 ### Gambling/Economy

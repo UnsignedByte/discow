@@ -86,6 +86,7 @@ def shutdown(Discow, msg):
     yield from Discow.logout()
 
 
+add_message_handler(info, "hi")
 add_message_handler(info, "info")
 add_message_handler(shutdown, "close")
 add_message_handler(shutdown, "shutdown")
