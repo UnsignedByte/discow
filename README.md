@@ -20,6 +20,7 @@ Remember to delete `{}` and `()`.
 |settings|`cow settings {args}`|Look at Settings Subcommands.|`settings`|
 |purge|`cow purge {n}`|Clears the last `n` messages.|`clear`, `purge`|
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
+|schedule|`cow schedule {day}`|Tells you the Gunn Schedule for a given day.|`schedule`|
 
 #### Settings Subcommands
 
@@ -51,9 +52,3 @@ Remember to delete `{}` and `()`.
 |buy|`cow stock buy {name}`|Buy virtual stocks|`buy`, `invest`|
 |sell|`cow stock sell {name}`|Sell virtual stocks.|`sell`|
 |get|`cow stock get {name}`|View realtime stock information from the nasdaq website.|`get`, `info`|
-
-### Calendar Parser
-| **Name** | **Usage** | **Description** | **Aliases** |
-|:-:|:-:|:-:|:-:|
-|schedule|`cow schedule {day}`|Tells you the schedule for a given day.|`schedule`|
-|weekschedule|`cow weekschedule {week}`|Tells you the schedule for a given week.|`weekschedule`, `week-schedule`, `week_schedule`|
