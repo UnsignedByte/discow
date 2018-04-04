@@ -76,7 +76,7 @@ def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             if Discow.user in msg.mentions:
-                randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", msg.author.mention+" to you too!", "Stop mentioning me! :rage:", "..."]
+                randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help."]
                 yield from Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             if allowed_command("easteregg", msg.channel):
                 if randint(1, 50) == 1:

@@ -78,15 +78,16 @@ def stock(Discow, msg):
 
     em = Embed(title="Stock information", description="Retrieving data...", colour=0xffd747)
     stockmsg = yield from send_embed(Discow, msg, em)
-    cont = strip_command(msg.content)
+    try:
+        cont = strip_command(msg.content)
+    except IndexError:
+        em = Embed(title="Missing Inputs", description="Not enough inputs provided for **stock**.", colour=0xd32323)
+        yield from edit_embed(Discow, stockmsg, em)
+        return
     minfo = cont.split(' ')
     if len(minfo) > 2:
         em = Embed(title="Invalid Input", description="Stock Name cannot contain whitespace", colour=0xd32323)
         stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-        return
-    if len(minfo) < 1:
-        em = Embed(title="Missing Inputs", description="Not enough inputs provided for **stock**.", colour=0xd32323)
-        yield from edit_embed(Discow, stockmsg, em)
         return
     if len(minfo) == 1:
         cont = minfo[0]

@@ -8,7 +8,7 @@ from discord import Embed
 def info(Discow, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
     em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048> and <@418667403396775936>."
-    em.add_field(name="Features", value="For information about my features do `cow help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
+    em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
     yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
