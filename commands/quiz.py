@@ -3,6 +3,7 @@ from discord import Embed
 from discow.handlers import add_message_handler, quiz_data
 from discow.utils import *
 from collections import OrderedDict
+from commands.utilites import save
 
 quiz_handlers = {}
 
@@ -20,25 +21,42 @@ class Question:
 @asyncio.coroutine
 def quiz(Discow, msg):
     if not msg.server.id in quiz_data:
-        quiz_data[msg.server.id] = {}
+        quiz_data[msg.server.id] = [None, {}]
     else:
-        for k in quiz_data[msg.server.id].keys():
-            if not quiz_data[msg.server.id][k]:
-                del quiz_data[msg.server.id][k]
+        for k in quiz_data[msg.server.id][1].keys():
+            if not quiz_data[msg.server.id][1][k]:
+                del quiz_data[msg.server.id][1][k]
     newmsg = strip_command(msg.content).split(" ")
     try:
         yield from quiz_handlers[newmsg[0]](Discow, msg)
     except KeyError:
         em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
         yield from Discow.send_message(msg.channel, embed=em)
+    yield from save(Discow, msg, overrideperms=True)
+
+@asyncio.coroutine
+def setmod(Discow, msg):
+    if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
+        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        yield from send_embed(Discow, msg, em)
+        return
+    try:
+        quiz_data[msg.server.id][0] = msg.role_mentions[0]
+        yield from Discow.send_message(msg.channel, "Quiz moderator role has succesfully been set to "+msg.role_mentions[0].mention+".")
+    except IndexError:
+        yield from Discow.send_message(msg.channel, "Please mention a role.")
 
 @asyncio.coroutine
 def add(Discow, msg):
+    if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
+        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        yield from send_embed(Discow, msg, em)
+        return
     question = strip_command(msg.content).split(" ", 1)[1]
     em = Embed(title="Add Quiz Question", description="Question:\n"+question, colour=0xff7830)
     desc = ''
-    if len(quiz_data[msg.server.id]) > 0:
-        for k,v in quiz_data[msg.server.id].items():
+    if len(quiz_data[msg.server.id][1]) > 0:
+        for k,v in quiz_data[msg.server.id][1].items():
             desc+='\n'+k
     else:
         desc = '\nNone'
@@ -57,13 +75,13 @@ def add(Discow, msg):
 
     def oformat(s, v, c):
         if c:
-            return "\n."+s+": ("+v.rjust(25).ljust(50)+")"
+            return "\n."+s+": ("+v.center(50)+")"
         else:
-            return "\n."+s+": ["+v.rjust(25).ljust(50)+"]"
+            return "\n."+s+": ["+v.center(50)+"]"
 
     while True:
         def check(s):
-            return s.content.lower() in ['add', 'remove', 'edit', 'back', 'a', 'r', 'e', 'cancel']
+            return s.content.lower() in ['done', 'add', 'remove', 'edit', 'back', 'a', 'r', 'e', 'cancel']
         out = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
         if out.content == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
@@ -178,6 +196,12 @@ def add(Discow, msg):
                     mmm = yield from Discow.send_message(msg.channel, "*Operation Cancelled*")
                     yield from asyncio.sleep(0.25)
                     yield from Discow.delete_messages([out, option, mm, mmm])
+        elif out.content == 'done':
+            em.set_field_at(1, name="Responses", value=optionresponses)
+            yield from edit_embed(Discow, qmsg, em)
+            yield from Discow.delete_message(out)
+            quiz_data[msg.server.id][1].append(Question(question, options))
+            return
 
 
 @asyncio.coroutine
@@ -189,7 +213,7 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(out)
             return None
-        elif out.content.title() not in quiz_data[msg.server.id]:
+        elif out.content.title() not in quiz_data[msg.server.id][1]:
             if add:
                 m = yield from Discow.send_message(msg.channel, out.content.title()+" is not currently a category. Would you like to make a new category? Type` yes (y)` or `no (n)`.")
                 def check(s):
@@ -197,7 +221,7 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
                 yesno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
                 yield from Discow.delete_messages([yesno, m, out])
                 if yesno.content.lower() in ["y", "yes"]:
-                    quiz_data[msg.server.id][out.content.title()] = []
+                    quiz_data[msg.server.id][1][out.content.title()] = []
                     return out.content.title()
             else:
                 m = yield from Discow.send_message(msg.channel, out.content.title()+" is not currently a category.")
@@ -208,5 +232,7 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
 
 
 quiz_handlers["add"] = add
+quiz_handlers["setmod"] = setmod
+quiz_handlers["modrole"] = setmod
 
 add_message_handler(quiz, "quiz")

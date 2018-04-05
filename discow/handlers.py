@@ -101,7 +101,7 @@ def on_message(Discow, msg):
             else:
                 yield from message_handlers[cmd](Discow, msg)
                 if cmd != 'save' and randint(1,50)==1:
-                    yield from message_handlers["save"](Discow, msg)
+                    yield from message_handlers["save"](Discow, msg, overrideperms=True)
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)

@@ -7,6 +7,7 @@ from random import randint
 from bs4 import BeautifulSoup
 import urllib.request as req
 import urllib.error as err
+from commands.utilites import save
 
 @asyncio.coroutine
 def daily(Discow, msg):
@@ -173,7 +174,6 @@ def stock(Discow, msg):
                         em.description = "How many shares would you like to buy? Input an integer.\n\nCannot buy "+str(num)+" shares, you do not have enough money!"
                     else:
                         break
-
                 user_data[msg.author.id]["money"]-=num*float(data[0][1:])*100
                 if "stock" in user_data[msg.author.id]:
                     if stock[0] in user_data[msg.author.id]["stock"]:
@@ -222,6 +222,8 @@ def stock(Discow, msg):
     except err.HTTPError:
         em = Embed(title="Invalid Input", description="Your input was invalid", colour=0xd32323)
         stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
+        return
+    yield from save(Discow, msg, overrideperms=True)
 
 add_message_handler(stock, "stock")
 add_message_handler(daily, "daily")
