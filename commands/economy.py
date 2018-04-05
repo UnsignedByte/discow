@@ -7,7 +7,7 @@ from random import randint
 from bs4 import BeautifulSoup
 import urllib.request as req
 import urllib.error as err
-from commands.utilites import save
+from commands.utilities import save
 
 @asyncio.coroutine
 def daily(Discow, msg):

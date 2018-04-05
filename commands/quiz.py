@@ -3,7 +3,7 @@ from discord import Embed
 from discow.handlers import add_message_handler, quiz_data
 from discow.utils import *
 from collections import OrderedDict
-from commands.utilites import save
+from commands.utilities import save
 
 quiz_handlers = {}
 
@@ -32,7 +32,6 @@ def quiz(Discow, msg):
     except KeyError:
         em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
         yield from Discow.send_message(msg.channel, embed=em)
-    yield from save(Discow, msg, overrideperms=True)
 
 @asyncio.coroutine
 def setmod(Discow, msg):
@@ -45,6 +44,9 @@ def setmod(Discow, msg):
         yield from Discow.send_message(msg.channel, "Quiz moderator role has succesfully been set to "+msg.role_mentions[0].mention+".")
     except IndexError:
         yield from Discow.send_message(msg.channel, "Please mention a role.")
+
+@asyncio.coroutine
+def take(Discow, msg):
 
 @asyncio.coroutine
 def add(Discow, msg):
@@ -173,34 +175,40 @@ def add(Discow, msg):
                     mmm = yield from Discow.send_message(msg.channel, "What would you like to replace it with?")
                     while True:
                         newoption = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
-                        if newoption.content not in options:
+                        def corrcheck(s):
+                            return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
+                        mmmmmmmm = yield from Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
+                        iscorrm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=corrcheck)
+                        iscorr = iscorrm.content in ["correct", "c", "right"]
+                        if newoption.content not in options or options[newoption.content] != iscorr:
                             break
                         else:
                             _m = yield from Discow.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
                             yield from asyncio.sleep(0.5)
-                            yield from Discow.delete_messages([out, option, newoption, _m])
+                            yield from Discow.delete_messages([out, option, newoption, _m, iscorrm, mmmmmmmm])
                     mmmm = yield from Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
                     yesorno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=yesnocheck)
                     if yesorno.content.lower() in ['yes', 'y']:
                         oldoption = list(options.keys())[int(option.content)-1]
-                        options = OrderedDict(list((newoption.content, v) if k == oldoption else (k, v) for k, v in options.items()))
+                        options = OrderedDict(list((newoption.content, iscorr) if k == oldoption else (k, v) for k, v in options.items()))
                         optionresponses = '```css\n'
                         for k, v in options.items():
                             optionresponses+= oformat(str(list(options.keys()).index(k)+1), k, v)
                         em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
                         yield from edit_embed(Discow, qmsg, em)
-                        yield from Discow.delete_messages([out, option, newoption, mm, mmm, mmmm, yesorno])
+                    yield from Discow.delete_messages([out, option, newoption, mm, mmm, mmmm, yesorno, iscorrm, mmmmmmmm])
                 else:
                     mmm = yield from Discow.send_message(msg.channel, "*Operation Cancelled*")
                     yield from asyncio.sleep(0.25)
                     yield from Discow.delete_messages([out, option, mm, mmm])
         elif out.content == 'done':
-            em.set_field_at(1, name="Responses", value=optionresponses)
+            em.set_field_at(1, name="Responses", value=optionresponses+'```')
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(out)
-            quiz_data[msg.server.id][1].append(Question(question, options))
+            quiz_data[msg.server.id][1][cat].append(Question(question, options))
+            yield from save(Discow, msg, overrideperms=True)
             return
 
 

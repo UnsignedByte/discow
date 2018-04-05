@@ -21,6 +21,7 @@ Remember to delete `{}` and `()`.
 |purge|`cow purge {n}`|Clears the last `n` messages.|`clear`, `purge`|
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
 |define|`cow define {word}`|Retrieves the definition of a word from Merriam-Webster.|`define`, `dictionary`|
+|quiz|`cow quiz {subcommand}`|Create quizzes and take them for money! For more information take a look at Quiz Subcommands.|`quiz`|
 |schedule|`cow schedule {day}`|Tells you the Gunn Schedule for a given day.|`schedule`|
 
 #### Settings Subcommands
@@ -29,6 +30,13 @@ Remember to delete `{}` and `()`.
 |:-:|:-:|:-:|:-:|
 |disable|`cow settings disable {cmd} {channel(s)}`|Disables a command in the specified channels.|`disable`|
 |enable|`cow settings enable {cmd} {channel(s)}`|Enables a command in the specified channels.|`enable`|
+
+#### Quiz Subcommands
+
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|setmod|`cow settings setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
+|add|`cow settings add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
 
 ### Fun
 | **Name** | **Usage** | **Description** | **Aliases** |
