@@ -76,13 +76,10 @@ def dictionary(Discow, msg):
                         yield from Discow.delete_message(vm)
                         break
                 else:
-                    try:
-                        words.index(v)
+                    if v in words:
                         x = v.replace(' ', "%20")
                         yield from Discow.delete_message(vm)
                         break
-                    except IndexError:
-                        pass
             html_doc = req.urlopen(link+x)
             soup = BeautifulSoup(html_doc, 'html.parser')
             em.title = "Definition for "+x+"."
@@ -115,6 +112,7 @@ def dictionary(Discow, msg):
                         st+=" *"+n+"*"
 
         em.description+= '\n'+st
+    em.description+="\n\nDefinitions retrieved from [The Merriam-Webster Dictionary](https://www.merriam-webster.com/) using [Dictionary](https://github.com/UnsignedByte/Dictionary) by [UnsignedByte](https://github.com/UnsignedByte)."
     dictm = yield from edit_embed(Discow, dictm, em)
 
 
