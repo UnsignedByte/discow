@@ -20,6 +20,7 @@ Remember to delete `{}` and `()`.
 |settings|`cow settings {args}`|Look at Settings Subcommands.|`settings`|
 |purge|`cow purge {n}`|Clears the last `n` messages.|`clear`, `purge`|
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
+|define|`cow define {word}`|Retrieves the definition of a word from Merriam-Webster.|`define`, `dictionary`|
 |schedule|`cow schedule {day}`|Tells you the Gunn Schedule for a given day.|`schedule`|
 
 #### Settings Subcommands

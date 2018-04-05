@@ -3,6 +3,9 @@ import pickle
 from discow.utils import *
 from discow.handlers import add_message_handler, flip_shutdown, get_data
 from discord import Embed
+import urllib.request as req
+import urllib.error as err
+from bs4 import BeautifulSoup
 
 @asyncio.coroutine
 def info(Discow, msg):
@@ -41,6 +44,79 @@ def quote(Discow, msg):
     em.set_footer(text=txt, icon_url=avatarurl)
     yield from Discow.delete_message(msg)
     yield from send_embed(Discow, msg, em)
+
+@asyncio.coroutine
+def dictionary(Discow, msg):
+    link="https://www.merriam-webster.com/dictionary/"
+    x = strip_command(msg.content).replace(' ', '%20')
+    em = Embed(title="Definition for "+x+".", description="Retrieving Definition...", colour=0x4e91fc)
+    dictm = yield from send_embed(Discow, msg, em)
+
+    try:
+        html_doc = req.urlopen(link+x)
+        soup = BeautifulSoup(html_doc, 'html.parser')
+    except err.HTTPError as e:
+        try:
+            em.description = "Could not find "+x+" in the dictionary. Choose one of the words below, or type 'cancel' to cancel."
+            soup = BeautifulSoup(e.read(), 'html.parser')
+            words = soup.find("ol", {"class":"definition-list"}).get_text().split()
+            for i in range(0, len(words)):
+                em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
+            dictm = yield from edit_embed(Discow, dictm, em)
+            while True:
+                vm = yield from Discow.wait_for_message(author=msg.author)
+                v = vm.content
+                if v == 'cancel':
+                    em.description="*Operation Canceled*"
+                    dictm = yield from edit_embed(Discow, dictm, em)
+                    return
+                elif isInteger(v):
+                    if int(v)>=1 and int(v) <=len(words):
+                        x = words[int(v)-1].replace(' ', "%20")
+                        yield from Discow.delete_message(vm)
+                        break
+                else:
+                    try:
+                        words.index(v)
+                        x = v.replace(' ', "%20")
+                        yield from Discow.delete_message(vm)
+                        break
+                    except IndexError:
+                        pass
+            html_doc = req.urlopen(link+x)
+            soup = BeautifulSoup(html_doc, 'html.parser')
+            em.title = "Definition for "+x+"."
+            em.description = "Retrieving Definition..."
+            dictm = yield from edit_embed(Discow, dictm, em)
+        except AttributeError:
+            em.description = "Could not find "+x+" in the dictionary."
+            dictm = yield from edit_embed(Discow, dictm, em)
+            return
+
+    em.description = ""
+    txts = soup.find("div", {"id" : "entry-1"}).find("div", {"class":"vg"}).findAll("div", {"class":["sb", "has-sn"]}, recursive=False)
+    for x in txts:
+        l = list(filter(None,map(lambda x:x.strip(), x.get_text().split("\n"))))
+        st = ""
+        for a in l:
+            if a.startswith(":"):
+                st+=' '.join(a.strip().split())
+            else:
+                v1 = a.split()
+                if isInteger(v1[0]):
+                    st+="\n**__"+v1[0]+"__**"
+                    v1 = v1[1:]
+                for n in v1:
+                    if isInteger(n.strip("()")):
+                        st+="\n\t\t***"+n+"***"
+                    elif len(n)==1:
+                        st+="\n\t**"+n+"**"
+                    else:
+                        st+=" *"+n+"*"
+
+        em.description+= '\n'+st
+    dictm = yield from edit_embed(Discow, dictm, em)
+
 
 @asyncio.coroutine
 def purge(Discow, msg):
@@ -89,3 +165,5 @@ add_message_handler(save, "save")
 add_message_handler(purge, "purge")
 add_message_handler(purge, "clear")
 add_message_handler(quote, "quote")
+add_message_handler(dictionary, "define")
+add_message_handler(dictionary, "dictionary")
