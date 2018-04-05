@@ -1,1 +1,1 @@
-__all__=["settings", "utilities", "fun", "economy", "help"]
+__all__=["settings", "utilities", "fun", "economy", "help", "quiz"]

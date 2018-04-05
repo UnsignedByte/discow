@@ -15,7 +15,10 @@ user_data = {}
 if os.path.isfile("discow/client/data/user_data.txt"):
     with open("discow/client/data/user_data.txt", "rb") as f:
         user_data = pickle.load(f)
-
+quiz_data = {}
+if os.path.isfile("discow/client/data/quiz_data.txt"):
+    with open("discow/client/data/quiz_data.txt", "rb") as f:
+        quiz_data = pickle.load(f)
 
 persistent_variables = {}
 
@@ -23,7 +26,7 @@ def flip_shutdown():
     global closing
     closing = not closing
 def get_data():
-    return [command_settings, user_data]
+    return [command_settings, user_data, quiz_data]
 def disable_command(cmd, channels):
     global command_settings
     if cmd in command_settings:

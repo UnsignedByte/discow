@@ -64,10 +64,11 @@ def dictionary(Discow, msg):
                 em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
             dictm = yield from edit_embed(Discow, dictm, em)
             while True:
-                vm = yield from Discow.wait_for_message(author=msg.author)
+                vm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
                 v = vm.content
                 if v == 'cancel':
-                    em.description="*Operation Canceled*"
+                    em.description = "*Operation Cancelled*"
+                    yield from Discow.delete_message(vm)
                     dictm = yield from edit_embed(Discow, dictm, em)
                     return
                 elif isInteger(v):
@@ -142,9 +143,13 @@ def save(Discow, msg):
             pickle.dump(data[0], f)
         with open("discow/client/data/user_data.txt", "wb") as f:
             pickle.dump(data[1], f)
+        with open("discow/client/data/quiz_data.txt", "wb") as f:
+            pickle.dump(data[2], f)
         em.description = "Complete!"
         flip_shutdown()
         msg = yield from edit_embed(Discow, msg, embed=em)
+        yield from asyncio.sleep(0.5)
+        yield from Discow.delete_message(msg)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         yield from send_embed(Discow, msg, em)

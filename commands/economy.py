@@ -124,12 +124,12 @@ def stock(Discow, msg):
             def check(s):
                 s = s.content
                 if s == 'cancel':
-                    return 'cancel'
+                    return True
                 return isInteger(s) and int(s) <= len(el) and int(s) > 0
-            stock = yield from Discow.wait_for_message(author=msg.author, check=check)
+            stock = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
             yield from Discow.delete_message(stock)
-            if stock == 'cancel':
-                em = Embed(title="Stock Information", description="Canceled!", colour=0xffd747)
+            if stock.content == 'cancel':
+                em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)
                 stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
                 return
             stock = el[int(stock.content)-1]
@@ -156,14 +156,18 @@ def stock(Discow, msg):
                 def check(s):
                     s = s.content
                     if s == 'cancel':
-                        return 'cancel'
+                        return True
                     return isInteger(s) and int(s) > 0
                 em = Embed(title="Buying Shares...", description="How many shares would you like to buy? Input an integer.", colour=0xffd747)
                 em.add_field(name=name, value=info)
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-                    num = yield from Discow.wait_for_message(author=msg.author, check=check)
+                    num = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
                     yield from Discow.delete_message(num)
+                    if num.content == 'cancel':
+                        em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)
+                        stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
+                        return
                     num = int(num.content)
                     if num*float(data[0][1:])*100 > user_data[msg.author.id]["money"]:
                         em.description = "How many shares would you like to buy? Input an integer.\n\nCannot buy "+str(num)+" shares, you do not have enough money!"
@@ -190,14 +194,18 @@ def stock(Discow, msg):
                 def check(s):
                     s = s.content
                     if s == 'cancel':
-                        return 'cancel'
+                        return True
                     return isInteger(s) and int(s) > 0
                 em = Embed(title="Selling Shares...", description="How many shares would you like to sell? Input an integer.", colour=0xffd747)
                 em.add_field(name=name, value=info)
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-                    num = yield from Discow.wait_for_message(author=msg.author, check=check)
+                    num = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
                     yield from Discow.delete_message(num)
+                    if num.content == 'cancel':
+                        em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)
+                        stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
+                        return
                     num = int(num.content)
                     if num > user_data[msg.author.id]["stock"][stock[0]]:
                         em.description = "How many shares would you like to sell? Input an integer.\n\nCannot sell "+str(num)+" shares, you do not own that many!"
