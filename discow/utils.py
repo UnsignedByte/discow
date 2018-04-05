@@ -1,5 +1,6 @@
 whitespace = [' ', '\t', '\n']
 discow_prefix = "cow "
+
 from discord import ServerRegion
 import datetime
 from pytz import timezone
@@ -86,3 +87,14 @@ def isInteger(s):
         return True
     except ValueError:
         return False
+
+
+class Question:
+    def __init__(self, q, o):
+        self.question = q
+        self.options = o
+    def isCorrect(option):
+        if option in self.options:
+            return self.options[option]
+        elif isInteger(option) and 0 <= int(option) < len(self.options):
+            return self.options.values()[int(option)]

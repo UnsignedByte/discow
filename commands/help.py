@@ -4,8 +4,8 @@ from discow.handlers import add_message_handler
 from discow.utils import *
 from collections import OrderedDict
 
-
-print("Parsing Help Command")
+print("\tInitializing Help Command")
+print("\t\tParsing Help Command")
 helpvals = OrderedDict()
 
 with open("README.md", "r") as f:
@@ -43,10 +43,11 @@ for key, value in helpvals.items():
         else:
             desc+=stoadd
 helpembed.add_field(name="\a", value=desc+'```')
-print("Finished Parsing")
+print("\t\tFinished Parsing")
 
 @asyncio.coroutine
 def gethelp(Discow, msg):
     yield from send_embed(Discow, msg, helpembed)
 
 add_message_handler(gethelp, "help")
+print("\tHelp Command Initialized")

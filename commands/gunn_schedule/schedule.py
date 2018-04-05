@@ -59,7 +59,7 @@ for sched in raw_defaults:
                                                name, None))
 defaults[curr_day_text] = curr_schedule.copy()
 
-print("Parsing schedules")
+print("\tParsing Schedules")
 
 i = 1
 for sched in raw_schedules:
@@ -89,7 +89,7 @@ for sched in raw_schedules:
 
 schedules[curr_day] = curr_schedule
 
-print("Finished parsing")
+print("\tSchedule Parsing Finished")
 
 def getSchedule(date):
     return schedules[date]

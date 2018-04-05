@@ -1,11 +1,15 @@
 from random import randint
 import os
 import pickle
+from discow.utils import *
+
+print("Begin Handler Initialization")
 
 message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
 
+print("\tBegin Loading Files")
 closing = False
 command_settings = {}
 if os.path.isfile("discow/client/data/settings.txt"):
@@ -19,6 +23,8 @@ quiz_data = {}
 if os.path.isfile("discow/client/data/quiz_data.txt"):
     with open("discow/client/data/quiz_data.txt", "rb") as f:
         quiz_data = pickle.load(f)
+
+print("\tLoaded files")
 
 persistent_variables = {}
 
@@ -63,12 +69,13 @@ def add_unreaction_handler(handler, name):
         persistent_variables[name] = True
 
 
-
+print("Handler initialized")
+print("Begin Command Initialization")
 # Add modules here
 from commands import *
 import commands.gunn_schedule.schedule
-from discow.utils import *
 import discord
+print("Command Initialization Finished")
 
 import asyncio
 

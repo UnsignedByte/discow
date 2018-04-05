@@ -5,18 +5,8 @@ from discow.utils import *
 from collections import OrderedDict
 from commands.utilities import save
 
+print("\tInitializing Quiz Command")
 quiz_handlers = {}
-
-class Question:
-    def __init__(self, q, o):
-        self.question = q
-        self.options = o
-    def isCorrect(option):
-        if option in self.options:
-            return self.options[option]
-        elif isInteger(option) and 0 <= int(option) < len(self.options):
-            return self.options.values()[int(option)]
-
 
 @asyncio.coroutine
 def quiz(Discow, msg):
@@ -47,6 +37,20 @@ def setmod(Discow, msg):
 
 @asyncio.coroutine
 def take(Discow, msg):
+    try:
+        cat = strip_command(msg.content).split(" ", 1)[1]
+    except IndexError:
+        em = Embed(title="Available Categories", colour=0xff7830)
+        desc = ''
+        if len(quiz_data[msg.server.id][1]) > 0:
+            for k,v in quiz_data[msg.server.id][1].items():
+                desc+='\n'+k
+        else:
+            desc = '\nNone'
+        while True:
+            pass
+
+    em = Embed(title=cat, colour=0xff7830)
 
 @asyncio.coroutine
 def add(Discow, msg):
@@ -244,3 +248,4 @@ quiz_handlers["setmod"] = setmod
 quiz_handlers["modrole"] = setmod
 
 add_message_handler(quiz, "quiz")
+print("\tQuiz Command Initialized")
