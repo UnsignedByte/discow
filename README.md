@@ -2,12 +2,23 @@
 A Python3 bot for Discord using discord.py.  
 Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https://github.com/anematode) and licensed under [The MIT License](https://en.wikipedia.org/wiki/MIT_License).
 
+**Features:**
+* Lots of commands! Including, but not limited to:
+  * Quiz creating and taking!
+  * Stock trading!
+  * Moderation!
+  * Gambling!
+  * And more!
+* Easter eggs (Discow will respond and react to messages occasionally)!
+* Creating a better discord - Don't ***hate, slightly dislike*** instead!
+
 ## Commands
 Prefix: `cow`
 
 Necessary arguments: `{var}`  
 Optional arguments: `(var)`  
 Remember to delete `{}` and `()`.
+
 
 ### Utilities
 
