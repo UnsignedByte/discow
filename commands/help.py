@@ -7,6 +7,7 @@ from collections import OrderedDict
 print("\tInitializing Help Command")
 print("\t\tParsing Help Command")
 helpvals = OrderedDict()
+helppages = []
 
 with open("README.md", "r") as f:
     lastheader = ""
@@ -33,21 +34,29 @@ first = True
 for key, value in helpvals.items():
     if first:
         helpembed.title = key
-        helpembed.description = '\n'.join(map(lambda x:x.lstrip(">").strip(), value))
+        helpembed.description = '\n'.join(map(lambda x:x.lstrip(">").strip(), value))+'\n\nTo display another page, do `cow help {page number}`. For more help, take a look at [the Readme](https://github.com/UnsignedByte/discow/blob/master/README.md) on our [github repository](https://github.com/UnsignedByte/discow)!'
         first = False
     else:
         stoadd = "\n\n# "+key+'\n\n'+'\n'.join(value)
         if len(desc)+len(stoadd) >= 1000:
-            helpembed.add_field(name="\a", value=desc+'```')
+            helppages.append(desc+'```')
             desc = "```markdown"+stoadd
         else:
             desc+=stoadd
-helpembed.add_field(name="\a", value=desc+'```')
+helppages.append(desc+'```')
 print("\t\tFinished Parsing")
+helpembed.add_field(name='\a', value='\a')
 
 @asyncio.coroutine
 def gethelp(Discow, msg):
-    yield from send_embed(Discow, msg, helpembed)
+    try:
+        pnum = int(strip_command(msg.content))-1
+        helpembed.set_field_at(0, name='\a', value=helppages[pnum])
+        yield from send_embed(Discow, msg, helpembed)
+    except (IndexError, ValueError):
+        helpembed.set_field_at(0, name='\a', value=helppages[0])
+        yield from send_embed(Discow, msg, helpembed)
+
 
 add_message_handler(gethelp, "help")
 print("\tHelp Command Initialized")

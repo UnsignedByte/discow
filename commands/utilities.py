@@ -146,7 +146,6 @@ def save(Discow, msg, overrideperms = False):
     if perms.manage_server or overrideperms:
         em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
         msg = yield from send_embed(Discow, msg, em)
-        flip_shutdown()
         yield from asyncio.sleep(1)
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
@@ -156,7 +155,6 @@ def save(Discow, msg, overrideperms = False):
         with open("discow/client/data/quiz_data.txt", "wb") as f:
             pickle.dump(data[2], f)
         em.description = "Complete!"
-        flip_shutdown()
         msg = yield from edit_embed(Discow, msg, embed=em)
         yield from asyncio.sleep(0.5)
         yield from Discow.delete_message(msg)
@@ -166,6 +164,7 @@ def save(Discow, msg, overrideperms = False):
 
 @asyncio.coroutine
 def shutdown(Discow, msg):
+    flip_shutdown()
     yield from save(Discow, msg)
     yield from Discow.logout()
 

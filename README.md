@@ -13,7 +13,7 @@ Remember to delete `{}` and `()`.
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
-|help|`cow help`|Displays help information.|`help`|
+|help|`cow help (page)`|Displays help information. If no valid page number is given, the first page will be displayed.|`help`|
 |info|`cow info`|Displays general information about the bot.|`info`, `hi`|
 |close|`cow close`|Shut down the bot and save all data.|`close`, `shutdown`|
 |save|`cow save`|Save all data.|`save`|
@@ -37,6 +37,7 @@ Remember to delete `{}` and `()`.
 |:-:|:-:|:-:|:-:|
 |setmod|`cow settings setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
 |add|`cow settings add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
+|take|`cow settings take (category)`|Take a quiz! Follow the Quiz Wizard's instructions.|`take`|
 
 ### Fun
 | **Name** | **Usage** | **Description** | **Aliases** |
