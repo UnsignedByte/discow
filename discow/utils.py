@@ -62,19 +62,15 @@ def convertTime(time, serv):
 
 @asyncio.coroutine
 def send_embed(Discow, msg, embed):
-    myinfo = yield from Discow.application_info()
-    me = yield from Discow.get_user_info(myinfo.id)
-    txt = "Created by "+me.display_name+" on "+get_localized_time(msg.server)+"."
-    embed.set_footer(text=txt, icon_url=myinfo.icon_url)
+    txt = "Created by "+msg.server.get_member(Discow.user.id).nick+" on "+get_localized_time(msg.server)+"."
+    embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
     m = yield from Discow.send_message(msg.channel, embed=embed)
     return m
 
 @asyncio.coroutine
 def edit_embed(Discow, msg, embed):
-    myinfo = yield from Discow.application_info()
-    me = yield from Discow.get_user_info(myinfo.id)
-    txt = "Edited by "+me.display_name+" on "+get_localized_time(msg.server)+"."
-    embed.set_footer(text=txt, icon_url=myinfo.icon_url)
+    txt = "Edited by "+msg.server.get_member(Discow.user.id).nick+" on "+get_localized_time(msg.server)+"."
+    embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
     m = yield from Discow.edit_message(msg, embed=embed)
     return m
 

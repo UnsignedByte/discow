@@ -20,7 +20,7 @@ def daily(Discow, msg):
         if (round(time.time())-user_data[msg.author.id]["daily"]) > 86400:
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["daily"]=round(time.time())
-            yield from Discow.send_message(msg.channel, "Added $"+str(addedmoney/100)+" to your balance, "+msg.author.mention+"!")
+            yield from Discow.send_message(msg.channel, "Added $"+'{0:.2f}'.format(addedmoney/100)+" to your balance, "+msg.author.mention+"!")
         else:
             seconds = 86400-(round(time.time())-user_data[msg.author.id]["daily"])
             m, s = divmod(seconds, 60)
@@ -28,7 +28,7 @@ def daily(Discow, msg):
             yield from Discow.send_message(msg.channel, "Not so fast! Please wait another %d hours, %02d minutes, and %02d seconds." % (h, m, s))
     else:
         user_data[msg.author.id] = {"daily": round(time.time()), "money": addedmoney}
-        yield from Discow.send_message(msg.channel, "Added $"+str(addedmoney/100)+" to your balance, "+msg.author.mention+"!")
+        yield from Discow.send_message(msg.channel, "Added $"+'{0:.2f}'.format(addedmoney/100)+" to your balance, "+msg.author.mention+"!")
 
 @asyncio.coroutine
 def money(Discow, msg):
@@ -39,7 +39,7 @@ def money(Discow, msg):
         user = msg.mentions[0]
     if user.id in user_data:
         user_data[user.id]["money"] = round(user_data[user.id]["money"])
-        em.description = "%s currently has $%s." % (user.mention, user_data[user.id]["money"]/100)
+        em.description = "%s currently has $%s." % (user.mention, '{0:.2f}'.format(user_data[user.id]["money"]/100))
         if "stock" in user_data[user.id]:
             name = msg.author.display_name+"'s owned stocks"
             desc = ""
@@ -62,9 +62,9 @@ def slots(Discow, msg):
         else:
             moneychange = randint(-1*bet, bet)
             if moneychange >= 0:
-                yield from Discow.send_message(msg.channel, msg.author.mention+" won $"+str(moneychange/100)+". Nice job!")
+                yield from Discow.send_message(msg.channel, msg.author.mention+" won $"+'{0:.2f}'.format(moneychange/100)+". Nice job!")
             else:
-                yield from Discow.send_message(msg.channel, msg.author.mention+" lost $"+str(-1*moneychange/100)+". Better luck next time!")
+                yield from Discow.send_message(msg.channel, msg.author.mention+" lost $"+'{0:.2f}'.format(-1*moneychange/100)+". Better luck next time!")
             if msg.author.id in user_data:
                 user_data[msg.author.id]["money"]+=moneychange
             else:
