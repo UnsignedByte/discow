@@ -86,12 +86,11 @@ whitespace = [' ', '\t', '\n']
 def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
-            nickname = msg.server.get_member(Discow.user.id).nick.lower() if msg.server.get_member(Discow.user.id).nick else Discow.user.name.lower()
             hatingRegex = re.compile(r'\bhat((e(d|rs*|s)?|ing)\b)', re.I)
             newRe = hatingRegex.sub(r'**slightly dislik\1**', msg.content)
             if newRe != msg.content:
                 yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newRe.lower()+'"')
-            elif Discow.user in msg.mentions or any(x in list(n.lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname]):
+            elif Discow.user in msg.mentions or any(x in list(n.lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
                 randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Why do you act like I need to care about your pitiful life?", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
                 yield from Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             elif allowed_command("easteregg", msg.channel):

@@ -60,16 +60,22 @@ def convertTime(time, serv):
     fmt = '%Y-%m-%d at %H:%M:%S %Z'
     return loctime.strftime(fmt)
 
+def nickname(usr, srv):
+    n = srv.get_member(usr.id).nick
+    if not n:
+        n = usr.name
+    return n
+
 @asyncio.coroutine
 def send_embed(Discow, msg, embed):
-    txt = "Created by "+msg.server.get_member(Discow.user.id).nick+" on "+get_localized_time(msg.server)+"."
+    txt = "Created by "+nickname(Discow.user, msg.server)+" on "+get_localized_time(msg.server)+"."
     embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
     m = yield from Discow.send_message(msg.channel, embed=embed)
     return m
 
 @asyncio.coroutine
 def edit_embed(Discow, msg, embed):
-    txt = "Edited by "+msg.server.get_member(Discow.user.id).nick+" on "+get_localized_time(msg.server)+"."
+    txt = "Edited by "+nickname(Discow.user, msg.server)+" on "+get_localized_time(msg.server)+"."
     embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
     m = yield from Discow.edit_message(msg, embed=embed)
     return m
