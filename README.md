@@ -52,7 +52,7 @@ Remember to delete `{}` and `()`.
 |:-:|:-:|:-:|:-:|
 |daily|`cow daily`|Gives you your daily money!|`daily`|
 |money|`cow money (mention)`|Displays your money or someone else's money.|`money`|
-|stock|`cow stock {subcommand} {name}`|View, buy, and sell stocks using realtime stock information from the nasdaq website. For more info look at Stock Subcommands.|`stock`|
+|stock|`cow stock {subcommand} {name}`|View, buy, and sell stocks using realtime stock information from the nasdaq website. For more info look at Stock Subcommands.|`stock`, `stocks`|
 |slots|`cow slots {amount}`|Gamble for money!|`slots`, `gamble`|
 
 #### Stock Subcommands

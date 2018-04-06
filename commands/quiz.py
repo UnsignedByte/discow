@@ -4,6 +4,8 @@ from discow.handlers import add_message_handler, quiz_data
 from discow.utils import *
 from collections import OrderedDict
 from commands.utilities import save
+from commands.economy import give
+from random import shuffle, randint
 
 print("\tInitializing Quiz Command")
 quiz_handlers = {}
@@ -38,19 +40,90 @@ def setmod(Discow, msg):
 @asyncio.coroutine
 def take(Discow, msg):
     try:
-        cat = strip_command(msg.content).split(" ", 1)[1]
-    except IndexError:
+        cat = strip_command(msg.content).split(" ", 1)[1].title()
+        questions = quiz_data[msg.server.id][1][cat]
+    except (KeyError, IndexError):
         em = Embed(title="Available Categories", colour=0xff7830)
-        desc = ''
+        desc = 'We could not find the specified category in this server. Please choose one of the available options listed below.\n'
         if len(quiz_data[msg.server.id][1]) > 0:
             for k,v in quiz_data[msg.server.id][1].items():
                 desc+='\n'+k
         else:
-            desc = '\nNone'
-        while True:
-            pass
+            desc += '\nNone'
+        em.description = desc
+        qmsg = yield from send_embed(Discow, msg, em)
+        def check(s):
+            return s.content.title() in quiz_data[msg.server.id][1] or s.content == 'cancel'
+        newm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+        if newm.content == 'cancel':
+            em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)
+            yield from edit_embed(Discow, qmsg, em)
+            yield from Discow.delete_message(newm)
+            return
+        cat = newm.content
+        questions = quiz_data[msg.server.id][1][cat]
+        yield from Discow.delete_messages([qmsg, newm])
 
-    em = Embed(title=cat, colour=0xff7830)
+    def formatDesc(cat="Unknown", ql="Unknown", score="Unknown"):
+        return "Category: "+cat+"\nQuestions Left: "+str(ql)+"\nPercent Correct: "+str(score)+"%"
+
+    em = Embed(title="Quiz", description=formatDesc(cat=cat)+"\n\nHow many questions do you want in your quiz? There "+("is" if len(questions) == 1 else "are")+" "+str(len(questions))+" question"+("s" if len(questions) == 1 else "")+" in total to choose from.\nType a number, or type `all` to get all questions in the category.", colour=0xff7830)
+    qmsg = yield from send_embed(Discow, msg, em)
+    def check(s):
+        return (isInteger(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
+    nm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+    if nm.content != 'all':
+        shuffle(questions)
+        questions = questions[0:int(nm.content)]
+    yield from Discow.delete_message(nm)
+    em.add_field(name="Question", value="NULL")
+
+    totalscore = 0
+
+    em.description=formatDesc(cat=cat, ql=len(questions), score=100.0)
+    for a in range(len(questions)):
+        em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr()+"\n\nTo select your answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nIf you don't know the answer, you can always guess!")
+        qmsg = yield from edit_embed(Discow, qmsg, em)
+        def check(s):
+            return len(s.content)==1 and 1<=ord(s.content.upper())-64<=len(questions[a].options)
+        def yesnocheck(s):
+            return s.content in ['y', 'n', 'yes', 'no']
+        def confirmcheck(s):
+            return check(s) or s.content in ['n', 'next']
+        select = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+        select.content = str(ord(select.content.upper())-64)
+        yield from Discow.delete_message(select)
+        while True:
+            em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
+            qmsg = yield from edit_embed(Discow, qmsg, em)
+            newselect = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=confirmcheck)
+            yield from Discow.delete_message(newselect)
+            if newselect.content in ['n', 'next']:
+                mmm = yield from Discow.send_message(msg.channel, "Are you sure?\nYou cannot change your choice after submitting!\nRespond with `yes (y)` or `no (n)`")
+                yesorno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=yesnocheck)
+                yield from Discow.delete_messages([yesorno, mmm])
+                if yesorno.content in ['y', 'yes']:
+                    if questions[a].isCorrect(int(select.content)):
+                        totalscore+=1
+                    em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1, showCorrect=True)+'\n\nWhen you are done viewing answers, type `next (n)` to move on.')
+                    em.description = formatDesc(cat=cat, ql=len(questions)-a-1, score=100*totalscore/(a+1))
+                    yield from edit_embed(Discow, qmsg, em)
+                    def moveoncheck(s):
+                        return s.content in ['n', 'next']
+                    moveon = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=moveoncheck)
+                    yield from Discow.delete_message(moveon)
+                    break
+            else:
+                newselect.content = str(ord(newselect.content.upper())-64)
+                select = newselect
+
+    em.remove_field(0)
+    moneyrecieved = randint(round(totalscore/2)*100, round(totalscore*2)*100)
+    em.title = 'Quiz Completed!'
+    em.description = 'Congratulations! You completed a quiz in the '+cat+' category with '+str(len(questions))+' questions.\nYou recieved a score of '+str(100*totalscore/len(questions))+'%, or '+str(totalscore)+' out of '+str(len(questions))+'!\nAs you answered '+str(totalscore)+' questions correctly, you have recieved $'+str(moneyrecieved/100)+'!'
+    yield from edit_embed(Discow, qmsg, em)
+    give(moneyrecieved, msg.author.id)
+
 
 @asyncio.coroutine
 def add(Discow, msg):
@@ -81,9 +154,9 @@ def add(Discow, msg):
 
     def oformat(s, v, c):
         if c:
-            return "\n."+s+": ("+v.center(50)+")"
+            return "\n."+chr(int(s)+64)+": ("+v.center(50)+")"
         else:
-            return "\n."+s+": ["+v.center(50)+"]"
+            return "\n."+chr(int(s)+64)+": ["+v.center(50)+"]"
 
     while True:
         def check(s):
@@ -138,11 +211,12 @@ def add(Discow, msg):
                 yield from asyncio.sleep(0.25)
                 yield from Discow.delete_messages([mm, out])
             else:
-                mm = yield from Discow.send_message(msg.channel, "What is the response you would like to remove? Type in its number.\nType `cancel` to cancel.")
+                mm = yield from Discow.send_message(msg.channel, "What is the response you would like to remove? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
-                    return s.content.lower == 'cancel' or (isInteger(s.content) and 1 <= int(s.content) <= len(options))
+                    return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
                 option = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
                 if option != 'cancel':
+                    option.content = str(ord(option.content.upper())-64)
                     mmm = yield from Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
@@ -171,11 +245,12 @@ def add(Discow, msg):
                 yield from asyncio.sleep(0.25)
                 yield from Discow.delete_messages([mm, out])
             else:
-                mm = yield from Discow.send_message(msg.channel, "What is the response you would like to edit? Type in its number.\nType `cancel` to cancel.")
+                mm = yield from Discow.send_message(msg.channel, "What is the response you would like to edit? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
-                    return s.content.lower == 'cancel' or (isInteger(s.content) and 1 <= int(s.content) <= len(options))
+                    return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
                 option = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
                 if option != 'cancel':
+                    option.content = str(ord(option.content.upper())-64)
                     mmm = yield from Discow.send_message(msg.channel, "What would you like to replace it with?")
                     while True:
                         newoption = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
@@ -208,12 +283,17 @@ def add(Discow, msg):
                     yield from asyncio.sleep(0.25)
                     yield from Discow.delete_messages([out, option, mm, mmm])
         elif out.content == 'done':
-            em.set_field_at(1, name="Responses", value=optionresponses+'```')
-            yield from edit_embed(Discow, qmsg, em)
-            yield from Discow.delete_message(out)
-            quiz_data[msg.server.id][1][cat].append(Question(question, options))
-            yield from save(Discow, msg, overrideperms=True)
-            return
+            if len(options) > 1:
+                em.set_field_at(1, name="Responses", value=optionresponses+'```')
+                yield from edit_embed(Discow, qmsg, em)
+                yield from Discow.delete_message(out)
+                quiz_data[msg.server.id][1][cat].append(Question(question, options))
+                yield from save(Discow, msg, overrideperms=True)
+                return
+            else:
+                momomo = yield from Discow.send_message(msg.channel, "You must have at least 2 options!")
+                yield from asyncio.sleep(0.5)
+                yield from Discow.delete_messages([out, momomo])
 
 
 @asyncio.coroutine
@@ -238,11 +318,14 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
             else:
                 m = yield from Discow.send_message(msg.channel, out.content.title()+" is not currently a category.")
                 yield from asyncio.sleep(0.25)
-                yield from Discow.delete_message(m)
+                yield from Discow.delete_messages([m, out])
+                return None
         else:
+            yield from Discow.delete_message(out)
             return out.content.title()
 
 
+quiz_handlers["take"] = take
 quiz_handlers["add"] = add
 quiz_handlers["setmod"] = setmod
 quiz_handlers["modrole"] = setmod

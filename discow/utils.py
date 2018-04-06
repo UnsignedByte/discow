@@ -93,8 +93,30 @@ class Question:
     def __init__(self, q, o):
         self.question = q
         self.options = o
-    def isCorrect(option):
-        if option in self.options:
-            return self.options[option]
-        elif isInteger(option) and 0 <= int(option) < len(self.options):
-            return self.options.values()[int(option)]
+    def isCorrect(self, option):
+        return list(self.options.values())[option-1]
+    def getstr(self, selected=None, showCorrect=False):
+        if showCorrect:
+            outstr = "```css\n{Question: '"+self.question+"'}"
+        else:
+            outstr = "```markdown\n# "+self.question
+        for a in range(len(self.options)):
+            if a == selected:
+                if showCorrect:
+                    outstr+="\n."+chr(a+65)+":  "
+                    if self.isCorrect(a+1):
+                        outstr+="("+list(self.options.keys())[a].center(49)+")"
+                    else:
+                        outstr+="["+list(self.options.keys())[a].center(49)+"]"
+                else:
+                    outstr+="\n<["+chr(a+65)+"]> ["+list(self.options.keys())[a].center(46)+"]()"
+            else:
+                if showCorrect:
+                    outstr+="\n{"+chr(a+65)+":} "
+                    if self.isCorrect(a+1):
+                        outstr+="("+list(self.options.keys())[a].center(49)+")"
+                    else:
+                        outstr+="["+list(self.options.keys())[a].center(49)+"]"
+                else:
+                    outstr+="\n<<"+chr(a+65)+">> ["+list(self.options.keys())[a].center(46)+"]()"
+        return outstr+'```'

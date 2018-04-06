@@ -9,6 +9,10 @@ import urllib.request as req
 import urllib.error as err
 from commands.utilities import save
 
+#used to add money
+def give(amount, userid):
+    user_data[userid]["money"]+=amount
+
 @asyncio.coroutine
 def daily(Discow, msg):
     addedmoney = randint(40000, 60000)
@@ -34,6 +38,7 @@ def money(Discow, msg):
     else:
         user = msg.mentions[0]
     if user.id in user_data:
+        user_data[user.id]["money"] = round(user_data[user.id]["money"])
         em.description = "%s currently has $%s." % (user.mention, user_data[user.id]["money"]/100)
         if "stock" in user_data[user.id]:
             name = msg.author.display_name+"'s owned stocks"
@@ -225,6 +230,7 @@ def stock(Discow, msg):
         return
     yield from save(Discow, msg, overrideperms=True)
 
+add_message_handler(stock, "stocks")
 add_message_handler(stock, "stock")
 add_message_handler(daily, "daily")
 add_message_handler(money, "money")

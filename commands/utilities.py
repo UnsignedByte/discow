@@ -2,7 +2,7 @@ import asyncio
 import pickle
 from discow.utils import *
 from discow.handlers import add_message_handler, flip_shutdown, get_data
-from discord import Embed
+from discord import Embed, NotFound
 import urllib.request as req
 import urllib.error as err
 from bs4 import BeautifulSoup
@@ -16,7 +16,12 @@ def info(Discow, msg):
 
 @asyncio.coroutine
 def quote(Discow, msg):
-    m = yield from Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+    try:
+        m = yield from Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+    except NotFound:
+        em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
+        yield from send_embed(Discow, msg, em)
+        return
     em = Embed(colour=0x3b7ce5)
     em.title = "Message Quoted by "+msg.author.display_name+":"
     desc = m.content
@@ -119,16 +124,21 @@ def dictionary(Discow, msg):
 
 @asyncio.coroutine
 def purge(Discow, msg):
-    num = max(1,min(100,int(parse_command(msg.content, 1)[1])))+1
-    msgs = yield from Discow.logs_from(msg.channel, limit=num)
-    msgs = list(msgs)
-    if num == 1:
-        yield from Discow.delete_message(msgs[0])
+    perms = msg.channel.permissions_for(msg.author)
+    if perms.manage_messages:
+        num = max(1,min(99,int(parse_command(msg.content, 1)[1])))+1
+        msgs = yield from Discow.logs_from(msg.channel, limit=num)
+        msgs = list(msgs)
+        if num == 1:
+            yield from Discow.delete_message(msgs[0])
+        else:
+            yield from Discow.delete_messages(msgs)
+        m = yield from Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
+        yield from asyncio.sleep(2)
+        yield from Discow.delete_message(m)
     else:
-        yield from Discow.delete_messages(msgs)
-    m = yield from Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
-    yield from asyncio.sleep(2)
-    yield from Discow.delete_message(m)
+        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
 def save(Discow, msg, overrideperms = False):
