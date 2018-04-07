@@ -88,12 +88,15 @@ def on_message(Discow, msg):
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\bhat((e(d|rs*|s)?|ing)\b)', re.I)
             newRe = hatingRegex.sub(r'**slightly dislik\1**', msg.content)
-            if newRe != msg.content:
-                yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newRe.lower()+'"')
-            elif Discow.user in msg.mentions or any(x in list(n.lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
-                randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Why do you act like I need to care about your pitiful life?", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
+            if Discow.user in msg.mentions or any(x in list(n.lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
+                if newRe != msg.content:
+                    randms = ["Did I just hear "+Discow.user.mention+" and **HATE** in the **SAME MESSAGE???**", "Woah there! You better have a 'don't' in front of the hate!", "Hey! I don't like being hated! \nIf you have a problem with me, report it on our issues page on github!", "Don't hate me, okay? Bots have feelings too", "Stop with the hate! I don't like it!", "I **slightly dislike** you as well, "+msg.author.mention+"!:rage:"]
+                else:
+                    randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
                 yield from Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             elif allowed_command("easteregg", msg.channel):
+                if newRe != msg.content:
+                    yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newRe.lower()+'"')
                 if randint(1, 100) == 1:
                     e = msg.server.emojis
                     try:
