@@ -87,7 +87,7 @@ def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing))(\*|_|~)*\b', re.I)
-            newHatingRe = hatingRegex.sub(r'**slightly dislik\g<ending>**', msg.content)
+            newHatingRe = hatingRegex.sub(r'**dislik\g<ending>**', msg.content)
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
                 return

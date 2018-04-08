@@ -10,7 +10,7 @@ Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https
   * Gambling!
   * And more!
 * Easter eggs (Discow will respond and react to messages occasionally)!
-* Creating a better discord - Don't ***hate, slightly dislike*** instead!
+* Creating a better discord - Don't ***hate, dislike*** instead!
 
 ## Commands
 Prefix: `cow`
