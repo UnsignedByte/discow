@@ -61,9 +61,11 @@ def convertTime(time, serv):
     return loctime.strftime(fmt)
 
 def nickname(usr, srv):
+    if not srv:
+        return usr.name
     n = srv.get_member(usr.id).nick
     if not n:
-        n = usr.name
+        return usr.name
     return n
 
 @asyncio.coroutine

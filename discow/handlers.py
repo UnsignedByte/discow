@@ -85,15 +85,13 @@ whitespace = [' ', '\t', '\n']
 @asyncio.coroutine
 def on_message(Discow, msg):
     if not msg.author.bot:
-        if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
-            yield from Discow.send_message(msg.channel, msg.content.split(':', 1)[1])
-            return
-        if msg.channel.is_private:
-            yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
-            hatingRegex = re.compile(r'\bhat((e(d|rs*|s)?|ing)\b)', re.I)
+            hatingRegex = re.compile(r'\bhat((e(d|rs*|s|ful(ness)?)?|ing)\b)', re.I)
             newHatingRe = hatingRegex.sub(r'**slightly dislik\1**', msg.content)
-            if Discow.user in msg.mentions or any(x in list(n.lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
+            if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
+                yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
+                return
+            if Discow.user in msg.mentions or any(x in list(re.sub(r'[^\w\s]','',n).lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
                 if newHatingRe != msg.content:
                     randms = ["Did I just hear "+Discow.user.mention+" and **HATE** in the **SAME MESSAGE???**", "Woah there! You better have a 'don't' in front of the hate!", "Hey! I don't like being hated! \nIf you have a problem with me, report it on our issues page on github!", "Don't hate me, okay? Bots have feelings too", "Stop with the hate! I don't like it!", "I **slightly dislike** you as well, "+msg.author.mention+"!:rage:"]
                 else:
@@ -111,6 +109,8 @@ def on_message(Discow, msg):
                 if randint(1, 150) == 1:
                     yield from fun.easteregg(Discow, msg)
             return
+        if msg.channel.is_private:
+            yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
         if closing:
             em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is saving data.", colour=0xd32323)
             yield from send_embed(Discow, msg, em)
