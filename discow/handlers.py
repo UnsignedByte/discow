@@ -91,11 +91,12 @@ def on_message(Discow, msg):
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
                 return
-            if Discow.user in msg.mentions or any(x in list(re.sub(r'[^\w\s]','',n).lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()]):
-                if newHatingRe != msg.content:
-                    randms = ["Did I just hear "+Discow.user.mention+" and **HATE** in the **SAME MESSAGE???**", "Woah there! You better have a 'don't' in front of the hate!", "Hey! I don't like being hated! \nIf you have a problem with me, report it on our issues page on github!", "Don't hate me, okay? Bots have feelings too", "Stop with the hate! I don't like it!", "I **slightly dislike** you as well, "+msg.author.mention+"!:rage:"]
-                else:
-                    randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
+            if newHatingRe != msg.content and (Discow.user in msg.mentions or any(x in list(re.sub(r'[^\w\s]','',n).lower() for n in msg.content.split()) for x in [Discow.user.name.lower(), nickname(Discow.user, msg.server).lower()])):
+                randms = ["Did I just hear "+Discow.user.mention+" and **HATE** in the **SAME MESSAGE???**", "Woah there! You better have a 'don't' in front of the hate!", "Hey! I don't like being hated! \nIf you have a problem with me, report it on our issues page on github!", "Don't hate me, okay? Bots have feelings too", "Stop with the hate! I don't like it!", "I **slightly dislike** you as well, "+msg.author.mention+"!:rage:"]
+                yield from Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
+                return
+            if Discow.user in msg.mentions:
+                randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
                 yield from Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             elif allowed_command("easteregg", msg.channel):
                 if newHatingRe != msg.content:
