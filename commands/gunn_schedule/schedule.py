@@ -1,6 +1,6 @@
 from discow.handlers import *
 import asyncio
-import discow.utils
+from discow.utils import send_embed, edit_embed, strip_command
 import dateparser as cf
 import datetime
 import re
@@ -59,7 +59,7 @@ for sched in raw_defaults:
                                                name, None))
 defaults[curr_day_text] = curr_schedule.copy()
 
-print("Parsing schedules")
+print("\tParsing Schedules")
 
 i = 1
 for sched in raw_schedules:
@@ -89,7 +89,7 @@ for sched in raw_schedules:
 
 schedules[curr_day] = curr_schedule
 
-print("Finished parsing")
+print("\tSchedule Parsing Finished")
 
 def getSchedule(date):
     return schedules[date]
@@ -126,7 +126,6 @@ class ScheduleMessage:
         return self.msg == other.msg
 
 old_schedule_messages = []
-old_week_schedule_messages = []
 
 leftarrow = "\U000025C0"
 rightarrow = "\U000025B6"
@@ -136,7 +135,7 @@ fastforward = "\U000023E9"
 @asyncio.coroutine
 def schedule(Discow, msg):
 
-    timef = discow.utils.strip_command(msg.content)
+    timef = strip_command(msg.content)
     if timef == '':
         timef = "today"
     parsed = specialParseDate(timef)
@@ -147,7 +146,7 @@ def schedule(Discow, msg):
 
     parsed = parsed.date()
 
-    msg = yield from Discow.send_message(msg.channel, embed=formatSchedule(parsed))
+    msg = yield from send_embed(Discow, msg, formatSchedule(parsed))
 
     yield from Discow.add_reaction(msg, rewind)
     yield from Discow.add_reaction(msg, leftarrow)
@@ -165,55 +164,11 @@ def schedule_react(Discow, reaction, user):
     for c in old_schedule_messages:
         if c.id == reaction.message.id:
             c.time += datetime.timedelta(days=(-1 if (reaction.emoji == leftarrow) else (1 if reaction.emoji == rightarrow else -7 if reaction.emoji == rewind else 7)))
-            yield from Discow.edit_message(reaction.message, embed=Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
-            yield from Discow.edit_message(reaction.message, embed=formatSchedule(c.time))
+            yield from edit_embed(Discow, reaction.message, Embed(title="Schedule for %s (%s)" % (c.time.isoformat(), calendar.day_name[c.time.weekday()]), colour=0x12AA24, description="Calculating schedule..."))
+            yield from edit_embed(Discow, reaction.message, formatSchedule(c.time))
             return
-
-@asyncio.coroutine
-def week_schedule_react(Discow, reaction, user):
-    if user == Discow.user or reaction.message.author != Discow.user:
-        return
-
-    for c in old_week_schedule_messages:
-        if c.id == reaction.message.id:
-            c.time += datetime.timedelta(days=(-7 if (reaction.emoji == leftarrow) else 7))
-            yield from Discow.edit_message(reaction.message, "Calculating schedule...")
-
-            parsed = c.time
-            daf = (parsed.weekday() + 1) % 7
-
-            yield from Discow.edit_message(reaction.message, '\n'.join(
-                formatSchedule(parsed + datetime.timedelta(days=x)) for x in range(-daf, 7 - daf)))
-            return
-
-@asyncio.coroutine
-def week_schedule(Discow, msg):
-
-    timef = discow.utils.strip_command(msg.content)
-    if timef == '':
-        timef = "today"
-
-    parsed = specialParseDate(timef)
-    if not parsed:
-        yield from Discow.send_message(msg.channel, "Unknown date.")
-        return
-
-    parsed = parsed.date()
-    daf = (parsed.weekday() + 1) % 7
-
-    frp = yield from Discow.send_message(msg.channel, '\n'.join(formatSchedule(parsed + datetime.timedelta(days=x)) for x in range(-daf, 7-daf)))
-
-    yield from Discow.add_reaction(frp, leftarrow)
-    yield from Discow.add_reaction(frp, rightarrow)
-
-    old_week_schedule_messages.append(ScheduleMessage(frp, time.gmtime(), parsed))
 
 add_message_handler(schedule, "schedule")
-add_message_handler(week_schedule, "weekschedule")
-add_message_handler(week_schedule, "week-schedule")
-add_message_handler(week_schedule, "week_schedule")
 
 add_reaction_handler(schedule_react, "sch_react")
 add_unreaction_handler(schedule_react, "sch_react")
-add_reaction_handler(week_schedule_react, "wsch_react")
-add_unreaction_handler(week_schedule_react, "wsch_react")
