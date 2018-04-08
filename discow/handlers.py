@@ -88,6 +88,8 @@ def on_message(Discow, msg):
         if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
             yield from Discow.send_message(msg.channel, msg.content.split(':', 1)[1])
             return
+        if msg.channel.is_private:
+            yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\bhat((e(d|rs*|s)?|ing)\b)', re.I)
             newHatingRe = hatingRegex.sub(r'**slightly dislik\1**', msg.content)
