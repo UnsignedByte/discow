@@ -25,7 +25,8 @@ def rps(Discow, msg):
         result = "It's a tie!"
     else:
         comb = mine+yours
-        if comb == "rockpaper" or "scissorsrock" or "paperscissors":
+        print(comb)
+        if comb in ["rockpaper", "scissorsrock", "paperscissors"]:
             result = format_response("{_mention} wins!", _msg=msg)
         else:
             result = "I win!"
