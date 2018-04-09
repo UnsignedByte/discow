@@ -94,6 +94,7 @@ def take(Discow, msg):
 
     em.description=formatDesc(cat=cat, ql=len(questions), score=100.0)
     for a in range(len(questions)):
+        questions[a].optshuf()
         em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr()+"\n\nTo select your answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nIf you don't know the answer, you can always guess!")
         qmsg = yield from edit_embed(Discow, qmsg, em)
         def check(s):
@@ -105,7 +106,6 @@ def take(Discow, msg):
         select = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         select.content = str(ord(select.content.upper())-64)
         yield from Discow.delete_message(select)
-        questions[a].optshuf()
         while True:
             em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
             qmsg = yield from edit_embed(Discow, qmsg, em)
@@ -201,9 +201,7 @@ def add(Discow, msg):
                     break
             if option.content.lower() != 'cancel':
                 def corrcheck(s):
-                    return s.co
-
-                    ntent.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
+                    return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
                 mmm = yield from Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
                 corr = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
                 if not corr:
@@ -311,7 +309,7 @@ def add(Discow, msg):
                     yield from Discow.delete_messages([out, option, mm, mmm])
         elif out.content == 'done':
             if len(options) > 1:
-                yield from Discow.send_message("Should this question have shuffled responses?")
+                mooooooooocow = yield from Discow.send_message(msg.channel, "Should this question have shuffled responses?")
                 def yesnocheck(s):
                     return s.content.lower() in ['yes', 'no', 'y', 'n']
                 yesorno = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
@@ -322,8 +320,8 @@ def add(Discow, msg):
                 else:
                     shuffled = False
                 em.set_field_at(1, name="Responses", value=optionresponses+'```')
-                yield from edit_embed(Discow, qmsg, em, yesorno)
-                yield from Discow.delete_message(out)
+                yield from edit_embed(Discow, qmsg, em)
+                yield from Discow.delete_messages([out, yesorno, mooooooooocow])
                 quiz_data[msg.server.id][1][cat].append(Question(question, options, shuffled))
                 yield from save(Discow, msg, overrideperms=True)
                 return

@@ -8,6 +8,7 @@ import pytz
 import itertools
 import asyncio
 from random import shuffle
+from collections import OrderedDict
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -104,7 +105,12 @@ class Question:
         return list(self.options.values())[option-1]
     def optshuf(self):
         if self.shuffle:
-            self.options = shuffle(self.options)
+            keeeeys = list(self.options.keys())
+            shuffle(keeeeys)
+            newoptions = OrderedDict()
+            for k in keeeeys:
+                newoptions[k] = self.options[k]
+            self.options = newoptions
     def getstr(self, selected=None, showCorrect=False):
         if showCorrect:
             outstr = "```css\n{Question: '"+self.question+"'}"
