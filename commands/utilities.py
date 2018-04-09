@@ -42,13 +42,8 @@ def quote(Discow, msg):
         else:
             break
     em.description = desc
-    txt = "Written by "+m.author.display_name+" on "+convertTime(m.timestamp, m.server)
-    avatarurl = m.author.avatar_url
-    if not avatarurl:
-        avatarurl = m.author.default_avatar_url
-    em.set_footer(text=txt, icon_url=avatarurl)
     yield from Discow.delete_message(msg)
-    yield from send_embed(Discow, msg, em)
+    yield from send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
 
 @asyncio.coroutine
 def dictionary(Discow, msg):
