@@ -23,10 +23,14 @@ def quiz(Discow, msg):
     try:
         if not msg.author.id in quiz_users:
             quiz_users.append(msg.author.id)
-            yield from quiz_handlers[newmsg[0]](Discow, msg)
-            quiz_users.remove(msg.author.id)
+            try:
+                yield from quiz_handlers[newmsg[0]](Discow, msg)
+            except Exception:
+                raise
+            finally:
+                quiz_users.remove(msg.author.id)
         else:
-            yield from Discow.send_message("You already have a quiz running!\nPlease cancel that command first.")
+            yield from Discow.send_message(msg.channel, "You already have a quiz running!\nPlease cancel that command first.")
     except KeyError:
         em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
         yield from Discow.send_message(msg.channel, embed=em)
@@ -59,7 +63,7 @@ def take(Discow, msg):
         em.description = desc
         qmsg = yield from send_embed(Discow, msg, em)
         def check(s):
-            return s.content.title() in quiz_data[msg.server.id][1] or s.content == 'cancel'
+            return s.content.title() in quiz_data[msg.server.id][1] or s.content.lower() == 'cancel'
         newm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
         if newm.content == 'cancel':
             em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)

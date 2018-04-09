@@ -34,9 +34,6 @@ def parse_command(msg, num=-1):
 def strip_command(msg):
     return parse_command(msg, 1)[1]
 
-def get_localized_time(serv):
-    return convertTime(datetime.datetime.utcnow(), serv)
-
 def convertTime(time, serv):
     timezones = {
     ServerRegion.us_west:"America/Los_Angeles",
@@ -61,22 +58,28 @@ def convertTime(time, serv):
     return loctime.strftime(fmt)
 
 def nickname(usr, srv):
+    if not srv:
+        return usr.name
     n = srv.get_member(usr.id).nick
     if not n:
-        n = usr.name
+        return usr.name
     return n
 
 @asyncio.coroutine
-def send_embed(Discow, msg, embed):
-    txt = "Created by "+nickname(Discow.user, msg.server)+" on "+get_localized_time(msg.server)+"."
-    embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
+def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
+    if not usr:
+        usr = Discow.user
+    txt = "Created by "+nickname(usr, msg.server)+" on "+convertTime(time, msg.server)+"."
+    embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     m = yield from Discow.send_message(msg.channel, embed=embed)
     return m
 
 @asyncio.coroutine
-def edit_embed(Discow, msg, embed):
-    txt = "Edited by "+nickname(Discow.user, msg.server)+" on "+get_localized_time(msg.server)+"."
-    embed.set_footer(text=txt, icon_url=Discow.user.avatar_url)
+def edit_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
+    if not usr:
+        usr = Discow.user
+    txt = "Edited by "+nickname(usr, msg.server)+" on "+convertTime(time, msg.server)+"."
+    embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     m = yield from Discow.edit_message(msg, embed=embed)
     return m
 

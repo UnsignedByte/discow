@@ -1,6 +1,7 @@
 # Discow
 A Python3 bot for Discord using discord.py.  
-Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https://github.com/anematode) and licensed under [The MIT License](https://en.wikipedia.org/wiki/MIT_License).
+Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https://github.com/anematode) and licensed under [The MIT License](https://en.wikipedia.org/wiki/MIT_License).  
+Add this bot to your server [here](https://discordapp.com/api/oauth2/authorize?client_id=427609586032443392&permissions=8&scope=bot)!
 
 **Features:**
 * Lots of commands! Including, but not limited to:
@@ -10,7 +11,7 @@ Created by [UnsignedByte](https://github.com/UnsignedByte) and [anematode](https
   * Gambling!
   * And more!
 * Easter eggs (Discow will respond and react to messages occasionally)!
-* Creating a better discord - Don't ***hate, slightly dislike*** instead!
+* Creating a better discord - Don't ***hate, dislike*** instead!
 
 ## Commands
 Prefix: `cow`

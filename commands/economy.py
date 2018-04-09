@@ -32,16 +32,16 @@ def daily(Discow, msg):
 
 @asyncio.coroutine
 def money(Discow, msg):
-    em = Embed(title=msg.author.display_name+"'s money",colour=0xffd747)
     if len(msg.mentions) == 0:
         user = msg.author
     else:
         user = msg.mentions[0]
+    em = Embed(title=user.display_name+"'s money",colour=0xffd747)
     if user.id in user_data:
         user_data[user.id]["money"] = round(user_data[user.id]["money"])
         em.description = "%s currently has $%s." % (user.mention, '{0:.2f}'.format(user_data[user.id]["money"]/100))
         if "stock" in user_data[user.id]:
-            name = msg.author.display_name+"'s owned stocks"
+            name = user.display_name+"'s owned stocks"
             desc = ""
             for k,v in user_data[user.id]["stock"].items():
                 if v > 0:
