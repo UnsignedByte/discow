@@ -105,6 +105,7 @@ def take(Discow, msg):
         select = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         select.content = str(ord(select.content.upper())-64)
         yield from Discow.delete_message(select)
+        questions[a].optshuf()
         while True:
             em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
             qmsg = yield from edit_embed(Discow, qmsg, em)

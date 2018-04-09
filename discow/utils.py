@@ -7,6 +7,7 @@ from pytz import timezone
 import pytz
 import itertools
 import asyncio
+from random import shuffle
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -101,6 +102,9 @@ class Question:
         self.shuffle = s
     def isCorrect(self, option):
         return list(self.options.values())[option-1]
+    def optshuf(self):
+        if self.shuffle:
+            self.options = shuffle(self.options)
     def getstr(self, selected=None, showCorrect=False):
         if showCorrect:
             outstr = "```css\n{Question: '"+self.question+"'}"
