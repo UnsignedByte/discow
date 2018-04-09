@@ -117,7 +117,7 @@ def on_message(Discow, msg):
             yield from send_embed(Discow, msg, em)
             return
         try:
-            cmd = parse_command(msg.content)[0]
+            cmd = parse_command(msg.content)[0].lower()
             if cmd in command_settings and msg.channel in command_settings[cmd]:
                 em = discord.Embed(title="Command Disabled", colour=0xd32323)
                 em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."
