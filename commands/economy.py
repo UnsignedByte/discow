@@ -132,7 +132,9 @@ def stock(Discow, msg):
                 if s == 'cancel':
                     return True
                 return isInteger(s) and int(s) <= len(el) and int(s) > 0
-            stock = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+            stock = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+            if not stock:
+                return
             yield from Discow.delete_message(stock)
             if stock.content == 'cancel':
                 em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)
@@ -168,7 +170,9 @@ def stock(Discow, msg):
                 em.add_field(name=name, value=info)
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-                    num = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+                    num = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                    if not num:
+                        return
                     yield from Discow.delete_message(num)
                     if num.content == 'cancel':
                         em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)
@@ -205,7 +209,9 @@ def stock(Discow, msg):
                 em.add_field(name=name, value=info)
                 while True:
                     stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-                    num = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+                    num = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                    if not num:
+                        return
                     yield from Discow.delete_message(num)
                     if num.content == 'cancel':
                         em = Embed(title="Stock Information", description="*Operation Cancelled*", colour=0xffd747)

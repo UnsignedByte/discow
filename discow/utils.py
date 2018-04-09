@@ -95,9 +95,10 @@ def isInteger(s):
 
 
 class Question:
-    def __init__(self, q, o):
+    def __init__(self, q, o, s):
         self.question = q
         self.options = o
+        self.shuffle = s
     def isCorrect(self, option):
         return list(self.options.values())[option-1]
     def getstr(self, selected=None, showCorrect=False):

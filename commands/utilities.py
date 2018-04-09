@@ -64,7 +64,9 @@ def dictionary(Discow, msg):
                 em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
             dictm = yield from edit_embed(Discow, dictm, em)
             while True:
-                vm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
+                vm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                if not vm:
+                    return
                 v = vm.content
                 if v == 'cancel':
                     em.description = "*Operation Cancelled*"

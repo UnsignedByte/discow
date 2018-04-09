@@ -64,8 +64,8 @@ def take(Discow, msg):
         qmsg = yield from send_embed(Discow, msg, em)
         def check(s):
             return s.content.title() in quiz_data[msg.server.id][1] or s.content.lower() == 'cancel'
-        newm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
-        if newm.content == 'cancel':
+        newm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+        if not newm or newm.content == 'cancel':
             em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(newm)
@@ -81,7 +81,9 @@ def take(Discow, msg):
     qmsg = yield from send_embed(Discow, msg, em)
     def check(s):
         return (isInteger(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
-    nm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+    nm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+    if not nm:
+        return
     if nm.content != 'all':
         shuffle(questions)
         questions = questions[0:int(nm.content)]
@@ -100,13 +102,13 @@ def take(Discow, msg):
             return s.content in ['y', 'n', 'yes', 'no']
         def confirmcheck(s):
             return check(s) or s.content in ['n', 'next']
-        select = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+        select = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         select.content = str(ord(select.content.upper())-64)
         yield from Discow.delete_message(select)
         while True:
             em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
             qmsg = yield from edit_embed(Discow, qmsg, em)
-            newselect = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=confirmcheck)
+            newselect = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=confirmcheck)
             yield from Discow.delete_message(newselect)
             if newselect.content in ['n', 'next']:
                 if questions[a].isCorrect(int(select.content)):
@@ -116,7 +118,7 @@ def take(Discow, msg):
                 yield from edit_embed(Discow, qmsg, em)
                 def moveoncheck(s):
                     return s.content in ['n', 'next']
-                moveon = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=moveoncheck)
+                moveon = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=moveoncheck)
                 yield from Discow.delete_message(moveon)
                 break
             else:
@@ -167,8 +169,8 @@ def add(Discow, msg):
     while True:
         def check(s):
             return s.content.lower() in ['done', 'add', 'remove', 'edit', 'back', 'a', 'r', 'e', 'cancel']
-        out = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
-        if out.content == 'cancel':
+        out = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+        if not out or out.content == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(out)
@@ -187,7 +189,9 @@ def add(Discow, msg):
         elif out.content in ('add', 'a'):
             mm = yield from Discow.send_message(msg.channel, "What is the response you would like to add? Type `cancel` to cancel.")
             while True:
-                option = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
+                option = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                if not option:
+                    return
                 if option.content in options:
                     _m = yield from Discow.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
                     yield from asyncio.sleep(0.5)
@@ -196,9 +200,13 @@ def add(Discow, msg):
                     break
             if option.content.lower() != 'cancel':
                 def corrcheck(s):
-                    return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
+                    return s.co
+
+                    ntent.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
                 mmm = yield from Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
-                corr = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=corrcheck)
+                corr = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
+                if not corr:
+                    return
                 if corr.content.lower() in ["correct", "c", "right"]:
                     options[option.content] = True
                 else:
@@ -220,13 +228,17 @@ def add(Discow, msg):
                 mm = yield from Discow.send_message(msg.channel, "What is the response you would like to remove? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
                     return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
-                option = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+                option = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                if not option:
+                    return
                 if option.content != 'cancel':
                     option.content = str(ord(option.content.upper())-64)
                     mmm = yield from Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
-                    yesorno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=yesnocheck)
+                    yesorno = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                    if not yesorno:
+                        return
                     if yesorno.content.lower() in ['yes', 'y']:
                         del options[list(options.keys())[int(option.content)-1]]
                         optionresponses = "```css\n"
@@ -254,16 +266,22 @@ def add(Discow, msg):
                 mm = yield from Discow.send_message(msg.channel, "What is the response you would like to edit? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
                     return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
-                option = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+                option = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                if not option:
+                    return
                 if option.content != 'cancel':
                     option.content = str(ord(option.content.upper())-64)
                     mmm = yield from Discow.send_message(msg.channel, "What would you like to replace it with?")
                     while True:
-                        newoption = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
+                        newoption = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                        if not newoption:
+                            return
                         def corrcheck(s):
                             return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
                         mmmmmmmm = yield from Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
-                        iscorrm = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=corrcheck)
+                        iscorrm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
+                        if not iscorrm:
+                            return
                         iscorr = iscorrm.content in ["correct", "c", "right"]
                         if newoption.content not in options or options[newoption.content] != iscorr:
                             break
@@ -274,7 +292,9 @@ def add(Discow, msg):
                     mmmm = yield from Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
-                    yesorno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=yesnocheck)
+                    yesorno = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                    if not yesorno:
+                        return
                     if yesorno.content.lower() in ['yes', 'y']:
                         oldoption = list(options.keys())[int(option.content)-1]
                         options = OrderedDict(list((newoption.content, iscorr) if k == oldoption else (k, v) for k, v in options.items()))
@@ -290,10 +310,20 @@ def add(Discow, msg):
                     yield from Discow.delete_messages([out, option, mm, mmm])
         elif out.content == 'done':
             if len(options) > 1:
+                yield from Discow.send_message("Should this question have shuffled responses?")
+                def yesnocheck(s):
+                    return s.content.lower() in ['yes', 'no', 'y', 'n']
+                yesorno = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                if not yesorno:
+                    return
+                if yesorno.content.lower() in ['yes', 'y']:
+                    shuffled = True
+                else:
+                    shuffled = False
                 em.set_field_at(1, name="Responses", value=optionresponses+'```')
-                yield from edit_embed(Discow, qmsg, em)
+                yield from edit_embed(Discow, qmsg, em, yesorno)
                 yield from Discow.delete_message(out)
-                quiz_data[msg.server.id][1][cat].append(Question(question, options))
+                quiz_data[msg.server.id][1][cat].append(Question(question, options, shuffled))
                 yield from save(Discow, msg, overrideperms=True)
                 return
             else:
@@ -305,8 +335,8 @@ def add(Discow, msg):
 @asyncio.coroutine
 def getquestioncategory(Discow, msg, qmsg, em, add=False):
     while True:
-        out = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel)
-        if out.content.lower() == 'cancel':
+        out = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+        if not out or out.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(out)
@@ -316,7 +346,9 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
                 m = yield from Discow.send_message(msg.channel, out.content.title()+" is not currently a category. Would you like to make a new category? Type` yes (y)` or `no (n)`.")
                 def check(s):
                     return s.content.lower() in ["y", "n", "yes", "no"]
-                yesno = yield from Discow.wait_for_message(author=msg.author, channel=msg.channel, check=check)
+                yesno = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                if not yesno:
+                    return
                 yield from Discow.delete_messages([yesno, m, out])
                 if yesno.content.lower() in ["y", "yes"]:
                     quiz_data[msg.server.id][1][out.content.title()] = []
