@@ -65,12 +65,12 @@ def take(Discow, msg):
         def check(s):
             return s.content.title() in quiz_data[msg.server.id][1] or s.content.lower() == 'cancel'
         newm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
-        if not newm or newm.content == 'cancel':
+        if not newm or newm.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)
             yield from edit_embed(Discow, qmsg, em)
             yield from Discow.delete_message(newm)
             return
-        cat = newm.content
+        cat = newm.content.title()
         questions = quiz_data[msg.server.id][1][cat]
         yield from Discow.delete_messages([qmsg, newm])
 
@@ -155,6 +155,12 @@ def add(Discow, msg):
     if not cat:
         return
     em.set_field_at(0, name="Question Category", value=cat, inline=False)
+    quest = yield from editquestion(Discow, msg, qmsg, em, cat, question)
+    quiz_data[msg.server.id][1][cat].append(quest)
+    yield from save(Discow, msg, overrideperms=True)
+
+@asyncio.coroutine
+def editquestion(Discow, msg, qmsg, em, cat, question):
     responsesvalue = "Type `add (a)`, `remove (r)`, and `edit (e)` to add, remove, and edit responses.\nType `back` to go back and edit your category, `cancel` to leave the Question Wizard, or `done` to finish and publish your question."
     optionresponses = "```css\n"
     em.add_field(name="Responses", value=responsesvalue)
@@ -322,9 +328,7 @@ def add(Discow, msg):
                 em.set_field_at(1, name="Responses", value=optionresponses+'```')
                 yield from edit_embed(Discow, qmsg, em)
                 yield from Discow.delete_messages([out, yesorno, mooooooooocow])
-                quiz_data[msg.server.id][1][cat].append(Question(question, options, shuffled))
-                yield from save(Discow, msg, overrideperms=True)
-                return
+                return Question(question, options, shuffled)
             else:
                 momomo = yield from Discow.send_message(msg.channel, "You must have at least 2 options!")
                 yield from asyncio.sleep(0.5)
