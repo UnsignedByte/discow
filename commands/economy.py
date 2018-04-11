@@ -38,24 +38,26 @@ def daily(Discow, msg):
     else:
         addedmoney = randint(0, 40000)
         user_data[msg.author.id]["streak"] = 1
-        user_data[msg.author.id] = {"daily": round(time.time()), "money": addedmoney}
+        user_data[msg.author.id] = {"daily": round(time.time()), "work":0, "money": addedmoney}
         yield from Discow.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `1`.")
 
 @asyncio.coroutine
 def work(Discow, msg):
     addedmoney = randint(0, 5000)
     if msg.author.id in user_data:
+        if not "work" in user_data[msg.author.id]:
+            user_data[msg.author.id]["work"] = 0
         if (round(time.time())-user_data[msg.author.id]["work"]) > 360:
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["work"]=round(time.time())
             yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
         else:
-            seconds = 360-(round(time.time())-user_data[msg.author.id]["daily"])
+            seconds = 360-(round(time.time())-user_data[msg.author.id]["work"])
             m, s = divmod(seconds, 60)
             yield from Discow.send_message(msg.channel, "You're too tired from working! Please wait another %02d minutes, and %02d seconds." % (m, s))
     else:
-        user_data[msg.author.id]["streak"] = 1
-        user_data[msg.author.id] = {"daily": round(time.time()), "money": addedmoney}
+        user_data[msg.author.id]["streak"] = 0
+        user_data[msg.author.id] = {"daily": 0, "work": round(time.time()), "money": addedmoney}
         yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
 
 @asyncio.coroutine

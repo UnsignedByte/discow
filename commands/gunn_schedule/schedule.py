@@ -96,7 +96,6 @@ def getSchedule(date):
 
 def formatSchedule(date):
     em = Embed(title="Schedule for %s (%s)" % (date.isoformat(), calendar.day_name[date.weekday()]), colour=0x12AA24)
-    em.set_footer(text="Taken from the Gunn Website.")
     try:
         sched = getSchedule(date)
     except:
