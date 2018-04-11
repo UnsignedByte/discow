@@ -37,8 +37,7 @@ def daily(Discow, msg):
             yield from Discow.send_message(msg.channel, "Not so fast! Please wait another %d hours, %02d minutes, and %02d seconds." % (h, m, s))
     else:
         addedmoney = randint(0, 40000)
-        user_data[msg.author.id]["streak"] = 1
-        user_data[msg.author.id] = {"daily": round(time.time()), "work":0, "money": addedmoney}
+        user_data[msg.author.id] = {"streak": 1, "daily": round(time.time()), "work":0, "money": addedmoney}
         yield from Discow.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `1`.")
 
 @asyncio.coroutine
@@ -47,17 +46,16 @@ def work(Discow, msg):
     if msg.author.id in user_data:
         if not "work" in user_data[msg.author.id]:
             user_data[msg.author.id]["work"] = 0
-        if (round(time.time())-user_data[msg.author.id]["work"]) > 360:
+        if (round(time.time())-user_data[msg.author.id]["work"]) > 3600:
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["work"]=round(time.time())
             yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
         else:
-            seconds = 360-(round(time.time())-user_data[msg.author.id]["work"])
+            seconds = 3600-(round(time.time())-user_data[msg.author.id]["work"])
             m, s = divmod(seconds, 60)
             yield from Discow.send_message(msg.channel, "You're too tired from working! Please wait another %02d minutes, and %02d seconds." % (m, s))
     else:
-        user_data[msg.author.id]["streak"] = 0
-        user_data[msg.author.id] = {"daily": 0, "work": round(time.time()), "money": addedmoney}
+        user_data[msg.author.id] = {"streak": 0, "daily": 0, "work": round(time.time()), "money": addedmoney}
         yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
 
 @asyncio.coroutine
@@ -84,7 +82,7 @@ def convert(Discow, msg):
         yield from Discow.send_message(msg.channel, "Not a valid currency!")
         return
     em = Embed(title="convert", description = ' '.join([msg.author.mention]+info))
-    yield from Discow.send_message(Discow.get_channel("433441820102361110"), embed=em)
+    yield from Discow.send_message(Discow.get_channel("433441820102361110"), content=usr.mention, embed=em)
     success = yield from Discow.wait_for_reaction(emoji="👌", user=usr, timeout=15)
     if not success:
         yield from Discow.send_message(msg.channel, "Currency could not be converted. Either "+usr.mention+" is offline or is lagging.\nTry again later.")
@@ -99,10 +97,10 @@ def recieveconvert(Discow, msg):
     info = msg.embeds[0]["description"].split(' ')
     findusr = re.compile(r'<@([0-9]+)>')
     usr = yield from Discow.get_user_info(findusr.search(info[0]).group(1))
-    if info[2] == 'mooney':
-        if msg.author.id == "393248490739859458":
-            rate = "bcbw"
-        else:
+    if msg.mentions[0] == Discow.user:
+        try:
+            rate = currency_rates[info[2]]
+        except KeyError:
             return
         if usr.id in user_data:
             user_data[usr.id]["money"]+=int(info[1])/currency_rates[rate]*100
