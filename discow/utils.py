@@ -1,7 +1,7 @@
 whitespace = [' ', '\t', '\n']
 discow_prefix = "cow "
 
-from discord import ServerRegion
+from discord import ServerRegion, Forbidden
 import datetime
 from pytz import timezone
 import pytz
@@ -73,8 +73,12 @@ def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
         usr = Discow.user
     txt = "Created by "+nickname(usr, msg.server)+" on "+convertTime(time, msg.server)+"."
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
-    m = yield from Discow.send_message(msg.channel, embed=embed)
-    return m
+    try:
+        m = yield from Discow.send_message(msg.channel, embed=embed)
+        return m
+    except Forbidden:
+        yield from Discow.send_message(msg.channel, "**Missing Permissions**\nDiscow is missing permissions to perform this task.")
+        return None
 
 @asyncio.coroutine
 def edit_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):

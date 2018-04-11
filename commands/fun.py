@@ -12,7 +12,7 @@ import string
 @asyncio.coroutine
 def invite(Discow, msg):
     inv = yield from Discow.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
-    outstr = "You have been invited to "+msg.server.name+"!\nJoin with this link:\n"+inv.url
+    outstr = "You have been invited to **"+msg.server.name+"**!\nJoin with this link:\n"+inv.url
     yield from Discow.send_message(msg.channel, outstr)
 
 @asyncio.coroutine

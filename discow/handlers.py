@@ -6,6 +6,7 @@ from discow.utils import *
 print("Begin Handler Initialization")
 
 message_handlers = {}
+bot_message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
 
@@ -52,6 +53,9 @@ def allowed_command(cmd, channel):
         return channel not in command_settings[cmd]
 def add_message_handler(handler, keyword):
     message_handlers[keyword] = handler
+
+def add_bot_message_handler(handler, keyword):
+    bot_message_handlers[keyword] = handler
 
 def add_settings_handler(handler, keyword):
     command_settings[keyword] = handler
@@ -129,6 +133,9 @@ def on_message(Discow, msg):
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)
+        except TypeError:
+            em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
+            yield from send_embed(Discow, msg, em)
         except KeyError:
             em = discord.Embed(title="Unknown Command", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)
@@ -138,6 +145,9 @@ def on_message(Discow, msg):
         except Exception as e:
             em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
             yield from send_embed(Discow, msg, em)
+    else:
+        if msg.author != Discow.user and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
+            yield from bot_message_handlers[msg.embeds[0]["title"]](Discow, msg)
 
 @asyncio.coroutine
 def on_reaction(Discow, reaction, user):
