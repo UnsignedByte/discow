@@ -60,7 +60,11 @@ def work(Discow, msg):
 
 @asyncio.coroutine
 def convert(Discow, msg):
-    info = parse_command(msg.content, 2)[1:]
+    try:
+        info = parse_command(msg.content, 2)[1:]
+    except IndexError:
+        yield from Discow.send_message(msg.channel, "Available currencies:\n"+', '.join(currency_rates.keys()))
+        return
     convertm = int(info[0])
     if msg.author.id not in user_data:
         yield from Discow.send_message(msg.channel, "You have no mooney to convert! Try doing `cow daily` or `cow work` for mooney.")
