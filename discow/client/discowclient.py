@@ -1,6 +1,8 @@
 import discord
 import asyncio
 import logging
+import datetime
+import time
 
 import discow.client.getkey as _getkey
 import discow.handlers
@@ -15,6 +17,7 @@ class DiscowClientClass(discord.Client):
     @asyncio.coroutine
     def on_ready(self):
         yield from self.change_presence(game=discord.Game(name='cow help', url='https://github.com/UnsignedByte/discow', type=2))
+        yield from discow.handlers.timed_msg(self)
     @asyncio.coroutine
     def on_message(self, message):
         yield from discow.handlers.on_message(self, message)

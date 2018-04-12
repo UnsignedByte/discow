@@ -163,3 +163,11 @@ def on_reaction(Discow, reaction, user):
 def on_unreaction(Discow, reaction, user):
     for handler in reaction_handlers:
         yield from handler(Discow, reaction, user)
+
+@asyncio.coroutine
+def timed_msg(Discow):
+    while True:
+        t = datetime.datetime.today()
+        future = datetime.datetime(t.year,t.month,t.day,0,0)+datetime.timedelta(days=1)
+        yield from asyncio.sleep((future-t).seconds)
+        economy.interest()
