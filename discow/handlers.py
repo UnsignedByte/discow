@@ -108,11 +108,10 @@ def on_message(Discow, msg):
                     yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newHatingRe.lower()+'"')
                     yield from Discow.add_reaction(msg, "👎")
                 if randint(1, 100) == 1:
-                    e = yield from discow.get_all_emojis()
-                    e = list(e)
+                    e = msg.server.emojis
                     try:
                         yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
-                    except discord.NotFound:
+                    except (discord.NotFound, ValueError):
                         pass
                 if randint(1, 150) == 1:
                     yield from fun.easteregg(Discow, msg)
@@ -149,7 +148,7 @@ def on_message(Discow, msg):
             em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
             yield from send_embed(Discow, msg, em)
     else:
-        if msg.author != Discow.user and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
+        if msg.author != Discow.user and msg.channel.id == "433441820102361110" and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
             try:
                 yield from bot_message_handlers[msg.embeds[0]["title"]](Discow, msg)
             except Exception:

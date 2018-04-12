@@ -10,11 +10,14 @@ import urllib.error as err
 from commands.utilities import save
 import re
 
-currency_rates = {"bcbw":100}
+currency_rates = {"bcbw":100, "cb":200}
 
 #used to add money
 def give(amount, userid):
-    user_data[userid]["money"]+=amount
+    if userid in user_data:
+        user_data[userid]["money"]+=amount
+    else:
+        user_data[userid]["money"]=amount
 
 @asyncio.coroutine
 def daily(Discow, msg):
@@ -61,35 +64,68 @@ def work(Discow, msg):
         yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
 
 @asyncio.coroutine
+def deposit(Discow, msg):
+    amount = round(float(strip_command(msg.content))*100)
+    if msg.author.id in user_data:
+        if amount <= user_data[msg.author.id]["money"]:
+            if "bank" in user_data[msg.author.id]:
+                user_data[msg.author.id]["bank"] += amount
+            else:
+                user_data[msg.author.id]["bank"] = amount
+            yield from Discow.send_message(msg.channel, "Deposited `"+'{0:.2f}'.format(amount/100)+"` Mooney to your bank account.\nYour new bank balance is `"+'{0:.2f}'.format(user_data[msg.author.id]["bank"]/100)+"` Mooney.")
+            yield from save(Discow, msg, overrideperms=True)
+        else:
+            yield from Discow.send_message(msg.channel, "You can't deposit that much money, you only have `"+'{0:.2f}'.format(user_data[msg.author.id]["money"]/100)+'`!')
+    else:
+        yield from Discow.send_message(msg.channel, "You have no Mooney to deposit! Try using `cow work` or `cow daily` first.")
+
+@asyncio.coroutine
+def withdraw(Discow, msg):
+    amount = round(float(strip_command(msg.content))*100)
+    if msg.author.id in user_data and "bank" in user_data[msg.author.id]:
+        if amount <= user_data[msg.author.id]["bank"]:
+            user_data[msg.author.id]["bank"] -= amount
+            yield from Discow.send_message(msg.channel, "Withdrew "+'{0:.2f}'.format(amount/100)+" from your bank account.\nYour new bank balance is "+'{0:.2f}'.format(user_data[msg.author.id]["bank"]/100)+".")
+            yield from save(Discow, msg, overrideperms=True)
+        else:
+            yield from Discow.send_message(msg.channel, "You can't withdraw that much money, you only have `"+'{0:.2f}'.format(user_data[msg.author.id]["bank"]/100)+'` in your bank!')
+    else:
+        yield from Discow.send_message(msg.channel, "You have no Mooney to withdraw! Try depositing mooney first")
+
+@asyncio.coroutine
 def convert(Discow, msg):
     try:
         info = parse_command(msg.content, 2)[1:]
     except IndexError:
         yield from Discow.send_message(msg.channel, "Available currencies:\n"+', '.join(currency_rates.keys()))
         return
-    convertm = int(info[0])
+    convertm = round(float(info[0])*100)
     if msg.author.id not in user_data:
         yield from Discow.send_message(msg.channel, "You have no mooney to convert! Try doing `cow daily` or `cow work` for mooney.")
         return
     elif user_data[msg.author.id]["money"] < convertm:
         yield from Discow.send_message(msg.channel, "You don't have that much mooney to convert! Try doing `cow daily` or `cow work` for mooney.\nYou currently have "+user_data[msg.author.id]["money"]+" Mooney.")
         return
-    else:
-        yield from Discow.send_message(msg.channel, "Converting "+str(convertm)+" Mooney to bcbw...")
-    if info[1] in ["bcbw", "bitcoin but worse", "bitcoin"]:
+
+    if info[1] in ["bcbw", "bitcoin but worse", "bitcoin", "bc"]:
         usr = yield from Discow.get_user_info("393248490739859458")
         info[1] = "bcbw"
         info[0] = str(int(info[0])*currency_rates["bcbw"])
+    elif info[1] in ["cb", "cowbit"]:
+        usr = yield from Discow.get_user_info("427890474708238339")
+        info[1] = "cb"
+        info[0] = str(int(info[0])*currency_rates["cb"])
     else:
         yield from Discow.send_message(msg.channel, "Not a valid currency!")
         return
+    yield from Discow.send_message(msg.channel, "Converting "+'{0:.2f}'.format(convertm/100)+" Mooney to "+info[1]+"...")
     em = Embed(title="convert", description = ' '.join([msg.author.mention]+info))
     yield from Discow.send_message(Discow.get_channel("433441820102361110"), content=usr.mention, embed=em)
     success = yield from Discow.wait_for_reaction(emoji="👌", user=usr, timeout=15)
     if not success:
         yield from Discow.send_message(msg.channel, "Currency could not be converted. Either "+usr.mention+" is offline or is lagging.\nTry again later.")
     else:
-        yield from Discow.send_message(msg.channel, "Convert successful! "+str(convertm)+" Mooney has been removed from your account.")
+        yield from Discow.send_message(msg.channel, "Convert successful! "+'{0:.2f}'.format(convertm/100)+" Mooney has been removed from your account.")
         user_data[msg.author.id]["money"]-=convertm*100
         yield from save(Discow, msg, overrideperms=True)
 
@@ -119,7 +155,6 @@ def money(Discow, msg):
         user = msg.mentions[0]
     em = Embed(title=user.display_name+"'s mooney",colour=0xffd747)
     if user.id in user_data:
-        user_data[user.id]["money"] = round(user_data[user.id]["money"])
         em.description = "%s currently has %s Mooney." % (user.mention, '{0:.2f}'.format(user_data[user.id]["money"]/100))
         if "stock" in user_data[user.id]:
             name = user.display_name+"'s owned stocks"
@@ -132,6 +167,19 @@ def money(Discow, msg):
     else:
         em.description = "%s is new and currently has no money." % user.mention
 
+    yield from send_embed(Discow, msg, em)
+
+@asyncio.coroutine
+def bank(Discow, msg):
+    if len(msg.mentions) > 0:
+        yield from Discow.send_message(msg.channel, "Bank accounts are private! You can't check other's account values!")
+        return
+
+    em = Embed(title=msg.author.display_name+"'s bank account",colour=0xffd747)
+    if msg.author.id in user_data and "bank" in user_data[msg.author.id]:
+        em.description = "%s currently has %s Mooney in the bank." % (msg.author.mention, '{0:.2f}'.format(user_data[msg.author.id]["bank"]/100))
+    else:
+        em.description = "%s has no bank account." % msg.author.mention
     yield from send_embed(Discow, msg, em)
 
 @asyncio.coroutine
@@ -152,13 +200,6 @@ def slots(Discow, msg):
                 user_data[msg.author.id] = {"daily": -86400, "money": moneychange}
     else:
         yield from Discow.send_message(msg.channel, "You have no mooney yet! Do `cow daily` to recieve your daily reward.")
-
-
-@asyncio.coroutine
-def deposit(Discow, msg):
-    amount = int(strip_command(msg.content))
-    em = Embed(title="Bovine Bank Transaction", description="Deposited ")
-    yield from Discow.send_message(msg.channel, )
 
 @asyncio.coroutine
 def stock(Discow, msg):
@@ -333,5 +374,10 @@ add_message_handler(slots, "slots")
 add_message_handler(slots, "gamble")
 add_message_handler(work, "work")
 add_message_handler(convert, "convert")
+add_message_handler(deposit, "deposit")
+add_message_handler(deposit, "dep")
+add_message_handler(withdraw, "with")
+add_message_handler(withdraw, "withdraw")
+add_message_handler(bank, "bank")
 
 add_bot_message_handler(recieveconvert, "convert")

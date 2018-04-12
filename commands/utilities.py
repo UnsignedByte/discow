@@ -141,9 +141,10 @@ def purge(Discow, msg):
 def save(Discow, msg, overrideperms = False):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_server or overrideperms or msg.author.id in ["418827664304898048", "418667403396775936"]:
-        em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
-        msg = yield from send_embed(Discow, msg, em)
-        yield from asyncio.sleep(1)
+        if not overrideperms:
+            em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
+            msg = yield from send_embed(Discow, msg, em)
+            yield from asyncio.sleep(1)
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
             pickle.dump(data[0], f)
@@ -151,10 +152,11 @@ def save(Discow, msg, overrideperms = False):
             pickle.dump(data[1], f)
         with open("discow/client/data/quiz_data.txt", "wb") as f:
             pickle.dump(data[2], f)
-        em.description = "Complete!"
-        msg = yield from edit_embed(Discow, msg, embed=em)
-        yield from asyncio.sleep(0.5)
-        yield from Discow.delete_message(msg)
+        if not overrideperms:
+            em.description = "Complete!"
+            msg = yield from edit_embed(Discow, msg, embed=em)
+            yield from asyncio.sleep(0.5)
+            yield from Discow.delete_message(msg)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         yield from send_embed(Discow, msg, em)
