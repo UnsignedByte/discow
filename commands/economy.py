@@ -30,6 +30,7 @@ def daily(Discow, msg):
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["daily"]=round(time.time())
             yield from Discow.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `"+str(user_data[msg.author.id]["streak"])+"`")
+            yield from save(Discow, msg, overrideperms=True)
         else:
             seconds = 86400-(round(time.time())-user_data[msg.author.id]["daily"])
             m, s = divmod(seconds, 60)
@@ -42,7 +43,7 @@ def daily(Discow, msg):
 
 @asyncio.coroutine
 def work(Discow, msg):
-    addedmoney = randint(0, 5000)
+    addedmoney = randint(1000, 7500)
     if msg.author.id in user_data:
         if not "work" in user_data[msg.author.id]:
             user_data[msg.author.id]["work"] = 0
@@ -50,6 +51,7 @@ def work(Discow, msg):
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["work"]=round(time.time())
             yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
+            yield from save(Discow, msg, overrideperms=True)
         else:
             seconds = 3600-(round(time.time())-user_data[msg.author.id]["work"])
             m, s = divmod(seconds, 60)
@@ -103,9 +105,9 @@ def recieveconvert(Discow, msg):
         except KeyError:
             return
         if usr.id in user_data:
-            user_data[usr.id]["money"]+=int(info[1])/currency_rates[rate]*100
+            user_data[usr.id]["money"]+=int(info[1])/rate*100
         else:
-            user_data[usr.id] = {"money":int(info[1])/currency_rates[rate]*100, "daily":0}
+            user_data[usr.id] = {"money":int(info[1])/rate*100, "daily":0}
         yield from save(Discow, msg, overrideperms=True)
         yield from Discow.add_reaction(msg, "👌")
 
@@ -150,6 +152,13 @@ def slots(Discow, msg):
                 user_data[msg.author.id] = {"daily": -86400, "money": moneychange}
     else:
         yield from Discow.send_message(msg.channel, "You have no mooney yet! Do `cow daily` to recieve your daily reward.")
+
+
+@asyncio.coroutine
+def deposit(Discow, msg):
+    amount = int(strip_command(msg.content))
+    em = Embed(title="Bovine Bank Transaction", description="Deposited ")
+    yield from Discow.send_message(msg.channel, )
 
 @asyncio.coroutine
 def stock(Discow, msg):

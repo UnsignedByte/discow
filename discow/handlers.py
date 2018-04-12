@@ -108,7 +108,8 @@ def on_message(Discow, msg):
                     yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newHatingRe.lower()+'"')
                     yield from Discow.add_reaction(msg, "👎")
                 if randint(1, 100) == 1:
-                    e = msg.server.emojis
+                    e = yield from discow.get_all_emojis()
+                    e = list(e)
                     try:
                         yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
                     except discord.NotFound:
@@ -149,7 +150,10 @@ def on_message(Discow, msg):
             yield from send_embed(Discow, msg, em)
     else:
         if msg.author != Discow.user and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
-            yield from bot_message_handlers[msg.embeds[0]["title"]](Discow, msg)
+            try:
+                yield from bot_message_handlers[msg.embeds[0]["title"]](Discow, msg)
+            except Exception:
+                pass
 
 @asyncio.coroutine
 def on_reaction(Discow, reaction, user):
