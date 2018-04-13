@@ -135,7 +135,7 @@ def on_message(Discow, msg):
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)
-        except TypeError:
+        except (TypeError, ValueError):
             em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)
         except KeyError:

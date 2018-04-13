@@ -10,7 +10,7 @@ import urllib.error as err
 from commands.utilities import save
 import re
 
-currency_rates = {"bcbw":100, "cb":200}
+currency_rates = {"bcbw":100, "cb":200, "mn":1}
 interest_rate = 0.01
 
 #used to add money
@@ -48,7 +48,7 @@ def daily(Discow, msg):
             yield from Discow.send_message(msg.channel, "Not so fast! Please wait another %d hours, %02d minutes, and %02d seconds." % (h, m, s))
     else:
         addedmoney = randint(0, 40000)
-        user_data[msg.author.id] = {"streak": 1, "daily": round(time.time()), "work":0, "money": addedmoney}
+        user_data[msg.author.id] = {"usr": msg.author, "streak": 1, "daily": round(time.time()), "work":0, "money": addedmoney}
         yield from Discow.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `1`.")
 
 @asyncio.coroutine
@@ -67,7 +67,7 @@ def work(Discow, msg):
             m, s = divmod(seconds, 60)
             yield from Discow.send_message(msg.channel, "You're too tired from working! Please wait another %02d minutes, and %02d seconds." % (m, s))
     else:
-        user_data[msg.author.id] = {"streak": 0, "daily": 0, "work": round(time.time()), "money": addedmoney}
+        user_data[msg.author.id] = {"usr": msg.author, "streak": 0, "daily": 0, "work": round(time.time()), "money": addedmoney}
         yield from Discow.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
 
 @asyncio.coroutine
@@ -127,7 +127,7 @@ def convert(Discow, msg):
         yield from Discow.send_message(msg.channel, "You have no mooney to convert! Try doing `cow daily` or `cow work` for mooney.")
         return
     elif user_data[msg.author.id]["money"] < convertm:
-        yield from Discow.send_message(msg.channel, "You don't have that much mooney to convert! Try doing `cow daily` or `cow work` for mooney.\nYou currently have "+user_data[msg.author.id]["money"]+" Mooney.")
+        yield from Discow.send_message(msg.channel, "You don't have that much mooney to convert! Try doing `cow daily` or `cow work` for mooney.\nYou currently have "+str(user_data[msg.author.id]["money"])+" Mooney.")
         return
 
     if info[1] in ["bcbw", "bitcoin but worse", "bitcoin", "bc"]:
@@ -149,9 +149,8 @@ def convert(Discow, msg):
         yield from Discow.send_message(msg.channel, "Currency could not be converted. Either "+usr.mention+" is offline or is lagging.\nTry again later.")
     else:
         yield from Discow.send_message(msg.channel, "Convert successful! "+'{0:.2f}'.format(convertm/100)+" Mooney has been removed from your account.")
-        user_data[msg.author.id]["money"]-=convertm*100
+        user_data[msg.author.id]["money"]-=convertm
         yield from save(Discow, msg, overrideperms=True)
-
 
 @asyncio.coroutine
 def recieveconvert(Discow, msg):
@@ -166,9 +165,19 @@ def recieveconvert(Discow, msg):
         if usr.id in user_data:
             user_data[usr.id]["money"]+=int(info[1])/rate*100
         else:
-            user_data[usr.id] = {"money":int(info[1])/rate*100, "daily":0}
+            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":int(info[1])/rate*100, "daily":0}
         yield from save(Discow, msg, overrideperms=True)
         yield from Discow.add_reaction(msg, "👌")
+
+@asyncio.coroutine
+def leaderboard(Discow, msg):
+    em = Embed(title="10 Richest Users", description="",colour=0xffd747)
+    for a in sorted(user_data, key=lambda x:user_data[x]["money"]+(user_data[x]["bank"] if "bank" in user_data[x] else 0), reverse=True)[:10]:
+        if "usr" not in user_data[a]:
+            user_data[a]["usr"] = yield from Discow.get_user_info(a)
+        em.description+="**"+user_data[a]["usr"].display_name+"**: "+'{0:.2f}'.format((user_data[a]["money"]+(user_data[a]["bank"] if "bank" in user_data[a] else 0))/100)+' total Mooney\n'
+    yield from send_embed(Discow, msg, em)
+    yield from save(Discow, msg, overrideperms=True)
 
 @asyncio.coroutine
 def money(Discow, msg):
@@ -220,7 +229,7 @@ def slots(Discow, msg):
             if msg.author.id in user_data:
                 user_data[msg.author.id]["money"]+=moneychange
             else:
-                user_data[msg.author.id] = {"daily": -86400, "money": moneychange}
+                user_data[msg.author.id] = {"usr": msg.author, "work": 0, "bank": 0, "daily": -86400, "money": moneychange}
     else:
         yield from Discow.send_message(msg.channel, "You have no mooney yet! Do `cow daily` to recieve your daily reward.")
 
@@ -401,6 +410,8 @@ add_message_handler(deposit, "deposit")
 add_message_handler(deposit, "dep")
 add_message_handler(withdraw, "with")
 add_message_handler(withdraw, "withdraw")
+add_message_handler(leaderboard, "leader")
+add_message_handler(leaderboard, "leaderboard")
 add_message_handler(bank, "bank")
 
 add_bot_message_handler(recieveconvert, "convert")

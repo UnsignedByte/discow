@@ -6,7 +6,7 @@ if not os.path.exists(_keyfile):
     open(_keyfile, 'w+').write(input("Bot Key:"))
 
 def readKey():
-    return open(_keyfile, 'r').read().replace('\n', '')
+    return open(_keyfile, 'r').read().strip()
 
 _keyvalue = None
 
