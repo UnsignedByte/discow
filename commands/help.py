@@ -39,24 +39,19 @@ for key, value in helpvals.items():
     else:
         stoadd = "\n\n# "+key+'\n\n'+'\n'.join(value)
         if len(desc)+len(stoadd) >= 1000:
-            helppages.append(desc+'```')
+            helpembed.add_field(name='\a', value=desc+'```')
             desc = "```markdown"+stoadd
         else:
             desc+=stoadd
-helppages.append(desc+'```')
 print("\t\tFinished Parsing")
-helpembed.add_field(name='\a', value='\a')
+helpembed.add_field(name='\a', value=desc+'```')
 
 @asyncio.coroutine
 def gethelp(Discow, msg):
-    try:
-        pnum = int(strip_command(msg.content))-1
-        helpembed.set_field_at(0, name='\a', value=helppages[pnum])
-        yield from send_embed(Discow, msg, helpembed)
-    except (IndexError, ValueError):
-        helpembed.set_field_at(0, name='\a', value=helppages[0])
-        yield from send_embed(Discow, msg, helpembed)
+    yield from Discow.send_message(msg.channel, "Sent you command information!")
+    yield from Discow.send_message(msg.author, embed=helpembed)
 
 
+add_message_handler(gethelp, "commands")
 add_message_handler(gethelp, "help")
 print("\tHelp Command Initialized")
