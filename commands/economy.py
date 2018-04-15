@@ -53,19 +53,23 @@ def interest():
 @asyncio.coroutine
 def economy(Discow, msg):
     updateworldsum()
-    yield from Discow.send_message(msg.channel, "Total world money:\n"+'{0:.2f}'.format(MOONEY_TOTAL+GOVERNMENT_MONEY)+"\nConversion rate:\n1 Mooney = "+str(UNIVERSAL_CONVERSION_RATE)+" UNIVERSAL CURRENCY\nMaximum possible conversion rate:\n1 Mooney = "+str(1/GOVERNMENT_MONEY * UNIVERSAL_TOTAL)+" UNIVERSAL CURRENCY")
+    em = Embed(title='Mooney Economy Information', description='**'+'{0:.2f}'.format(MOONEY_TOTAL+GOVERNMENT_MONEY)+"** Total Mooney", colour=0xffd747)
+    em.add_field(name="Current Conversion rate to Universal", value="**1** Mooney to **"+str(UNIVERSAL_CONVERSION_RATE)+"** Universal Currency")
+    em.add_field(name="Default Conversion rate to Universal", value="**1** Mooney to **"+str(DESIRED_EXCHANGE_RATE)+"** Universal Currency")
+    yield from send_embed(Discow, msg, embed=em)
 
 @asyncio.coroutine
 def daily(Discow, msg):
     if msg.author.id in user_data:
         if (round(time.time())-user_data[msg.author.id]["daily"]) > 86400:
-            if not "streak" in user_data[msg.author.id]:
-                strk = 0
-                user_data[msg.author.id]["streak"] = 1
+            if (round(time.time())-user_data[msg.author.id]["daily"]) < 172800:
+                if not "streak" in user_data[msg.author.id]:
+                    user_data[msg.author.id]["streak"] = 1
+                else:
+                    user_data[msg.author.id]["streak"] += 1
             else:
-                strk = 1
-                user_data[msg.author.id]["streak"] += 1
-            addedmoney = randint(10000*strk, 40000+10000*strk)
+                user_data[msg.author.id]["streak"] = 1
+            addedmoney = randint(10000*user_data[msg.author.id]["streak"], 40000+10000*user_data[msg.author.id]["streak"])
             user_data[msg.author.id]["money"]+=addedmoney
             user_data[msg.author.id]["daily"]=round(time.time())
             yield from Discow.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `"+str(user_data[msg.author.id]["streak"])+"`")
@@ -187,10 +191,14 @@ def recieveconvert(Discow, msg):
     findusr = re.compile(r'<@!?([0-9]+)>')
     usr = yield from Discow.get_user_info(findusr.search(info[0]).group(1))
     if msg.mentions[0] == Discow.user:
-        if usr.id in user_data:
-            user_data[usr.id]["money"]+=round(float(info[1])/UNIVERSAL_CONVERSION_RATE*100)
+        if len(info) == 3:
+            rate = currency_rates[info[2]]
         else:
-            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/UNIVERSAL_CONVERSION_RATE*100), "daily":0}
+            rate = UNIVERSAL_CONVERSION_RATE
+        if usr.id in user_data:
+            user_data[usr.id]["money"]+=round(float(info[1])/rate*100)
+        else:
+            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/rate*100), "daily":0}
         yield from save(Discow, msg, overrideperms=True)
         yield from Discow.add_reaction(msg, "👌")
 
