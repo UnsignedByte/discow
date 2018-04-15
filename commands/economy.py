@@ -13,12 +13,34 @@ import re
 currency_rates = {"bcbw":100, "cb":200, "mn":1}
 interest_rate = 0.01
 
+#Desired Exchange Rate (1 Mooney = ??? Universal)
+DESIRED_EXCHANGE_RATE = 1
+#Highest Exchange Rate (1 Mooney = ??? Universal)
+MAXIMUM_EXCHANGE_RATE = 100
+#A normal bot total for money
+NORMALIZED_MONEY_AMOUNT = 100000
+
+MOONEY_TOTAL = 0
+UNIVERSAL_TOTAL = NORMALIZED_MONEY_AMOUNT/DESIRED_EXCHANGE_RATE
+GOVERNMENT_MONEY = UNIVERSAL_TOTAL/MAXIMUM_EXCHANGE_RATE
+UNIVERSAL_CONVERSION_RATE = 0
+def updateworldsum():
+    global MOONEY_TOTAL
+    global UNIVERSAL_CONVERSION_RATE
+    total = 0
+    for a in user_data:
+        total+=user_data[a]["money"]+(user_data[a]["bank"] if "bank" in user_data[a] else 0)
+    MOONEY_TOTAL = total/100
+    UNIVERSAL_CONVERSION_RATE = 1/(GOVERNMENT_MONEY+MOONEY_TOTAL) * UNIVERSAL_TOTAL
+updateworldsum()
+
 #used to add money
 def give(amount, userid):
     if userid in user_data:
         user_data[userid]["money"]+=amount
     else:
         user_data[userid]["money"]=amount
+
 
 #interest
 @asyncio.coroutine
@@ -27,6 +49,11 @@ def interest():
         if "bank" in user_data[a]:
             user_data[a]["bank"]+=round(user_data[a]["bank"]*interest_rate)
     yield from save(None, None, overrideperms=True)
+
+@asyncio.coroutine
+def economy(Discow, msg):
+    updateworldsum()
+    yield from Discow.send_message(msg.channel, "Total world money:\n"+'{0:.2f}'.format(MOONEY_TOTAL+GOVERNMENT_MONEY)+"\nConversion rate:\n1 Mooney = "+str(UNIVERSAL_CONVERSION_RATE)+" UNIVERSAL CURRENCY\nMaximum possible conversion rate:\n1 Mooney = "+str(1/GOVERNMENT_MONEY * UNIVERSAL_TOTAL)+" UNIVERSAL CURRENCY")
 
 @asyncio.coroutine
 def daily(Discow, msg):
@@ -119,6 +146,7 @@ def withdraw(Discow, msg):
 
 @asyncio.coroutine
 def convert(Discow, msg):
+    updateworldsum()
     try:
         info = parse_command(msg.content, 2)[1:]
     except IndexError:
@@ -129,45 +157,40 @@ def convert(Discow, msg):
         yield from Discow.send_message(msg.channel, "You have no mooney to convert! Try doing `cow daily` or `cow work` for mooney.")
         return
     elif user_data[msg.author.id]["money"] < convertm:
-        yield from Discow.send_message(msg.channel, "You don't have that much mooney to convert! Try doing `cow daily` or `cow work` for mooney.\nYou currently have "+str(user_data[msg.author.id]["money"])+" Mooney.")
+        yield from Discow.send_message(msg.channel, "You don't have that much mooney to convert! Try doing `cow daily` or `cow work` for mooney.\nYou currently have "+'{0:.2f}'.format(user_data[msg.author.id]["money"]/100)+" Mooney.")
         return
 
+    info[0] = str(float(info[0])*UNIVERSAL_CONVERSION_RATE)
     if info[1] in ["bcbw", "bitcoin but worse", "bitcoin", "bc"]:
         usr = yield from Discow.get_user_info("393248490739859458")
         info[1] = "bcbw"
-        info[0] = str(round(float(info[0]))*currency_rates["bcbw"])
     elif info[1] in ["cb", "cowbit"]:
         usr = yield from Discow.get_user_info("427890474708238339")
         info[1] = "cb"
-        info[0] = str(round(float(info[0]))*currency_rates["cb"])
     else:
         yield from Discow.send_message(msg.channel, "Not a valid currency!")
         return
     yield from Discow.send_message(msg.channel, "Converting "+'{0:.2f}'.format(convertm/100)+" Mooney to "+info[1]+"...")
-    em = Embed(title="convert", description = ' '.join([msg.author.mention]+info), colour=0xffd747)
+    em = Embed(title="convert", description = msg.author.mention+' '+info[0], colour=0xffd747)
     yield from Discow.send_message(Discow.get_channel("433441820102361110"), content=usr.mention, embed=em)
     success = yield from Discow.wait_for_reaction(emoji="👌", user=usr, timeout=15)
     if not success:
         yield from Discow.send_message(msg.channel, "Currency could not be converted. Either "+usr.mention+" is offline or is lagging.\nTry again later.")
     else:
-        yield from Discow.send_message(msg.channel, "Convert successful! "+'{0:.2f}'.format(convertm/100)+" Mooney has been removed from your account.")
+        yield from Discow.send_message(msg.channel, "Convert successful! "+'{0:.2f}'.format(convertm/100)+" Mooney has been converted to "+info[1]+".")
         user_data[msg.author.id]["money"]-=convertm
         yield from save(Discow, msg, overrideperms=True)
 
 @asyncio.coroutine
 def recieveconvert(Discow, msg):
     info = msg.embeds[0]["description"].split(' ')
-    findusr = re.compile(r'<@(!?\d+)>')
+    findusr = re.compile(r'<@!?([0-9]+)>')
     usr = yield from Discow.get_user_info(findusr.search(info[0]).group(1))
     if msg.mentions[0] == Discow.user:
-        try:
-            rate = currency_rates[info[2]]
-        except KeyError:
-            return
         if usr.id in user_data:
-            user_data[usr.id]["money"]+=round(float(info[1])/rate*100)
+            user_data[usr.id]["money"]+=round(float(info[1])/UNIVERSAL_CONVERSION_RATE*100)
         else:
-            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/rate*100), "daily":0}
+            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/UNIVERSAL_CONVERSION_RATE*100), "daily":0}
         yield from save(Discow, msg, overrideperms=True)
         yield from Discow.add_reaction(msg, "👌")
 
@@ -189,6 +212,7 @@ def money(Discow, msg):
         user = msg.mentions[0]
     em = Embed(title=user.display_name+"'s mooney",colour=0xffd747)
     if user.id in user_data:
+        user_data[user.id]["money"] = int(user_data[user.id]["money"])
         em.description = "%s currently has %s Mooney." % (user.mention, '{0:.2f}'.format(user_data[user.id]["money"]/100))
         if "stock" in user_data[user.id]:
             name = user.display_name+"'s owned stocks"
@@ -416,5 +440,6 @@ add_message_handler(withdraw, "withdraw")
 add_message_handler(leaderboard, "leader")
 add_message_handler(leaderboard, "leaderboard")
 add_message_handler(bank, "bank")
+add_message_handler(economy, "economy")
 
 add_bot_message_handler(recieveconvert, "convert")

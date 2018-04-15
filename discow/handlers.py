@@ -175,4 +175,6 @@ def timed_msg(Discow):
         if 'interest' not in global_data or global_data['interest'] < date.today():
             global_data['interest'] = date.today()
             yield from economy.interest()
-        yield from asyncio.sleep(3600)
+        for a in range(10):
+            economy.updateworldsum()
+            yield from asyncio.sleep(600)
