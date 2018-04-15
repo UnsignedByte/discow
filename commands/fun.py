@@ -54,9 +54,9 @@ def easteregg(Discow, msg):
         format_response("{_mention} is right, obviously", _msg=msg),
         "Hello!",
         "Eggs are superior",
-        "I think it's almost Easter!",
-        "Google \"do a barrel roll\"",
-        "I'm sorry, what are we talking about again?"
+        "Bananas are the supreme fruit!",
+        "🍌",
+        "Hi!"
     ]
     yield from Discow.send_message(msg.channel, msgs[randint(0,len(msgs)-1)])
 

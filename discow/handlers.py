@@ -2,6 +2,7 @@ from random import randint
 import os
 import pickle
 from discow.utils import *
+from datetime import date
 
 print("Begin Handler Initialization")
 
@@ -24,6 +25,10 @@ quiz_data = {}
 if os.path.isfile("discow/client/data/quiz_data.txt"):
     with open("discow/client/data/quiz_data.txt", "rb") as f:
         quiz_data = pickle.load(f)
+global_data = {}
+if os.path.isfile("discow/client/data/global_data.txt"):
+    with open("discow/client/data/global_data.txt", "rb") as f:
+        global_data = pickle.load(f)
 
 print("\tLoaded files")
 
@@ -33,7 +38,7 @@ def flip_shutdown():
     global closing
     closing = not closing
 def get_data():
-    return [command_settings, user_data, quiz_data]
+    return [command_settings, user_data, quiz_data, global_data]
 def disable_command(cmd, channels):
     global command_settings
     if cmd in command_settings:
@@ -108,7 +113,7 @@ def on_message(Discow, msg):
                     yield from Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newHatingRe.lower()+'"')
                     yield from Discow.add_reaction(msg, "👎")
                 if randint(1, 100) == 1:
-                    e = msg.server.emojis
+                    e = list(Discow.get_all_emojis())
                     try:
                         yield from Discow.add_reaction(msg, e[randint(0, len(e)-1)])
                     except (discord.NotFound, ValueError):
@@ -167,7 +172,7 @@ def on_unreaction(Discow, reaction, user):
 @asyncio.coroutine
 def timed_msg(Discow):
     while True:
-        t = datetime.datetime.today()
-        future = datetime.datetime(t.year,t.month,t.day,0,0)+datetime.timedelta(days=1)
-        yield from asyncio.sleep((future-t).seconds)
-        economy.interest()
+        if 'interest' not in global_data or global_data['interest'] < date.today():
+            global_data['interest'] = date.today()
+            yield from economy.interest()
+        yield from asyncio.sleep(3600)

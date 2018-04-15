@@ -139,8 +139,9 @@ def purge(Discow, msg):
 
 @asyncio.coroutine
 def save(Discow, msg, overrideperms = False):
-    perms = msg.channel.permissions_for(msg.author)
-    if perms.manage_server or overrideperms or msg.author.id in ["418827664304898048", "418667403396775936"]:
+    if msg:
+        perms = msg.channel.permissions_for(msg.author)
+    if overrideperms or perms.manage_server or msg.author.id in ["418827664304898048", "418667403396775936"]:
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
             msg = yield from send_embed(Discow, msg, em)
@@ -152,6 +153,8 @@ def save(Discow, msg, overrideperms = False):
             pickle.dump(data[1], f)
         with open("discow/client/data/quiz_data.txt", "wb") as f:
             pickle.dump(data[2], f)
+        with open("discow/client/data/global_data.txt", "wb") as f:
+            pickle.dump(data[3], f)
         if not overrideperms:
             em.description = "Complete!"
             msg = yield from edit_embed(Discow, msg, embed=em)

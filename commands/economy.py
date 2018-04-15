@@ -21,10 +21,12 @@ def give(amount, userid):
         user_data[userid]["money"]=amount
 
 #interest
+@asyncio.coroutine
 def interest():
     for a in user_data:
-        if "bank" in a:
-            a["bank"]+=round(a["bank"]*interest_rate)
+        if "bank" in user_data[a]:
+            user_data[a]["bank"]+=round(user_data[a]["bank"]*interest_rate)
+    yield from save(None, None, overrideperms=True)
 
 @asyncio.coroutine
 def daily(Discow, msg):
@@ -133,16 +135,16 @@ def convert(Discow, msg):
     if info[1] in ["bcbw", "bitcoin but worse", "bitcoin", "bc"]:
         usr = yield from Discow.get_user_info("393248490739859458")
         info[1] = "bcbw"
-        info[0] = str(int(info[0])*currency_rates["bcbw"])
+        info[0] = str(round(float(info[0]))*currency_rates["bcbw"])
     elif info[1] in ["cb", "cowbit"]:
         usr = yield from Discow.get_user_info("427890474708238339")
         info[1] = "cb"
-        info[0] = str(int(info[0])*currency_rates["cb"])
+        info[0] = str(round(float(info[0]))*currency_rates["cb"])
     else:
         yield from Discow.send_message(msg.channel, "Not a valid currency!")
         return
     yield from Discow.send_message(msg.channel, "Converting "+'{0:.2f}'.format(convertm/100)+" Mooney to "+info[1]+"...")
-    em = Embed(title="convert", description = ' '.join([msg.author.mention]+info))
+    em = Embed(title="convert", description = ' '.join([msg.author.mention]+info), colour=0xffd747)
     yield from Discow.send_message(Discow.get_channel("433441820102361110"), content=usr.mention, embed=em)
     success = yield from Discow.wait_for_reaction(emoji="👌", user=usr, timeout=15)
     if not success:
@@ -155,7 +157,7 @@ def convert(Discow, msg):
 @asyncio.coroutine
 def recieveconvert(Discow, msg):
     info = msg.embeds[0]["description"].split(' ')
-    findusr = re.compile(r'<@([0-9]+)>')
+    findusr = re.compile(r'<@(!?\d+)>')
     usr = yield from Discow.get_user_info(findusr.search(info[0]).group(1))
     if msg.mentions[0] == Discow.user:
         try:
@@ -163,9 +165,9 @@ def recieveconvert(Discow, msg):
         except KeyError:
             return
         if usr.id in user_data:
-            user_data[usr.id]["money"]+=int(info[1])/rate*100
+            user_data[usr.id]["money"]+=round(float(info[1])/rate*100)
         else:
-            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":int(info[1])/rate*100, "daily":0}
+            user_data[usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/rate*100), "daily":0}
         yield from save(Discow, msg, overrideperms=True)
         yield from Discow.add_reaction(msg, "👌")
 
@@ -401,6 +403,7 @@ add_message_handler(stock, "stocks")
 add_message_handler(stock, "stock")
 add_message_handler(daily, "daily")
 add_message_handler(money, "money")
+add_message_handler(money, "mooney")
 add_message_handler(money, "wealth")
 add_message_handler(slots, "slots")
 add_message_handler(slots, "gamble")
