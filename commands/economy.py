@@ -5,8 +5,7 @@ from discord import Embed
 import time
 from random import randint
 from bs4 import BeautifulSoup
-import urllib.request as req
-import urllib.error as err
+import requests as req
 from commands.utilities import save
 import re
 
@@ -304,7 +303,9 @@ def stock(Discow, msg):
 
     link="https://www.nasdaq.com/symbol/?Load=true&Search="+cont
     try:
-        html_doc = req.urlopen(link)
+        response = req.get(link)
+        response.raise_for_status()
+        html_doc = response.text
         soup = BeautifulSoup(html_doc, 'html.parser')
         tabl = 0
         el = []
@@ -343,7 +344,9 @@ def stock(Discow, msg):
             stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
             return
         link = "https://www.nasdaq.com/symbol/"+stock[0]
-        html_doc = req.urlopen(link)
+        response = req.get(link)
+        response.raise_for_status()
+        html_doc = response.text
         soup = BeautifulSoup(html_doc, 'html.parser')
         arr = " \u2b06 "
         if 'arrow-red' in soup.find("div", {"id": "qwidget-arrow"}).findChildren()[0].get("class"):
@@ -425,7 +428,7 @@ def stock(Discow, msg):
             else:
                 em = Embed(title="No Stocks", description="You have no stocks to sell.", colour=0xd32323)
                 stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
-    except err.HTTPError:
+    except req.exceptions.HTTPError:
         em = Embed(title="Invalid Input", description="Your input was invalid", colour=0xd32323)
         stockmsg = yield from edit_embed(Discow, stockmsg, embed=em)
         return

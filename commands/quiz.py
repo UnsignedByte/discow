@@ -365,7 +365,6 @@ def getquestioncategory(Discow, msg, qmsg, em, add=False):
             yield from Discow.delete_message(out)
             return out.content.title()
 
-
 quiz_handlers["take"] = take
 quiz_handlers["add"] = add
 quiz_handlers["setmod"] = setmod
