@@ -3,8 +3,7 @@ import pickle
 from discow.utils import *
 from discow.handlers import add_message_handler, flip_shutdown, get_data
 from discord import Embed, NotFound
-import urllib.request as req
-import urllib.error as err
+import requests as req
 from bs4 import BeautifulSoup
 
 @asyncio.coroutine
@@ -53,9 +52,12 @@ def dictionary(Discow, msg):
     dictm = yield from send_embed(Discow, msg, em)
 
     try:
-        html_doc = req.urlopen(link+x)
+        response = req.get(link+x)
+        response.raise_for_status()
+        html_doc = response.text
         soup = BeautifulSoup(html_doc, 'html.parser')
-    except err.HTTPError as e:
+    except req.exceptions.HTTPError as err:
+        e = err.response.text
         try:
             em.description = "Could not find "+x+" in the dictionary. Choose one of the words below, or type 'cancel' to cancel."
             soup = BeautifulSoup(e.read(), 'html.parser')
@@ -83,7 +85,7 @@ def dictionary(Discow, msg):
                         x = v.replace(' ', "%20")
                         yield from Discow.delete_message(vm)
                         break
-            html_doc = req.urlopen(link+x)
+            html_doc = req.get(link+x).text
             soup = BeautifulSoup(html_doc, 'html.parser')
             em.title = "Definition for "+x+"."
             em.description = "Retrieving Definition..."

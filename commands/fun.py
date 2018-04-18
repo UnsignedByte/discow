@@ -3,8 +3,7 @@ from discow.utils import *
 from discow.handlers import add_message_handler
 from discord import Embed
 from random import randint, shuffle, choice
-import urllib.request as req
-import urllib.error
+import requests as req
 from bs4 import BeautifulSoup
 import re
 import string
@@ -25,7 +24,6 @@ def rps(Discow, msg):
         result = "It's a tie!"
     else:
         comb = mine+yours
-        print(comb)
         if comb in ["rockpaper", "scissorsrock", "paperscissors"]:
             result = format_response("{_mention} wins!", _msg=msg)
         else:
@@ -209,15 +207,15 @@ def thesaurus(Discow, msg):
             x = newa[xi]
             if xi % 2 == 0:
                 try:
-                    html_doc = req.urlopen(link+x)
+                    response = req.get(link+x)
+                    response.raise_for_status()
+                    html_doc = response.text
                     soup = BeautifulSoup(html_doc, 'html.parser')
                     chosenone = choice(list(map(lambda x:x.decode_contents(formatter="html"), soup.findAll("span", 'text'))))
                     if x[0].isupper():
                         chosenone = chosenone.title()
                     lets.append(chosenone)
-                except urllib.error.HTTPError:
-                    lets.append(x)
-                except IndexError:
+                except (req.exceptions.HTTPError, IndexError):
                     lets.append(x)
             else:
                 lets.append(x)
