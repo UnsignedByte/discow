@@ -51,7 +51,8 @@ def convertTime(time, serv):
     ServerRegion.brazil:"Brazil/Acre",
     ServerRegion.vip_us_east:"America/New_York",
     ServerRegion.vip_us_west:"America/Los_Angeles",
-    ServerRegion.vip_amsterdam:"Europe/Amsterdam"
+    ServerRegion.vip_amsterdam:"Europe/Amsterdam",
+    'russia':'Europe/Russia'
     }
     zone = timezone(timezones[serv.region])
     time_naive = time.replace(tzinfo=pytz.utc)

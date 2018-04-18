@@ -3,6 +3,7 @@ import os
 import pickle
 from discow.utils import *
 from datetime import date
+from shutil import copyfile
 
 print("Begin Handler Initialization")
 
@@ -13,20 +14,35 @@ unreaction_handlers = []
 
 print("\tBegin Loading Files")
 closing = False
+
+if not os.path.exists("discow/client/data/data_backup/"):
+    os.makedirs("discow/client/data/data_backup/")
+
 command_settings = {}
 if os.path.isfile("discow/client/data/settings.txt"):
+    copyfile("discow/client/data/settings.txt", "discow/client/data/data_backup/settings.txt")
     with open("discow/client/data/settings.txt", "rb") as f:
         command_settings = pickle.load(f)
+
 user_data = {}
 if os.path.isfile("discow/client/data/user_data.txt"):
+    copyfile("discow/client/data/user_data.txt", "discow/client/data/data_backup/user_data.txt")
     with open("discow/client/data/user_data.txt", "rb") as f:
         user_data = pickle.load(f)
+with open("discow/client/data/data_backup/user_data.txt", "wb") as f2:
+    pickle.dump(user_data, f2)
+
 quiz_data = {}
 if os.path.isfile("discow/client/data/quiz_data.txt"):
+    copyfile("discow/client/data/quiz_data.txt", "discow/client/data/data_backup/quiz_data.txt")
     with open("discow/client/data/quiz_data.txt", "rb") as f:
         quiz_data = pickle.load(f)
+with open("discow/client/data/data_backup/quiz_data.txt", "wb") as f2:
+    pickle.dump(quiz_data, f2)
+
 global_data = {}
 if os.path.isfile("discow/client/data/global_data.txt"):
+    copyfile("discow/client/data/global_data.txt", "discow/client/data/data_backup/global_data.txt")
     with open("discow/client/data/global_data.txt", "rb") as f:
         global_data = pickle.load(f)
 
@@ -95,7 +111,7 @@ whitespace = [' ', '\t', '\n']
 def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
-            hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing))(\*|_|~)*\b', re.I)
+            hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing|red))(\*|_|~)*\b', re.I)
             newHatingRe = hatingRegex.sub(r'**dislik\g<ending>**', msg.content)
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
