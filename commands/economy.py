@@ -16,11 +16,9 @@ interest_rate = 0.01
 DESIRED_EXCHANGE_RATE = 1
 #Highest Exchange Rate (1 Mooney = ??? Universal)
 MAXIMUM_EXCHANGE_RATE = 100
-#A normal bot total for money
-NORMALIZED_MONEY_AMOUNT = 100000
 
 MOONEY_TOTAL = 0
-UNIVERSAL_TOTAL = NORMALIZED_MONEY_AMOUNT/DESIRED_EXCHANGE_RATE
+UNIVERSAL_TOTAL = 100000
 GOVERNMENT_MONEY = UNIVERSAL_TOTAL/MAXIMUM_EXCHANGE_RATE
 UNIVERSAL_CONVERSION_RATE = 0
 def updateworldsum():
@@ -40,6 +38,25 @@ def give(amount, userid):
     else:
         user_data[userid]["money"]=amount
 
+@asyncio.coroutine
+def addMooney(Discow, msg):
+    perms = msg.channel.permissions_for(msg.author)
+    if perms.manage_server or msg.author.id in ["418827664304898048", "418667403396775936"]:
+        try:
+            amt = int(float(strip_command(msg.content).split(' ', 1)[0])*100)
+            give(amt, msg.mentions[0].id)
+            yield from save(Discow, msg, overrideperms=True)
+            em = Embed(title="Money Added", description='{0:.2f}'.format(amt/100)+" mooney given to "+msg.mentions[0].mention, colour=0xffd747)
+            yield from send_embed(Discow, msg, em)
+        except (ValueError, TypeError):
+            em = Embed(title="Invalid Amount", description="Mooney to give must be a number.", colour=0xd32323)
+            yield from send_embed(Discow, msg, em)
+        except IndexError:
+            em = Embed(title="Missing User", description="You must specify the user to give mooney to.", colour=0xd32323)
+            yield from send_embed(Discow, msg, em)
+    else:
+        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        yield from send_embed(Discow, msg, em)
 
 #interest
 @asyncio.coroutine
@@ -452,5 +469,6 @@ add_message_handler(leaderboard, "leader")
 add_message_handler(leaderboard, "leaderboard")
 add_message_handler(bank, "bank")
 add_message_handler(economy, "economy")
+add_message_handler(addMooney, "add")
 
 add_bot_message_handler(recieveconvert, "convert")
