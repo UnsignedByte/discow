@@ -34,6 +34,7 @@ Remember to delete `{}` and `()`.
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
 |define|`cow define {word}`|Retrieves the definition of a word from Merriam-Webster.|`define`, `dictionary`|
 |quiz|`cow quiz {subcommand}`|Create quizzes and take them for money! For more information take a look at Quiz Subcommands.|`quiz`|
+|trivia|`cow trivia (difficulty) (category)`|Answer trivia questions for money!|`trivia`|
 |schedule|`cow schedule {day}`|Tells you the Gunn Schedule for a given day.|`schedule`|
 
 #### Settings Subcommands

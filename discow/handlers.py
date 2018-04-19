@@ -137,14 +137,15 @@ def on_message(Discow, msg):
                 if randint(1, 150) == 1:
                     yield from fun.easteregg(Discow, msg)
             return
-        if msg.channel.is_private:
-            yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
         if closing:
             em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is saving data.", colour=0xd32323)
             yield from send_embed(Discow, msg, em)
             return
         try:
             cmd = parse_command(msg.content)[0].lower()
+            if cmd not in ['help', 'commands'] and msg.channel.is_private:
+                yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
+                return
             if cmd in command_settings and msg.channel in command_settings[cmd]:
                 em = discord.Embed(title="Command Disabled", colour=0xd32323)
                 em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."

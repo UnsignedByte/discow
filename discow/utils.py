@@ -118,7 +118,7 @@ class Question:
             self.options = newoptions
     def getstr(self, selected=None, showCorrect=False):
         if showCorrect:
-            outstr = "```css\n{Question: '"+self.question+"'}"
+            outstr = "```css\n{Question: '"+self.question.replace('\'', '’')+"'}"
         else:
             outstr = "```markdown\n# "+self.question
         for a in range(len(self.options)):

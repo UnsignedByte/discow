@@ -228,6 +228,7 @@ def thesaurus(Discow, msg):
 
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")
+add_message_handler(reaction, "react")
 add_message_handler(easteregg, "easteregg")
 add_message_handler(invite, "invite")
 add_message_handler(thesaurus, "thesaurus")
