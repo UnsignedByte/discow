@@ -33,10 +33,24 @@ updateworldsum()
 
 #used to add money
 def give(amount, userid):
-    if userid in user_data:
-        user_data[userid]["money"]+=amount
+    increment(userid, "money", amount)
+
+#increments element
+def increment(userid, element, amount):
+    if userid in user_data and element in user_data[userid]:
+        user_data[userid][element]+=amount
     else:
-        user_data[userid]["money"]=amount
+        if userid in user_data:
+            user_data[userid][element]=amount
+        else:
+            user_data[userid] = {element:amount}
+
+#increments element
+def set_element(userid, element, amount):
+    if userid in user_data:
+        user_data[userid][element]=amount
+    else:
+        user_data[userid] = {element:amount}
 
 @asyncio.coroutine
 def addMooney(Discow, msg):

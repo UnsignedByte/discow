@@ -19,13 +19,18 @@ def quiz(Discow, msg):
         for k in quiz_data[msg.server.id][1].keys():
             if not quiz_data[msg.server.id][1][k]:
                 del quiz_data[msg.server.id][1][k]
-    newmsg = strip_command(msg.content).split(" ")
+    try:
+        newmsg = strip_command(msg.content).split(" ")
+    except IndexError:
+        em = Embed(title="Missing subcommand", description=format_response("You must specify a subcommand!\nValid options include `cow quiz add` and `cow quiz take`.", _msg=msg), colour=0xff7830)
+        yield from send_embed(Discow, msg, em)
+        return
     try:
         if not msg.author.id in quiz_users:
             quiz_users.append(msg.author.id)
             try:
                 yield from quiz_handlers[newmsg[0]](Discow, msg)
-            except Exception:
+            except KeyError:
                 raise
             finally:
                 quiz_users.remove(msg.author.id)

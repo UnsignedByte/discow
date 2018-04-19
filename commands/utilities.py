@@ -124,7 +124,7 @@ def dictionary(Discow, msg):
 @asyncio.coroutine
 def purge(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
-    if perms.manage_messages:
+    if perms.manage_messages or msg.author.id in ["418827664304898048", "418667403396775936"]:
         num = max(1,min(99,int(parse_command(msg.content, 1)[1])))+1
         msgs = yield from Discow.logs_from(msg.channel, limit=num)
         msgs = list(msgs)
@@ -162,15 +162,18 @@ def save(Discow, msg, overrideperms = False):
             msg = yield from edit_embed(Discow, msg, embed=em)
             yield from asyncio.sleep(0.5)
             yield from Discow.delete_message(msg)
+        return True
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         yield from send_embed(Discow, msg, em)
+        return False
 
 @asyncio.coroutine
 def shutdown(Discow, msg):
     flip_shutdown()
-    yield from save(Discow, msg)
-    yield from Discow.logout()
+    istrue = yield from save(Discow, msg)
+    if istrue:
+        yield from Discow.logout()
 
 
 add_message_handler(info, "hi")

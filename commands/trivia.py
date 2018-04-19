@@ -1,13 +1,19 @@
 import requests
 from base64 import b64decode
 from enum import Enum
-from discow.handlers import add_message_handler
+from discow.handlers import add_message_handler, user_data
+from discow.utils import *
 import asyncio
+from discord import Embed
+from commands.economy import increment, give, set_element
+from commands.utilities import save
+from random import randint
 
 def getCategories():
     categories = {}
     for a in requests.get('https://opentdb.com/api_category.php').json()['trivia_categories']:
-        categories[a['name'].lower()] = a['id']
+        categories[(a['name'].split(':', 1)[1].strip().lower() if ':' in a['name'] else a['name'].lower())] = a['id']
+    return categories
 
 class Data(Enum):
     difficulties = {
@@ -50,16 +56,42 @@ triviaAPI = Trivia()
 
 @asyncio.coroutine
 def trivia(Discow, msg):
-    cont = strip_command(msg.content).rsplit(' ', 1)
+    cont = strip_command(msg.content)
+    cont = (cont.rsplit(' ', 1) if ' ' in cont else [cont])
     diff = None
     cat = None
-    if cont[0].lower() not in Data.difficulties:
-        cont = ' '.join(cont)
+    if cont[0].lower() not in Data.difficulties.value:
+        cont = [' '.join(cont)]
     else:
-        diff = Data.difficulties[cont.pop(0).lower()]
-    if cont[0].lower() in categories:
-        cat = categories(cont[0].lower())
-    question = triviaAPI.getquestion()
-    yield from Discow.send_message(msg.channel, question)
+        diff = Data.difficulties.value[cont.pop(0).lower()]
+    if len(cont) > 0:
+        if cont[0].lower() in Data.categories.value:
+            cat = Data.categories.value[cont[0].lower()]
+        else:
+            em = Embed(title="Unknown Category", description="Could not find the specified category. Valid categories include:\n\n"+'\n'.join(Data.categories.value.keys()), colour=0xff7830)
+            yield from Discow.send_message(msg.channel, embed=em)
+            return
+    question = triviaAPI.getquestion(category=cat, difficulty=diff)[0]
+    options = {question["correct_answer"]:True}
+    options.update({(k, False) for k in question["incorrect_answers"]})
+    questionOBJ = Question(question['question'], options, True)
+    questionOBJ.optshuf()
+    em = Embed(title="Trivia Question", description = questionOBJ.getstr(), colour=0xff7830)
+    msgEmbed = yield from Discow.send_message(msg.channel, embed=em)
+    def check(s):
+        return len(s.content) == 1 and 0<=ord(s.content.lower())-ord('a')<len(options)
+    response = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+    selection = ord(response.content.lower())-ord('a')
+    em.description = questionOBJ.getstr(selected=selection, showCorrect=True)
+    if list(questionOBJ.options.values())[selection] == True:
+        increment(msg.author.id, "answerstreak", 1)
+        reward = randint(0, 250*user_data[msg.author.id]['answerstreak']*(['easy', 'medium', 'hard'].index(question['difficulty'])+1))
+        give(reward, msg.author.id)
+        em.description+='\n\nYou answered correctly! Your answer streak is now `'+str(user_data[msg.author.id]['answerstreak'])+'` and you have recieved '+'{0:.2f}'.format(reward/100)+' Mooney!\nYou now have '+'{0:.2f}'.format(user_data[msg.author.id]["money"]/100)+' Mooney.'
+    else:
+        set_element(msg.author.id, "answerstreak", 0)
+        em.description+='\n\nYour answer was incorrect! Your answer streak is now `0`.'
+    yield from edit_embed(Discow, msgEmbed, em)
+    yield from save(Discow, msg, overrideperms=True)
 
 add_message_handler(trivia, 'trivia')
