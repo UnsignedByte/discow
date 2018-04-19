@@ -1,7 +1,7 @@
 import requests
 from base64 import b64decode
 from enum import Enum
-from discow.handlers import add_message_handler, user_data
+from discow.handlers import add_private_message_handler, user_data
 from discow.utils import *
 import asyncio
 from discord import Embed
@@ -9,6 +9,8 @@ from commands.economy import increment, give, set_element
 from commands.utilities import save
 from random import randint
 
+print("\tInitializing Trivia Command")
+print("\t\Creating Trivia Classes")
 def getCategories():
     categories = {}
     for a in requests.get('https://opentdb.com/api_category.php').json()['trivia_categories']:
@@ -53,6 +55,7 @@ class Trivia:
             return self.getquestion(category=category, difficulty=difficulty, type=type, amount=amount)
 
 triviaAPI = Trivia()
+print("\t\Finished Trivia Classes")
 
 @asyncio.coroutine
 def trivia(Discow, msg):
@@ -94,4 +97,5 @@ def trivia(Discow, msg):
     yield from edit_embed(Discow, msgEmbed, em)
     yield from save(Discow, msg, overrideperms=True)
 
-add_message_handler(trivia, 'trivia')
+add_private_message_handler(trivia, 'trivia')
+print("\tTrivia Command Initialized")

@@ -1,6 +1,6 @@
 import asyncio
 from discord import Embed
-from discow.handlers import add_message_handler
+from discow.handlers import add_message_handler, add_private_message_handler
 from discow.utils import *
 from collections import OrderedDict
 
@@ -54,4 +54,6 @@ def gethelp(Discow, msg):
 
 add_message_handler(gethelp, "commands")
 add_message_handler(gethelp, "help")
+add_private_message_handler(gethelp, "commands")
+add_private_message_handler(gethelp, "help")
 print("\tHelp Command Initialized")

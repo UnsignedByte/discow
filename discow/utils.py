@@ -36,25 +36,28 @@ def parse_command(msg, num=-1):
 def strip_command(msg):
     return parse_command(msg, 1)[1]
 
-def convertTime(time, serv):
-    timezones = {
-    ServerRegion.us_west:"America/Los_Angeles",
-    ServerRegion.us_east:"America/New_York",
-    ServerRegion.us_central:"US/Central",
-    ServerRegion.eu_west:"Europe/Amsterdam",
-    ServerRegion.eu_central:"Europe/Berlin",
-    ServerRegion.singapore:"Singapore",
-    ServerRegion.london:"Europe/London",
-    ServerRegion.sydney:"Australia/Sydney",
-    ServerRegion.amsterdam:"Europe/Amsterdam",
-    ServerRegion.frankfurt:"Europe/Berlin",
-    ServerRegion.brazil:"Brazil/Acre",
-    ServerRegion.vip_us_east:"America/New_York",
-    ServerRegion.vip_us_west:"America/Los_Angeles",
-    ServerRegion.vip_amsterdam:"Europe/Amsterdam",
-    'russia':'Europe/Russia'
-    }
-    zone = timezone(timezones[serv.region])
+def convertTime(time, msg):
+    if msg.channel.is_private:
+        zone = timezone("Europe/London")
+    else:
+        timezones = {
+        ServerRegion.us_west:"America/Los_Angeles",
+        ServerRegion.us_east:"America/New_York",
+        ServerRegion.us_central:"US/Central",
+        ServerRegion.eu_west:"Europe/Amsterdam",
+        ServerRegion.eu_central:"Europe/Berlin",
+        ServerRegion.singapore:"Singapore",
+        ServerRegion.london:"Europe/London",
+        ServerRegion.sydney:"Australia/Sydney",
+        ServerRegion.amsterdam:"Europe/Amsterdam",
+        ServerRegion.frankfurt:"Europe/Berlin",
+        ServerRegion.brazil:"Brazil/Acre",
+        ServerRegion.vip_us_east:"America/New_York",
+        ServerRegion.vip_us_west:"America/Los_Angeles",
+        ServerRegion.vip_amsterdam:"Europe/Amsterdam",
+        'russia':'Europe/Russia'
+        }
+        zone = timezone(timezones[serv.region])
     time_naive = time.replace(tzinfo=pytz.utc)
     loctime = time_naive.astimezone(zone)
     fmt = '%Y-%m-%d at %H:%M:%S %Z'
@@ -72,7 +75,7 @@ def nickname(usr, srv):
 def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
     if not usr:
         usr = Discow.user
-    txt = "Created by "+nickname(usr, msg.server)+" on "+convertTime(time, msg.server)+"."
+    txt = "Created by "+nickname(usr, msg.server)+" on "+convertTime(time, msg)+"."
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     try:
         m = yield from Discow.send_message(msg.channel, embed=embed)
@@ -85,7 +88,7 @@ def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
 def edit_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
     if not usr:
         usr = Discow.user
-    txt = "Edited by "+nickname(usr, msg.server)+" on "+convertTime(time, msg.server)+"."
+    txt = "Edited by "+nickname(usr, msg.server)+" on "+convertTime(time, msg)+"."
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     m = yield from Discow.edit_message(msg, embed=embed)
     return m

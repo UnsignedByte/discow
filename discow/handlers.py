@@ -8,6 +8,7 @@ from shutil import copyfile
 print("Begin Handler Initialization")
 
 message_handlers = {}
+private_message_handlers = {}
 bot_message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
@@ -74,6 +75,9 @@ def allowed_command(cmd, channel):
         return channel not in command_settings[cmd]
 def add_message_handler(handler, keyword):
     message_handlers[keyword] = handler
+
+def add_private_message_handler(handler, keyword):
+    private_message_handlers[keyword] = handler
 
 def add_bot_message_handler(handler, keyword):
     bot_message_handlers[keyword] = handler
@@ -143,15 +147,23 @@ def on_message(Discow, msg):
             return
         try:
             cmd = parse_command(msg.content)[0].lower()
-            if cmd not in ['help', 'commands'] and msg.channel.is_private:
-                yield from Discow.send_message(msg.channel, "Sorry, commands don't work in private messages!")
+            if msg.channel.is_private:
+                try:
+                    yield from private_message_handlers[cmd](Discow, msg)
+                except KeyError:
+                    if cmd in message_handlers:
+                        yield from Discow.send_message(msg.channel, "The **"+cmd+"** command cannot be used in private channels!")
                 return
             if cmd in command_settings and msg.channel in command_settings[cmd]:
                 em = discord.Embed(title="Command Disabled", colour=0xd32323)
                 em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."
                 yield from send_embed(Discow, msg, em)
             else:
-                yield from message_handlers[cmd](Discow, msg)
+                try:
+                    yield from message_handlers[cmd](Discow, msg)
+                except KeyError:
+                    if cmd in private_message_handlers:
+                        yield from Discow.send_message(msg.channel, "The **"+cmd+"** command can only be used in private channels!")
                 if cmd != 'save' and randint(1,50)==1:
                     yield from message_handlers["save"](Discow, msg, overrideperms=True)
         except IndexError:
@@ -159,9 +171,6 @@ def on_message(Discow, msg):
             yield from send_embed(Discow, msg, em)
         except (TypeError, ValueError):
             em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
-            yield from send_embed(Discow, msg, em)
-        except KeyError:
-            em = discord.Embed(title="Unknown Command", description="Unknown command **%s**." % parse_command(msg.content)[0], colour=0xd32323)
             yield from send_embed(Discow, msg, em)
         except discord.Forbidden:
             em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
