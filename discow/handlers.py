@@ -4,6 +4,7 @@ import pickle
 from discow.utils import *
 from datetime import date
 from shutil import copyfile
+from commands.map.maputils import World
 
 print("Begin Handler Initialization")
 
@@ -15,6 +16,16 @@ unreaction_handlers = []
 
 print("\tBegin Loading Files")
 closing = False
+
+print("\t\tLoading World Map")
+if os.path.isfile('discow/client/data/world.txt'):
+    with open('discow/client/data/world.txt', 'rb') as f:
+        world = pickle.load(f)
+else:
+    world = World()
+    with open('discow/client/data/world.txt', 'wb') as f:
+        pickle.dump(world, f)
+print("\t\tWorld Map Loaded")
 
 if not os.path.exists("discow/client/data/data_backup/"):
     os.makedirs("discow/client/data/data_backup/")
@@ -102,6 +113,7 @@ print("Handler initialized")
 print("Begin Command Initialization")
 # Add modules here
 from commands import *
+import commands.map.maputils
 import commands.gunn_schedule.schedule
 import discord
 print("Command Initialization Finished")

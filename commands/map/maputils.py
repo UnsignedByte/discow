@@ -1,3 +1,9 @@
+# @Author: Edmund Lam <edl>
+# @Date:   07:17:41, 20-Apr-2018
+# @Filename: utils.py
+# @Last modified by:   edl
+# @Last modified time: 14:46:53, 21-Apr-2018
+
 import math
 import string
 import random
@@ -91,7 +97,7 @@ class Village:
 
 class Chunk:
     def __init__(self, hasvillage=random.randint(0,1), chunksize = 64):
-        self.map = list(['·']*chunksize for x in range(chunksize))
+        self.map = list([' ']*chunksize for x in range(chunksize))
         self.weightmap = list([0]*chunksize for x in range(chunksize))
         self.chunksize = chunksize
         self.hasvillage = hasvillage
@@ -99,7 +105,7 @@ class Chunk:
         self.grass = random.randint(400, 800)
         for i in range(self.grass):
             blade = self.plain.find(*self.plain.addPoint())
-            self.map[blade[1]][blade[0]] = "∗"
+            self.map[blade[1]][blade[0]] = "·"
 
         self.forest = PoissonDisc(chunksize, chunksize, 0.8, cSize=1)
         self.trees = random.randint(400, 800)
@@ -168,18 +174,24 @@ class Chunk:
         return '\n'.join(list(' '.join(v) for v in outgrid))
 
 class Player:
-    def __init__(self, pos=(0,0), health=25, hunger=0, thirst=0):
+    def __init__(self, pos=(0,0), health=25, hunger=1, thirst=1, speed=1):
         self.pos = pos
-        self.attribs = {"hunger":hunger, "health":health, "thirst":thirst}
+        self.attribs = {"hunger":hunger, "health":health, "thirst":thirst, "speed":speed}
     def add(self, elem, amount):
         if elem in self.attribs:
             self.attribs[elem]+=amount
+        else:
+            self.attribs[elem]=amount
+    def move(self, dir, dst):
+        self.pos = tuple(map(lambda x, y: x + y, self.pos, tuple(dst*x for x in [(0,-1), (1,0), (0,1), (-1,0)][dir])))
 
 class World:
     def __init__(self, size=64):
+        self.makeMap(size)
+        self.players = {}
+    def makeMap(size):
         self.chunksize = 64
         self.chunks = list([Chunk(chunksize=self.chunksize)]*size for x in range(size))
-        self.players = {}
     def addPlayer(self, pos=(96,96), id=None):
         if not id:
             id = len(self.players)
@@ -188,9 +200,10 @@ class World:
         pos = self.players[id].pos
         cx, x = divmod(pos[0], self.chunksize)
         cy, y = divmod(pos[1], self.chunksize)
-        print(cx, cy, x, y)
         def getchunk(cx, cy, x, y):
             return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks))].getCircle(radius, (x, y))
         def blockRow(cx, cy, y):
             return addblock(addblock(getchunk(cx-1, cy, x+self.chunksize, y), getchunk(cx, cy, x, y)), getchunk(cx+1, cy, x-self.chunksize, y))
         return '\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
+    def move(self, id, dir, dst):
+        self.players[id].move(dir, dst)

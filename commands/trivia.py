@@ -10,7 +10,7 @@ from commands.utilities import save
 from random import randint
 
 print("\tInitializing Trivia Command")
-print("\t\Creating Trivia Classes")
+print("\t\tCreating Trivia Classes")
 def getCategories():
     categories = {}
     for a in requests.get('https://opentdb.com/api_category.php').json()['trivia_categories']:
@@ -55,7 +55,7 @@ class Trivia:
             return self.getquestion(category=category, difficulty=difficulty, type=type, amount=amount)
 
 triviaAPI = Trivia()
-print("\t\Finished Trivia Classes")
+print("\t\tFinished Trivia Classes")
 
 @asyncio.coroutine
 def trivia(Discow, msg):
