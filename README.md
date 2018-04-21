@@ -33,8 +33,6 @@ Remember to delete `{}` and `()`.
 |purge|`cow purge {n}`|Clears the last `n` messages.|`clear`, `purge`|
 |quote|`cow quote {id} (channel)`|Quotes a message given an id and an optional channel.|`quote`|
 |define|`cow define {word}`|Retrieves the definition of a word from Merriam-Webster.|`define`, `dictionary`|
-|quiz|`cow quiz {subcommand}`|Create quizzes and take them for money! For more information take a look at Quiz Subcommands.|`quiz`|
-|trivia|`cow trivia (difficulty) (category)`|Answer trivia questions for money!|`trivia`|
 |schedule|`cow schedule {day}`|Tells you the Gunn Schedule for a given day.|`schedule`|
 
 #### Settings Subcommands
@@ -44,14 +42,6 @@ Remember to delete `{}` and `()`.
 |disable|`cow settings disable {cmd} {channel(s)}`|Disables a command in the specified channels.|`disable`|
 |enable|`cow settings enable {cmd} {channel(s)}`|Enables a command in the specified channels.|`enable`|
 
-#### Quiz Subcommands
-
-| **Name** | **Usage** | **Description** | **Aliases** |
-|:-:|:-:|:-:|:-:|
-|setmod|`cow settings setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
-|add|`cow settings add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
-|take|`cow settings take (category)`|Take a quiz! Follow the Quiz Wizard's instructions.|`take`|
-
 ### Fun
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
@@ -60,6 +50,16 @@ Remember to delete `{}` and `()`.
 |rps|`cow rps {item}`|Plays rock paper scissors!|`rps`|
 |reaction|`cow reaction {num}`|Adds random reactions to the last message.|`reaction`|
 |easteregg|`cow easteregg`|Sends a random message!|`easteregg`|
+|quiz|`cow quiz {subcommand}`|Create quizzes and take them for money! For more information take a look at Quiz Subcommands.|`quiz`|
+|trivia|`cow trivia (difficulty) (category)`|Answer trivia questions for money!|`trivia`|
+
+#### Quiz Subcommands
+
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|setmod|`cow settings setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
+|add|`cow settings add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
+|take|`cow settings take (category)`|Take a quiz! Follow the Quiz Wizard's instructions.|`take`|
 
 ### Gambling/Economy
 | **Name** | **Usage** | **Description** | **Aliases** |

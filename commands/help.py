@@ -40,6 +40,7 @@ for key, value in helpvals.items():
         stoadd = "\n\n# "+key+'\n\n'+'\n'.join(value)
         if len(desc)+len(stoadd) >= 1000:
             helpembed.add_field(name='\a', value=desc+'```')
+            print(len(desc))
             desc = "```markdown"+stoadd
         else:
             desc+=stoadd
