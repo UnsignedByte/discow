@@ -1,12 +1,15 @@
-# @Author: Edmund Lam <edl>
-# @Date:   07:17:41, 20-Apr-2018
-# @Filename: utils.py
-# @Last modified by:   edl
-# @Last modified time: 08:34:57, 21-Apr-2018
-
 import math
 import string
 import random
+
+def smartmod(a, b):
+    if a >= 0:
+        return a % b
+    else:
+        return b-(-1*a % b)
+
+def addblock(a, b):
+    return '\n'.join(map(lambda x, y:x+' '+y, a.split('\n'), b.split('\n')))
 
 class PoissonDisc:
     def __init__(self, w, h, r, tries = 30, cSize = math.sqrt(2)):
@@ -88,7 +91,7 @@ class Village:
 
 class Chunk:
     def __init__(self, hasvillage=random.randint(0,1), chunksize = 64):
-        self.map = list(['.']*chunksize for x in range(chunksize))
+        self.map = list(['·']*chunksize for x in range(chunksize))
         self.weightmap = list([0]*chunksize for x in range(chunksize))
         self.chunksize = chunksize
         self.hasvillage = hasvillage
@@ -134,7 +137,7 @@ class Chunk:
                 if self.weightmap[y][x] > 2:
                     self.map[y][x] = '#'
                 else:
-                    self.map[y][x] = '⌾'
+                    self.map[y][x] = '•'
             if ymin <= y-ud <= ymax:
                 b1 = self.weightmap[y-ud][x]
             else:
@@ -157,9 +160,37 @@ class Chunk:
         xmax = min(center[0]+radius, self.chunksize)
         ymin = max(0, center[1]-radius)
         ymax = min(center[1]+radius, self.chunksize)
-        outgrid = list([' ']*(2*radius) for a in range(2*radius))
+        outgrid = list([' ']*(xmax-xmin) for a in range(ymax-ymin))
         for y in range(ymin, ymax):
             for x in range(xmin, xmax):
                 if (x-center[0])**2 + (y-center[1])**2 <= radius**2:
                     outgrid[y-ymin][x-xmin] = self.map[y][x]
         return '\n'.join(list(' '.join(v) for v in outgrid))
+
+class Player:
+    def __init__(self, pos=(0,0), health=25, hunger=0, thirst=0):
+        self.pos = pos
+        self.attribs = {"hunger":hunger, "health":health, "thirst":thirst}
+    def add(self, elem, amount):
+        if elem in self.attribs:
+            self.attribs[elem]+=amount
+
+class World:
+    def __init__(self, size=64):
+        self.chunksize = 64
+        self.chunks = list([Chunk(chunksize=self.chunksize)]*size for x in range(size))
+        self.players = {}
+    def addPlayer(self, pos=(96,96), id=None):
+        if not id:
+            id = len(self.players)
+        self.players[id] = Player(pos=pos)
+    def reqScope(self, id, radius=10):
+        pos = self.players[id].pos
+        cx, x = divmod(pos[0], self.chunksize)
+        cy, y = divmod(pos[1], self.chunksize)
+        print(cx, cy, x, y)
+        def getchunk(cx, cy, x, y):
+            return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks))].getCircle(radius, (x, y))
+        def blockRow(cx, cy, y):
+            return addblock(addblock(getchunk(cx-1, cy, x+self.chunksize, y), getchunk(cx, cy, x, y)), getchunk(cx+1, cy, x-self.chunksize, y))
+        return '\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
