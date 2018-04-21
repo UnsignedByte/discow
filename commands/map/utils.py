@@ -2,7 +2,7 @@
 # @Date:   07:17:41, 20-Apr-2018
 # @Filename: utils.py
 # @Last modified by:   edl
-# @Last modified time: 08:18:26, 21-Apr-2018
+# @Last modified time: 08:34:57, 21-Apr-2018
 
 import math
 import string
@@ -90,6 +90,7 @@ class Chunk:
     def __init__(self, hasvillage=random.randint(0,1), chunksize = 64):
         self.map = list(['.']*chunksize for x in range(chunksize))
         self.weightmap = list([0]*chunksize for x in range(chunksize))
+        self.chunksize = chunksize
         self.hasvillage = hasvillage
         self.plain = PoissonDisc(chunksize, chunksize, 0.8, cSize=1)
         self.grass = random.randint(400, 800)
@@ -150,3 +151,15 @@ class Chunk:
                 y-=ud
             else:
                 x-=rl
+    def getCircle(self, radius, center):
+        if radius < 0:raise ValueError("Radius must be positive")
+        xmin = max(0, center[0]-radius)
+        xmax = min(center[0]+radius, self.chunksize)
+        ymin = max(0, center[1]-radius)
+        ymax = min(center[1]+radius, self.chunksize)
+        outgrid = list([' ']*(2*radius) for a in range(2*radius))
+        for y in range(ymin, ymax):
+            for x in range(xmin, xmax):
+                if (x-center[0])**2 + (y-center[1])**2 <= radius**2:
+                    outgrid[y-ymin][x-xmin] = self.map[y][x]
+        return '\n'.join(list(' '.join(v) for v in outgrid))
