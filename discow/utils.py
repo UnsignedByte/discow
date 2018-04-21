@@ -57,7 +57,7 @@ def convertTime(time, msg):
         ServerRegion.vip_amsterdam:"Europe/Amsterdam",
         'russia':'Europe/Russia'
         }
-        zone = timezone(timezones[serv.region])
+        zone = timezone(timezones[msg.server.region])
     time_naive = time.replace(tzinfo=pytz.utc)
     loctime = time_naive.astimezone(zone)
     fmt = '%Y-%m-%d at %H:%M:%S %Z'

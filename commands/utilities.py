@@ -141,9 +141,7 @@ def purge(Discow, msg):
 
 @asyncio.coroutine
 def save(Discow, msg, overrideperms = False):
-    if msg:
-        perms = msg.channel.permissions_for(msg.author)
-    if overrideperms or perms.manage_server or msg.author.id in ["418827664304898048", "418667403396775936"]:
+    if overrideperms or msg.author.id in ["418827664304898048", "418667403396775936"]:
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
             msg = yield from send_embed(Discow, msg, em)

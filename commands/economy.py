@@ -13,9 +13,11 @@ currency_rates = {"bcbw":100, "cb":200, "mn":1}
 interest_rate = 0.01
 
 #Desired Exchange Rate (1 Mooney = ??? Universal)
-DESIRED_EXCHANGE_RATE = 1
+DESIRED_EXCHANGE_RATE = 5
 #Highest Exchange Rate (1 Mooney = ??? Universal)
-MAXIMUM_EXCHANGE_RATE = 100
+MAXIMUM_EXCHANGE_RATE = 500
+#Point at which Desired Exchange Rate is reached
+NORMALIZED_MONEY_AMOUNT = 100000
 
 MOONEY_TOTAL = 0
 UNIVERSAL_TOTAL = 100000
@@ -28,7 +30,7 @@ def updateworldsum():
     for a in user_data:
         total+=user_data[a]["money"]+(user_data[a]["bank"] if "bank" in user_data[a] else 0)
     MOONEY_TOTAL = total/100
-    UNIVERSAL_CONVERSION_RATE = 1/(GOVERNMENT_MONEY+MOONEY_TOTAL) * UNIVERSAL_TOTAL
+    UNIVERSAL_CONVERSION_RATE = 1/(GOVERNMENT_MONEY+(MOONEY_TOTAL*UNIVERSAL_TOTAL)/(DESIRED_EXCHANGE_RATE*NORMALIZED_MONEY_AMOUNT)) * UNIVERSAL_TOTAL
 updateworldsum()
 
 #used to add money
@@ -238,7 +240,7 @@ def leaderboard(Discow, msg):
     for a in sorted(user_data, key=lambda x:user_data[x]["money"]+(user_data[x]["bank"] if "bank" in user_data[x] else 0), reverse=True)[:10]:
         if "usr" not in user_data[a]:
             user_data[a]["usr"] = yield from Discow.get_user_info(a)
-        em.description+="**"+user_data[a]["usr"].display_name+"**: "+'{0:.2f}'.format((user_data[a]["money"]+(user_data[a]["bank"] if "bank" in user_data[a] else 0))/100)+' total Mooney\n'
+        em.description+="**"+user_data[a]["usr"].name+"**: "+'{0:.2f}'.format((user_data[a]["money"]+(user_data[a]["bank"] if "bank" in user_data[a] else 0))/100)+' total Mooney\n'
     yield from send_embed(Discow, msg, em)
     yield from save(Discow, msg, overrideperms=True)
 
