@@ -1,8 +1,6 @@
 import discord
 import asyncio
 import logging
-import datetime
-import time
 
 import discow.client.getkey as _getkey
 import discow.handlers

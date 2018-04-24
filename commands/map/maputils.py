@@ -1,9 +1,3 @@
-# @Author: Edmund Lam <edl>
-# @Date:   07:17:41, 20-Apr-2018
-# @Filename: utils.py
-# @Last modified by:   edl
-# @Last modified time: 14:46:53, 21-Apr-2018
-
 import math
 import string
 import random
@@ -16,6 +10,11 @@ def smartmod(a, b):
 
 def addblock(a, b):
     return '\n'.join(map(lambda x, y:x+' '+y, a.split('\n'), b.split('\n')))
+def getbar(v, l):
+    full_block = '\u2588'
+    bars = ['', '\u258F', '\u258E', '\u258D', '\u258C', '\u258B', '\u258A', '\u2589']
+    d, i = math.modf(v*l)
+    return (int(i)*'\u2588'+bars[int(d*8)]).ljust(l, ' ')
 
 class PoissonDisc:
     def __init__(self, w, h, r, tries = 30, cSize = math.sqrt(2)):
@@ -126,7 +125,7 @@ class Chunk:
             self.water = random.randint(200, 400)
             for i in range(self.water):
                 water = self.swamp.find(*self.swamp.addPoint())
-                self.map[water[1]][water[0]] = '≡'
+                self.map[water[1]][water[0]] = '≈'
     def __str__(self):
         return '\n'.join(list(' '.join(v) for v in self.map))
     def maximumPathSum(self, p1, p2):
@@ -174,9 +173,11 @@ class Chunk:
         return '\n'.join(list(' '.join(v) for v in outgrid))
 
 class Player:
-    def __init__(self, pos=(0,0), health=25, hunger=1, thirst=1, speed=1):
+    def __init__(self, pos=(0,0), health=1, hunger=1, thirst=1, speed=1):
         self.pos = pos
         self.attribs = {"hunger":hunger, "health":health, "thirst":thirst, "speed":speed}
+    def __str__(self):
+        return "health:  ["+getbar(self.attribs["health"], 30)+"]\nhunger:  ["+getbar(self.attribs["hunger"], 30)+"]\nthirst:  ["+getbar(self.attribs["thirst"], 30)+']\nPosition:'+str(self.pos)
     def add(self, elem, amount):
         if elem in self.attribs:
             self.attribs[elem]+=amount
@@ -189,14 +190,16 @@ class World:
     def __init__(self, size=64):
         self.makeMap(size)
         self.players = {}
-    def makeMap(size):
+    def makeMap(self, size):
         self.chunksize = 64
         self.chunks = list([Chunk(chunksize=self.chunksize)]*size for x in range(size))
-    def addPlayer(self, pos=(96,96), id=None):
+    def addPlayer(self, pos=None, id=None):
+        if not pos:
+            pos = (random.randint(0, self.chunks*self.chunksize-1),random.randint(0, self.chunks*self.chunksize-1))
         if not id:
             id = len(self.players)
         self.players[id] = Player(pos=pos)
-    def reqScope(self, id, radius=10):
+    def reqPlayer(self, id, radius=10):
         pos = self.players[id].pos
         cx, x = divmod(pos[0], self.chunksize)
         cy, y = divmod(pos[1], self.chunksize)
@@ -204,6 +207,6 @@ class World:
             return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks))].getCircle(radius, (x, y))
         def blockRow(cx, cy, y):
             return addblock(addblock(getchunk(cx-1, cy, x+self.chunksize, y), getchunk(cx, cy, x, y)), getchunk(cx+1, cy, x-self.chunksize, y))
-        return '\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
+        return str(self.players[id])+'\n'+'\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
     def move(self, id, dir, dst):
         self.players[id].move(dir, dst)
