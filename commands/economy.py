@@ -1,6 +1,6 @@
 import asyncio
 from discow.utils import *
-from discow.handlers import add_message_handler, user_data, add_bot_message_handler
+from discow.handlers import add_message_handler, user_data, add_bot_message_handler, add_private_message_handler
 from discord import Embed
 import time
 from random import randint
@@ -84,7 +84,7 @@ def interest():
 @asyncio.coroutine
 def economy(Discow, msg):
     updateworldsum()
-    em = Embed(title='Mooney Economy Information', description='**'+'{0:.2f}'.format(MOONEY_TOTAL+GOVERNMENT_MONEY)+"** Total Mooney", colour=0xffd747)
+    em = Embed(title='Mooney Economy Information', description='**'+'{0:.2f}'.format(MOONEY_TOTAL)+"** Total Mooney", colour=0xffd747)
     em.add_field(name="Current Conversion rate to Universal", value="**1** Mooney to **"+str(UNIVERSAL_CONVERSION_RATE)+"** Universal Currency")
     em.add_field(name="Default Conversion rate to Universal", value="**1** Mooney to **"+str(DESIRED_EXCHANGE_RATE)+"** Universal Currency")
     yield from send_embed(Discow, msg, embed=em)
@@ -92,6 +92,8 @@ def economy(Discow, msg):
 @asyncio.coroutine
 def daily(Discow, msg):
     if msg.author.id in user_data:
+        if "daily" not in user_data[msg.author.id]:
+            user_data[msg.author.id]["daily"]=-86400
         if (round(time.time())-user_data[msg.author.id]["daily"]) > 86400:
             if (round(time.time())-user_data[msg.author.id]["daily"]) < 172800:
                 if not "streak" in user_data[msg.author.id]:
@@ -485,5 +487,6 @@ add_message_handler(leaderboard, "leaderboard")
 add_message_handler(bank, "bank")
 add_message_handler(economy, "economy")
 add_message_handler(addMooney, "add")
+add_private_message_handler(addMooney, "add")
 
 add_bot_message_handler(recieveconvert, "convert")

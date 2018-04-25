@@ -1,9 +1,11 @@
 import discord
 import asyncio
 import logging
+import re
 
 import discow.client.getkey as _getkey
 import discow.handlers
+from discow.handlers import britsub
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -15,16 +17,34 @@ class DiscowClientClass(discord.Client):
     @asyncio.coroutine
     def on_ready(self):
         yield from self.change_presence(game=discord.Game(name='cow help', url='https://github.com/UnsignedByte/discow', type=2))
+        for a in Discow.get_all_members():
+            if a.nick:
+                newnick = britsub(a.nick)
+                if newnick != a.nick:
+                    try:
+                        yield from self.change_nickname(a, newnick)
+                    except discord.Forbidden:
+                        pass
         yield from discow.handlers.timed_msg(self)
     @asyncio.coroutine
     def on_message(self, message):
         yield from discow.handlers.on_message(self, message)
+    def on_message_edit(self, before, after):
+        yield from discow.handlers.on_message(self, after)
     @asyncio.coroutine
     def on_reaction_add(self, reaction, user):
         yield from discow.handlers.on_reaction(self, reaction, user)
     @asyncio.coroutine
     def on_reaction_remove(self, reaction, user):
         yield from discow.handlers.on_unreaction(self, reaction, user)
+    def on_member_update(self, before, after):
+        if after.nick and before.nick != after.nick:
+            newnick = britsub(after.nick)
+            if newnick != after.nick:
+                try:
+                    yield from self.change_nickname(after, newnick)
+                except (discord.Forbidden, TypeError):
+                    pass
 Discow = DiscowClientClass()
 
 def runDiscow():

@@ -32,31 +32,27 @@ if not os.path.exists("discow/client/data/data_backup/"):
 
 command_settings = {}
 if os.path.isfile("discow/client/data/settings.txt"):
-    copyfile("discow/client/data/settings.txt", "discow/client/data/data_backup/settings.txt")
     with open("discow/client/data/settings.txt", "rb") as f:
         command_settings = pickle.load(f)
+    copyfile("discow/client/data/settings.txt", "discow/client/data/data_backup/settings.txt")
 
 user_data = {}
 if os.path.isfile("discow/client/data/user_data.txt"):
-    copyfile("discow/client/data/user_data.txt", "discow/client/data/data_backup/user_data.txt")
     with open("discow/client/data/user_data.txt", "rb") as f:
         user_data = pickle.load(f)
-with open("discow/client/data/data_backup/user_data.txt", "wb") as f2:
-    pickle.dump(user_data, f2)
+    copyfile("discow/client/data/user_data.txt", "discow/client/data/data_backup/user_data.txt")
 
 quiz_data = {}
 if os.path.isfile("discow/client/data/quiz_data.txt"):
-    copyfile("discow/client/data/quiz_data.txt", "discow/client/data/data_backup/quiz_data.txt")
     with open("discow/client/data/quiz_data.txt", "rb") as f:
         quiz_data = pickle.load(f)
-with open("discow/client/data/data_backup/quiz_data.txt", "wb") as f2:
-    pickle.dump(quiz_data, f2)
+    copyfile("discow/client/data/quiz_data.txt", "discow/client/data/data_backup/quiz_data.txt")
 
 global_data = {}
 if os.path.isfile("discow/client/data/global_data.txt"):
-    copyfile("discow/client/data/global_data.txt", "discow/client/data/data_backup/global_data.txt")
     with open("discow/client/data/global_data.txt", "rb") as f:
         global_data = pickle.load(f)
+    copyfile("discow/client/data/global_data.txt", "discow/client/data/data_backup/global_data.txt")
 
 print("\tLoaded files")
 
@@ -123,12 +119,36 @@ import asyncio
 
 whitespace = [' ', '\t', '\n']
 
+
+EXTREMEBRITISHREGEX = {
+re.compile(r'(?:(\S*(?:(?:[l1]+\W*[i!1]+|m+\W*[e3]+|c+\W*[e3]+\W*n+)\W*t+\W*|t+\W*h+\W*[e3]+\W*a+\W*t+|m+\W*a+\W*n+\W*[e3]+\W*u+\W*v+\W*))([e3]+)(\W*)(r+))(?P<ending>s?\S*)', re.I) : r'\1\4\3\2\g<ending>',
+re.compile(r'(\S*(?:c+\W*[o0]+\W*[l1]+|f+\W*a+\W*v+|[l1]+\W*a+\W*b+|f+\W*[l1]+\W*a+\W*v+\W*|[o0]+\W*d+\W*|v+\W*a+\W*(?:p+|l+)\W*))([o0]+)(\W*r+(?:r+\W*[i1!]+\W*t+\W*[e3]+\W*)?)(?P<ending>s?\S*)', re.I) : r'\1\2u\3\g<ending>',
+re.compile(r'\b(b*\W*[e3]*\W*c+\W*u+\W*z+|c+\W*a+\W*u+\W*s+\W*e+)(?P<ending>s?\S*)', re.I) : r'because\g<ending>',
+}
+def britsub(s):
+    for k, v in EXTREMEBRITISHREGEX.items():
+        s = k.sub(v, s)
+    return s
+
 @asyncio.coroutine
 def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing|red))(\*|_|~)*\b', re.I)
             newHatingRe = hatingRegex.sub(r'**dislik\g<ending>**', msg.content)
+            notbritish = britsub(msg.content)
+            last_messages = yield from Discow.logs_from(msg.channel, limit=3, before=msg)
+            for a in last_messages:
+                if a.author.id == msg.author.id and a.content == msg.content:
+                        yield from Discow.delete_message(msg)
+                        nospammsg = yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! Stop spamming the same message over and over again!")
+                        yield from asyncio.sleep(1)
+                        yield from Discow.delete_message(nospammsg)
+                        return
+            if notbritish != msg.content:
+                yield from Discow.delete_message(msg)
+                yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! You are using the wrong version of english. Here, I have fixed it for you:\n"+notbritish)
+                return
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
                 return
@@ -186,7 +206,10 @@ def on_message(Discow, msg):
             yield from send_embed(Discow, msg, em)
         except discord.Forbidden:
             em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
-            yield from send_embed(Discow, msg, em)
+            try:
+                yield from send_embed(Discow, msg, em)
+            except discord.Forbidden:
+                pass
         except Exception as e:
             em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
             yield from send_embed(Discow, msg, em)
