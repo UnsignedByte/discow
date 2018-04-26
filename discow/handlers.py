@@ -121,9 +121,10 @@ whitespace = [' ', '\t', '\n']
 
 
 EXTREMEBRITISHREGEX = {
-re.compile(r'(?:(\S*(?:(?:[l1]+\W*[i!1]+|m+\W*[e3]+|c+\W*[e3]+\W*n+)\W*t+\W*|t+\W*h+\W*[e3]+\W*a+\W*t+|m+\W*a+\W*n+\W*[e3]+\W*u+\W*v+\W*))([e3]+)(\W*)(r+))(?P<ending>s?\S*)', re.I) : r'\1\4\3\2\g<ending>',
-re.compile(r'(\S*(?:c+\W*[o0]+\W*[l1]+|f+\W*a+\W*v+|[l1]+\W*a+\W*b+|f+\W*[l1]+\W*a+\W*v+\W*|[o0]+\W*d+\W*|v+\W*a+\W*(?:p+|l+)\W*))([o0]+)(\W*r+(?:r+\W*[i1!]+\W*t+\W*[e3]+\W*)?)(?P<ending>s?\S*)', re.I) : r'\1\2u\3\g<ending>',
-re.compile(r'\b(b*\W*[e3]*\W*c+\W*u+\W*z+|c+\W*a+\W*u+\W*s+\W*e+)(?P<ending>s?\S*)', re.I) : r'because\g<ending>',
+re.compile(r'(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<END>(?:r\W*)+)', re.I) : r'\g<START>\g<END>\g<MID>',
+re.compile(r'(?P<START>(?:(?P<r>(?:c\W*)+(?:[o0]\W*)+(?:[l1]\W*)+|(?:[l1]\W*)+(?:a\W*)+(?:b\W*)+|(?:f\W*)+(?:[l1]\W*)+(?:a\W*)+(?:v\W*)+|(?:[o0]\W*)+(?:d\W*)+|(?:v\W*)+(?:a\W*)+(?:(?:p\W*)+|(?:[l1]\W*)+)|(?:p\W*)+(?:a\W*)+(?:r\W*)+(?:[l1]\W*)+|(?:t\W*)+(?:u\W*)+(?:m\W*)+|(?:a\W*)+(?:r\W*)+(?:m\W*)+)|(?P<rite>(?:f\W*)+(?:a\W*)+(?:v\W*)+)))(?P<MID>(?:[o0]\W*)+)(?P<END>(?(r)(?:r\W*)+|(?(rite)(?:r\W*)+(?:[il1!]\W*)+(?:t\W*)+(?:[e3]\W*)+)))', re.I) : r'\g<START>\g<MID>u\g<END>',
+re.compile(r'(?P<start>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<mid>(?:[e3]\W*)+)(?P<ending>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))', re.I) : r'\1\2o\3\g<ending>',
+re.compile(r'\b(b*\W*[e3]*\W*c+\W*u+\W*z+)(?P<ending>s?\S*)', re.I) : r'because\g<ending>',
 }
 def britsub(s):
     for k, v in EXTREMEBRITISHREGEX.items():

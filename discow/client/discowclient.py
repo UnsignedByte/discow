@@ -20,6 +20,7 @@ class DiscowClientClass(discord.Client):
         for a in Discow.get_all_members():
             if a.nick:
                 newnick = britsub(a.nick)
+                print(newnick, a.nick)
                 if newnick != a.nick:
                     try:
                         yield from self.change_nickname(a, newnick)
