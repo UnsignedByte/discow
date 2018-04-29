@@ -155,6 +155,8 @@ def save(Discow, msg, overrideperms = False):
             pickle.dump(data[2], f)
         with open("discow/client/data/global_data.txt", "wb") as f:
             pickle.dump(data[3], f)
+        with open("discow/client/data/world.txt", "wb") as f:
+            pickle.dump(data[4], f)
         if not overrideperms:
             em.description = "Complete!"
             msg = yield from edit_embed(Discow, msg, embed=em)

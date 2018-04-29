@@ -5,7 +5,7 @@ import re
 
 import discow.client.getkey as _getkey
 import discow.handlers
-from discow.handlers import britsub
+from discow.handlers import britsub, special_emojis
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -17,10 +17,16 @@ class DiscowClientClass(discord.Client):
     @asyncio.coroutine
     def on_ready(self):
         yield from self.change_presence(game=discord.Game(name='cow help', url='https://github.com/UnsignedByte/discow', type=2))
+        mod_server_emotes = Discow.get_server("433441820102361108").emojis
+        for a in mod_server_emotes:
+            if a.name in ["thumbsup", "thumbsdown", "empty"]:
+                if a.name in special_emojis:
+                    special_emojis[a.name].append(a)
+                else:
+                    special_emojis[a.name] = [a]
         for a in Discow.get_all_members():
             if a.nick:
                 newnick = britsub(a.nick)
-                print(newnick, a.nick)
                 if newnick != a.nick:
                     try:
                         yield from self.change_nickname(a, newnick)

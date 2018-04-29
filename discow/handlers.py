@@ -13,6 +13,8 @@ private_message_handlers = {}
 bot_message_handlers = {}
 reaction_handlers = []
 unreaction_handlers = []
+special_emojis = {}
+map_messages = {}
 
 print("\tBegin Loading Files")
 closing = False
@@ -25,6 +27,7 @@ else:
     world = World()
     with open('discow/client/data/world.txt', 'wb') as f:
         pickle.dump(world, f)
+    copyfile("discow/client/data/world.txt", "discow/client/data/data_backup/world.txt")
 print("\t\tWorld Map Loaded")
 
 if not os.path.exists("discow/client/data/data_backup/"):
@@ -62,7 +65,7 @@ def flip_shutdown():
     global closing
     closing = not closing
 def get_data():
-    return [command_settings, user_data, quiz_data, global_data]
+    return [command_settings, user_data, quiz_data, global_data, world]
 def disable_command(cmd, channels):
     global command_settings
     if cmd in command_settings:
@@ -119,12 +122,12 @@ import asyncio
 
 whitespace = [' ', '\t', '\n']
 
-
 EXTREMEBRITISHREGEX = {
-re.compile(r'(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<END>(?:r\W*)+)', re.I) : r'\g<START>\g<END>\g<MID>',
+re.compile(r':regional_indicator_([a-z]):', re.I) : r'\1',
+re.compile(r'(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<MID2>r+)(?P<END>(?:[e3]?s?\W*)+)\b', re.I) : r'\g<START>\g<MID2>\g<MID>\g<END>',
 re.compile(r'(?P<START>(?:(?P<r>(?:c\W*)+(?:[o0]\W*)+(?:[l1]\W*)+|(?:[l1]\W*)+(?:a\W*)+(?:b\W*)+|(?:f\W*)+(?:[l1]\W*)+(?:a\W*)+(?:v\W*)+|(?:[o0]\W*)+(?:d\W*)+|(?:v\W*)+(?:a\W*)+(?:(?:p\W*)+|(?:[l1]\W*)+)|(?:p\W*)+(?:a\W*)+(?:r\W*)+(?:[l1]\W*)+|(?:t\W*)+(?:u\W*)+(?:m\W*)+|(?:a\W*)+(?:r\W*)+(?:m\W*)+)|(?P<rite>(?:f\W*)+(?:a\W*)+(?:v\W*)+)))(?P<MID>(?:[o0]\W*)+)(?P<END>(?(r)(?:r\W*)+|(?(rite)(?:r\W*)+(?:[il1!]\W*)+(?:t\W*)+(?:[e3]\W*)+)))', re.I) : r'\g<START>\g<MID>u\g<END>',
-re.compile(r'(?P<start>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<mid>(?:[e3]\W*)+)(?P<ending>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))', re.I) : r'\1\2o\3\g<ending>',
-re.compile(r'\b(b*\W*[e3]*\W*c+\W*u+\W*z+)(?P<ending>s?\S*)', re.I) : r'because\g<ending>',
+re.compile(r'(?P<START>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<MID>(?:[e3]\W*)+)(?P<END>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))', re.I) : r'\g<START>o\g<MID>\g<END>',
+re.compile(r'\b((?:(?:b\W*)+(?:[e3]\W*)?)?(?:c\W*)+(?:u\W*)+(?:\W*z)+)\b', re.I) : r'because',
 }
 def britsub(s):
     for k, v in EXTREMEBRITISHREGEX.items():
@@ -133,22 +136,25 @@ def britsub(s):
 
 @asyncio.coroutine
 def on_message(Discow, msg):
+    notbritish = britsub(msg.content)
+    if notbritish != msg.content:
+        yield from Discow.delete_message(msg)
+        yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! You are using the wrong version of english. Here, I have fixed it for you:\n\n"+notbritish)
+        return
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing|red))(\*|_|~)*\b', re.I)
             newHatingRe = hatingRegex.sub(r'**dislik\g<ending>**', msg.content)
-            notbritish = britsub(msg.content)
-            last_messages = yield from Discow.logs_from(msg.channel, limit=3, before=msg)
+            last_messages = yield from Discow.logs_from(msg.channel, limit=5, before=msg)
+            countbad=0
             for a in last_messages:
                 if a.author.id == msg.author.id and a.content == msg.content:
-                        yield from Discow.delete_message(msg)
-                        nospammsg = yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! Stop spamming the same message over and over again!")
-                        yield from asyncio.sleep(1)
-                        yield from Discow.delete_message(nospammsg)
-                        return
-            if notbritish != msg.content:
+                        countbad+=1
+            if countbad >= 3:
                 yield from Discow.delete_message(msg)
-                yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! You are using the wrong version of english. Here, I have fixed it for you:\n"+notbritish)
+                nospammsg = yield from Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! Stop spamming the same message over and over again!")
+                yield from asyncio.sleep(1)
+                yield from Discow.delete_message(nospammsg)
                 return
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 yield from Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])

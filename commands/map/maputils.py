@@ -2,6 +2,8 @@ import math
 import string
 import random
 
+iteminfo = {"🍖":(6, 2), "🍗":(3, 2), "🍞":(2, 0), "🍌":(4, 3), "🌽":(1, 1), "🥛":(0, 6), "🥃":(0, 3), "🍹":(0, 4)}
+
 def smartmod(a, b):
     if a >= 0:
         return a % b
@@ -173,9 +175,12 @@ class Chunk:
         return '\n'.join(list(' '.join(v) for v in outgrid))
 
 class Player:
-    def __init__(self, pos=(0,0), health=1, hunger=1, thirst=1, speed=1):
+    def __init__(self, id, pos=(0,0), health=1, hunger=1, thirst=1, speed=1, maxhealth=25, maxthirst=15, maxhunger=20):
         self.pos = pos
-        self.attribs = {"hunger":hunger, "health":health, "thirst":thirst, "speed":speed}
+        self.save = pos
+        self.id = id
+        self.attribs = {"hunger":hunger, "health":health, "thirst":thirst, "speed":speed, "maxhealth":maxhealth, "maxthirst":maxthirst, "maxhunger":maxhunger}
+        self.inventory = {"🍖":0, "🍗":0, "🍞":0, "🍌":0, "🌽":0, "🥛":0, "🥃":0, "🍹":0}
     def __str__(self):
         return "health:  ["+getbar(self.attribs["health"], 30)+"]\nhunger:  ["+getbar(self.attribs["hunger"], 30)+"]\nthirst:  ["+getbar(self.attribs["thirst"], 30)+']\nPosition:'+str(self.pos)
     def add(self, elem, amount):
@@ -185,6 +190,14 @@ class Player:
             self.attribs[elem]=amount
     def move(self, dir, dst):
         self.pos = tuple(map(lambda x, y: x + y, self.pos, tuple(dst*x for x in [(0,-1), (1,0), (0,1), (-1,0)][dir])))
+        if self.attribs["health"] == 0:
+            self.__init__(self.id, pos=self.save)
+        elif self.attribs["thirst"] == 0 or self.attribs["hunger"] == 0:
+            self.attribs["health"]=max(0, self.attribs["health"]-1/self.attribs["maxhealth"])
+        else:
+            self.attribs["health"]=min(1, self.attribs["health"]+1/self.attribs["maxhealth"])
+            self.attribs["hunger"]=max(0, self.attribs["hunger"]-1/self.attribs["maxhunger"])
+            self.attribs["thirst"]=max(0, self.attribs["thirst"]-1/self.attribs["maxthirst"])
 
 class World:
     def __init__(self, size=64):
@@ -193,18 +206,32 @@ class World:
     def makeMap(self, size):
         self.chunksize = 64
         self.chunks = list([Chunk(chunksize=self.chunksize)]*size for x in range(size))
+    def getPlayerAttr(self, id, name):
+        try:
+            return self.players[id].attribs[name]
+        except KeyError:
+            return None
+    def setPlayerAttr(self, id, name):
+        self.players[id].attribs[name]=val
     def addPlayer(self, pos=None, id=None):
         if not pos:
-            pos = (random.randint(0, self.chunks*self.chunksize-1),random.randint(0, self.chunks*self.chunksize-1))
+            pos = (random.randint(0, len(self.chunks)*self.chunksize-1),random.randint(0, len(self.chunks[0])*self.chunksize-1))
+            chunkid = random.randint(0, len(self.chunks)-1)
+            while True:
+                if self.chunks[chunkid].hasvillage:
+                    p1, p2 = divmod(chunkid, len(self.chunks))
+                    pos = (p1+random.randint(0, self.chunksize-1), random.randint(0, self.chunksize-1))
+                chunkid+=1
+                chunkid%=len(self.chunks)*len(self.chunks[0])
         if not id:
             id = len(self.players)
-        self.players[id] = Player(pos=pos)
+        self.players[id] = Player(id, pos=pos)
     def reqPlayer(self, id, radius=10):
         pos = self.players[id].pos
         cx, x = divmod(pos[0], self.chunksize)
         cy, y = divmod(pos[1], self.chunksize)
         def getchunk(cx, cy, x, y):
-            return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks))].getCircle(radius, (x, y))
+            return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks[0]))].getCircle(radius, (x, y))
         def blockRow(cx, cy, y):
             return addblock(addblock(getchunk(cx-1, cy, x+self.chunksize, y), getchunk(cx, cy, x, y)), getchunk(cx+1, cy, x-self.chunksize, y))
         return str(self.players[id])+'\n'+'\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
