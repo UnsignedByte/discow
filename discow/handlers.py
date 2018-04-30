@@ -144,8 +144,9 @@ def on_message(Discow, msg):
             hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing|red))(\*|_|~)*\b', re.I)
             newHatingRe = hatingRegex.sub(r'**dislik\g<ending>**', msg.content)
             last_messages = yield from Discow.logs_from(msg.channel, limit=5, before=msg)
+            print(last_messages)
             countbad=0
-            for a in list(last_messages):
+            for a in last_messages:
                 if a.author.id == msg.author.id and a.content == msg.content:
                         countbad+=1
             if countbad >= 3:
