@@ -46,7 +46,7 @@ def increment(userid, element, amount):
         else:
             user_data[userid] = {element:amount}
 
-#increments element
+#sets element
 def set_element(userid, element, amount):
     if userid in user_data:
         user_data[userid][element]=amount
