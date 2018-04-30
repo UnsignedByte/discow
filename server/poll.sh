@@ -9,6 +9,13 @@ cd ..
 python3 -u test.py >> "$logs"/log.txt 2>&1
 cd server
 
+control_c() {
+    pkill -f test.py
+    exit
+}
+
+trap control_c SIGINT
+
 while :
 do
   git fetch > "$logs"/build_log.txt 2>&1
