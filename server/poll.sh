@@ -1,6 +1,9 @@
 #!/bin/bash
 
-sh ./build.sh >> build.html
+cd ..
+python3 test.py & >> log.txt 2>&1
+cd server
+
 while :
 do
   git fetch > build_log.txt 2>&1
@@ -15,7 +18,7 @@ do
      echo $(date) >> build.html
      echo ".\n" >> build.html
 
-     sh ./build.sh >> build.html 2>&1
+     sh ./build.sh >> log.txt 2>&1
 
      echo "Build finished at "
      echo $(date) >> build.html
