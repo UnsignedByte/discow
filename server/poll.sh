@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sh ./build.sh >> build.html
 while :
 do
@@ -13,7 +15,7 @@ do
      echo $(date) >> build.html
      echo ".\n" >> build.html
 
-     sh ./build.sh >> build.html
+     sh ./build.sh >> build.html 2>&1
 
      echo "Build finished at "
      echo $(date) >> build.html
