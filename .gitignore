@@ -3,6 +3,7 @@ discow/client/data/**
 *.DS_Store
 server/build_log.txt
 server/log.txt
+logs/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
