@@ -1,3 +1,4 @@
+sh ./build.sh >> build.html
 while :
 do
   git fetch > build_log.txt 2>&1
