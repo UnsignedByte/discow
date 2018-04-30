@@ -1,12 +1,12 @@
 #!/bin/bash
 
 logs=$(dirname "$(pwd)")/logs
-echo $logs
+echo "Logging to $logs."
 echo "" > "$logs"/log.txt
 echo "Build started at $(date).\n" >> "$logs"/log.txt
 
 cd ..
-python3 test.py & >> "$logs"/log.txt 2>&1
+python3 -u test.py >> "$logs"/log.txt 2>&1
 cd server
 
 while :
@@ -24,7 +24,12 @@ do
      echo ".\n" >> "$logs"/build.html
 
      echo "Build started at $(date).\n" >> "$logs"/log.txt
-     sh ./build.sh >> "$logs"/log.txt 2>&1
+
+     pkill -f test.py
+
+     cd ..
+     python3 -u test.py >> "$logs"/logs.txt 2>&1
+     cd server
 
      echo "Build finished at "
      echo $(date) >> "$logs"/build.html
