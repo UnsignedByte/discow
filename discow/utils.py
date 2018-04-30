@@ -1,4 +1,3 @@
-whitespace = [' ', '\t', '\n']
 discow_prefix = "cow "
 
 from discord import ServerRegion, Forbidden

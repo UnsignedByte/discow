@@ -120,8 +120,6 @@ import re
 
 import asyncio
 
-whitespace = [' ', '\t', '\n']
-
 EXTREMEBRITISHREGEX = {
 re.compile(r':regional_indicator_([a-z]):', re.I) : r'\1',
 re.compile(r'(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<MID2>r+)(?P<END>(?:[e3]?s?\W*)+)\b', re.I) : r'\g<START>\g<MID2>\g<MID>\g<END>',
