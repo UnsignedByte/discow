@@ -18,6 +18,8 @@ do
      echo $(date) >> build.html
      echo ".\n" >> build.html
 
+     echo "" > log.txt
+     echo "Build started at $(date).\n" >> log.txt 
      sh ./build.sh >> log.txt 2>&1
 
      echo "Build finished at "
