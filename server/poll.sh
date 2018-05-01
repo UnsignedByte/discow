@@ -19,7 +19,7 @@ trap control_c SIGINT
 while :
 do
   git fetch > "$logs"/build_log.txt 2>&1
-  if [ -s build_log.txt ]
+  if [ -s "$logs"/build_log.txt ]
   then
      echo "Changes detected, pulling... (overwriting all local changes)"
      git fetch --all
