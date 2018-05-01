@@ -56,7 +56,7 @@ def set_element(userid, element, amount):
 async def transfer(Discow, msg):
     try:
         amt = int(float(strip_command(msg.content).split(' ', 1)[0])*100)
-        if amt <= user_data[msg.author.id]["money"]
+        if amt <= user_data[msg.author.id]["money"]:
             give(amt, msg.mentions[0].id)
             give(-1*amt, msg.author.id)
             await save(Discow, msg, overrideperms=True)

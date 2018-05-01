@@ -35,7 +35,7 @@ do
      pkill -f test.py
 
      cd ..
-     python3 -u test.py >> "$logs"/logs.txt 2>&1
+     python3 -u test.py >> "$logs"/log.txt 2>&1
      cd server
 
      echo "Build finished at "
