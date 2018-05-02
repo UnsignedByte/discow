@@ -13,7 +13,8 @@ print("\tInitializing Trivia Command")
 print("\t\tCreating Trivia Classes")
 def getCategories():
     categories = {}
-    for a in requests.get('https://opentdb.com/api_category.php').json()['trivia_categories']:
+    cats = requests.get('https://opentdb.com/api_category.php').json()['trivia_categories']
+    for a in cats:
         categories[(a['name'].split(':', 1)[1].strip().lower() if ':' in a['name'] else a['name'].lower())] = a['id']
     return categories
 

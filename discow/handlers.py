@@ -121,10 +121,9 @@ import re
 import asyncio
 
 EXTREMEBRITISHREGEX = {
-re.compile(r':regional_indicator_([a-z]):', re.I) : r'\1',
-re.compile(r'(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<MID2>r+)(?P<END>(?:[e3]?s?\W*)+)\b', re.I) : r'\g<START>\g<MID2>\g<MID>\g<END>',
-re.compile(r'(?P<START>(?:(?P<r>(?:c\W*)+(?:[o0]\W*)+(?:[l1]\W*)+|(?:[l1]\W*)+(?:a\W*)+(?:b\W*)+|(?:f\W*)+(?:[l1]\W*)+(?:a\W*)+(?:v\W*)+|(?:[o0]\W*)+(?:d\W*)+|(?:v\W*)+(?:a\W*)+(?:(?:p\W*)+|(?:[l1]\W*)+)|(?:p\W*)+(?:a\W*)+(?:r\W*)+(?:[l1]\W*)+|(?:t\W*)+(?:u\W*)+(?:m\W*)+|(?:a\W*)+(?:r\W*)+(?:m\W*)+)|(?P<rite>(?:f\W*)+(?:a\W*)+(?:v\W*)+)))(?P<MID>(?:[o0]\W*)+)(?P<END>(?(r)(?:r\W*)+|(?(rite)(?:r\W*)+(?:[il1!]\W*)+(?:t\W*)+(?:[e3]\W*)+)))', re.I) : r'\g<START>\g<MID>u\g<END>',
-re.compile(r'(?P<START>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<MID>(?:[e3]\W*)+)(?P<END>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))', re.I) : r'\g<START>o\g<MID>\g<END>',
+re.compile(r'\b(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<MID2>r+)(?P<END>(?:[e3]?s?\W*)+)\b', re.I) : r'\g<START>\g<MID2>\g<MID>\g<END>',
+re.compile(r'\b(?P<START>(?:(?P<r>(?:c\W*)+(?:[o0]\W*)+(?:[l1]\W*)+|(?:[l1]\W*)+(?:a\W*)+(?:b\W*)+|(?:f\W*)+(?:[l1]\W*)+(?:a\W*)+(?:v\W*)+|(?:[o0]\W*)+(?:d\W*)+|(?:v\W*)+(?:a\W*)+(?:(?:p\W*)+|(?:[l1]\W*)+)|(?:p\W*)+(?:a\W*)+(?:r\W*)+(?:[l1]\W*)+|(?:t\W*)+(?:u\W*)+(?:m\W*)+|(?:a\W*)+(?:r\W*)+(?:m\W*)+)|(?P<rite>(?:f\W*)+(?:a\W*)+(?:v\W*)+)))(?P<MID>(?:[o0]\W*)+)(?P<END>(?(r)(?:r\W*)+|(?(rite)(?:r\W*)+(?:[il1!]\W*)+(?:t\W*)+(?:[e3]\W*)+)))\b', re.I) : r'\g<START>\g<MID>u\g<END>',
+re.compile(r'\b(?P<START>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<MID>(?:[e3]\W*)+)(?P<END>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))\b', re.I) : r'\g<START>o\g<MID>\g<END>',
 re.compile(r'\b((?:(?:b\W*)+(?:[e3]\W*)?)?(?:c\W*)+(?:u\W*)+(?:\W*z)+)\b', re.I) : r'because',
 }
 def britsub(s):
@@ -147,7 +146,7 @@ async def on_message(Discow, msg):
                 if a.author.id == msg.author.id and a.content == msg.content:
                         countbad+=1
 
-        
+
             if countbad >= 3:
                 await Discow.delete_message(msg)
                 nospammsg = await Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! Stop spamming the same message over and over again!")

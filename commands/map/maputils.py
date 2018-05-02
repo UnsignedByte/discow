@@ -2,7 +2,7 @@ import math
 import string
 import random
 
-iteminfo = {"🍖":(6, 2), "🍗":(3, 2), "🍞":(2, 0), "🍌":(4, 3), "🌽":(1, 1), "🥛":(0, 6), "🥃":(0, 3), "🍹":(0, 4)}
+iteminfo = {"food":{"🍖":(6, 2), "🍗":(3, 2), "🍞":(2, 0), "🍌":(4, 3), "🌽":(1, 1), "🥛":(0, 6), "🥃":(0, 3), "🍹":(0, 4)}}
 
 def smartmod(a, b):
     if a >= 0:
@@ -198,6 +198,13 @@ class Player:
             self.attribs["health"]=min(1, self.attribs["health"]+1/self.attribs["maxhealth"])
             self.attribs["hunger"]=max(0, self.attribs["hunger"]-1/self.attribs["maxhunger"])
             self.attribs["thirst"]=max(0, self.attribs["thirst"]-1/self.attribs["maxthirst"])
+    def useItem(self, item):
+        if item in self.inventory and self.inventory[item] >= 1:
+            self.inventory[item]-=1
+            if item in iteminfo["food"]:
+                itemINFO = iteminfo["food"][item]
+                self.attribs["hunger"]+=itemINFO[0]/self.attribs["maxhunger"]
+                self.attribs["thirst"]+=itemINFO[1]/self.attribs["maxthirst"]
 
 class World:
     def __init__(self, size=64):
@@ -215,16 +222,17 @@ class World:
         self.players[id].attribs[name]=val
     def addPlayer(self, pos=None, id=None):
         if not pos:
-            pos = (random.randint(0, len(self.chunks)*self.chunksize-1),random.randint(0, len(self.chunks[0])*self.chunksize-1))
             chunkid = random.randint(0, len(self.chunks)-1)
             while True:
-                if self.chunks[chunkid].hasvillage:
-                    p1, p2 = divmod(chunkid, len(self.chunks))
-                    pos = (p1+random.randint(0, self.chunksize-1), random.randint(0, self.chunksize-1))
+                x, y = divmod(chunkid, len(self.chunks))
+                if self.chunks[x][y].hasvillage:
+                    pos = (y+random.randint(0, self.chunksize-1), x+random.randint(0, self.chunksize-1))
                 chunkid+=1
                 chunkid%=len(self.chunks)*len(self.chunks[0])
         if not id:
             id = len(self.players)
+        if not pos:
+            pos = (random.randint(0, len(self.chunks)*self.chunksize-1),random.randint(0, len(self.chunks[0])*self.chunksize-1))
         self.players[id] = Player(id, pos=pos)
     def reqPlayer(self, id, radius=10):
         pos = self.players[id].pos
