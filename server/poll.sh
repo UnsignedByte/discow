@@ -20,12 +20,11 @@ echo "" > "$logs"/build_log.txt
 
 while :
 do
-  echo "Attempting fetch"
-  blog=$(md5 "$logs"/build_log.txt)
+  blog=$(md5sum "$logs"/build_log.txt)
   git fetch >> "$logs"/build_log.txt 2>&1
   if [ $? -eq  0 ]
   then
-    newblog=$(md5 "$logs"/build_log.txt)
+    newblog=$(md5sum "$logs"/build_log.txt)
     if [ "$blog" != "$newblog" ]
     then
        echo "Changes detected, pulling... (overwriting all local changes)"
