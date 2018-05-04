@@ -162,7 +162,7 @@ async def on_message(Discow, msg):
                 await Discow.add_reaction(msg, "👎")
                 return
             if Discow.user in msg.mentions:
-                randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
+                randms = ["**BIG BROTHER** is **WATCHING YOU", "I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
                 await Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             elif allowed_command("easteregg", msg.channel):
                 if newHatingRe != msg.content:

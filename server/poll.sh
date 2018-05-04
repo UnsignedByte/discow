@@ -28,8 +28,8 @@ do
     if [ "$blog" != "$newblog" ]
     then
        echo "Changes detected, pulling... (overwriting all local changes)"
-       #git fetch --all
-       #git reset --hard origin/master
+       git fetch --all
+       git reset --hard origin/master
 
        echo "" > "$logs"/build.html
        echo "<html><body style='white-space: pre-wrap'><p style='font-family: monospace'>Build started at " >> "$logs"/build.html
