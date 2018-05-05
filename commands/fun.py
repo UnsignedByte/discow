@@ -8,14 +8,12 @@ from bs4 import BeautifulSoup
 import re
 import string
 
-@asyncio.coroutine
-def invite(Discow, msg):
-    inv = yield from Discow.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
+async def invite(Discow, msg):
+    inv = await Discow.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
     outstr = "You have been invited to **"+msg.server.name+"**!\nJoin with this link:\n"+inv.url
-    yield from Discow.send_message(msg.channel, outstr)
+    await Discow.send_message(msg.channel, outstr)
 
-@asyncio.coroutine
-def rps(Discow, msg):
+async def rps(Discow, msg):
     valid = ["rock", "paper", "scissors"]
     mine = valid[randint(0, 2)]
     yours = parse_command(msg.content, 1)[1]
@@ -29,24 +27,23 @@ def rps(Discow, msg):
         else:
             result = "I win!"
     if yours in valid:
-        yield from Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
+        await Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
     else:
-        yield from Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
+        await Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
 
-@asyncio.coroutine
-def reaction(Discow, msg):
+async def reaction(Discow, msg):
     num = int(parse_command(msg.content, 1)[1])
     e = msg.server.emojis
     shuffle(e)
-    yield from Discow.delete_message(msg)
-    m = yield from Discow.logs_from(msg.channel, limit=1)
+    await Discow.delete_message(msg)
+    m = await Discow.logs_from(msg.channel, limit=1)
     m = list(m)[0]
     for i in range(0, min(len(e), num, 20-len(m.reactions))):
-        yield from Discow.add_reaction(m, e[i])
+        await Discow.add_reaction(m, e[i])
 
-@asyncio.coroutine
-def easteregg(Discow, msg):
+async def easteregg(Discow, msg):
     msgs = [
+        "**BIG BROTHER** is **WATCHING YOU",
         "Nice!",
         "I agree",
         format_response("{_mention} is right, obviously", _msg=msg),
@@ -56,11 +53,10 @@ def easteregg(Discow, msg):
         "🍌",
         "Hi!"
     ]
-    yield from Discow.send_message(msg.channel, msgs[randint(0,len(msgs)-1)])
+    await Discow.send_message(msg.channel, msgs[randint(0,len(msgs)-1)])
 
 #From https://github.com/UnsignedByte/Thesaurus-er
-@asyncio.coroutine
-def thesaurus(Discow, msg):
+async def thesaurus(Discow, msg):
     #Taken from https://stackoverflow.com/questions/19790188/expanding-english-language-contractions-in-python
     contractions = {
     "ain't": ["am not", "are not", "is not", "has not", "have not"],
@@ -189,7 +185,7 @@ def thesaurus(Discow, msg):
     em.add_field(name="Input Sentence", value=sentence, inline=False)
     em.add_field(name="Output Sentence", value="Converting...", inline=False)
 
-    m = yield from send_embed(Discow, msg, em)
+    m = await send_embed(Discow, msg, em)
 
     for k in sorted(contractions, key=len, reverse=True): # Through keys sorted by length
         sentence = sentence.replace(k, choice(contractions[k]))
@@ -224,7 +220,7 @@ def thesaurus(Discow, msg):
         newsentence.append(lets)
 
     em.set_field_at(1, name="Output Sentence", value=' '.join(newsentence), inline=False)
-    yield from edit_embed(Discow, m, em)
+    await edit_embed(Discow, m, em)
 
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")

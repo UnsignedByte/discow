@@ -6,25 +6,23 @@ from discord import Embed, NotFound
 import requests as req
 from bs4 import BeautifulSoup
 
-@asyncio.coroutine
-def info(Discow, msg):
+async def info(Discow, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
     em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048> and <@418667403396775936>.\nOn this server, I am known as "+nickname(Discow.user, msg.server)+'.'
     em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
-    yield from send_embed(Discow, msg, em)
+    await send_embed(Discow, msg, em)
 
-@asyncio.coroutine
-def quote(Discow, msg):
+async def quote(Discow, msg):
     try:
-        m = yield from Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+        m = await Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
     except NotFound:
         em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
         return
     em = Embed(colour=0x3b7ce5)
     em.title = "Message Quoted by "+msg.author.display_name+":"
     desc = m.content
-    log = yield from Discow.logs_from(m.channel, limit=20, after=m)
+    log = await Discow.logs_from(m.channel, limit=20, after=m)
     log = reversed(list(log))
     for a in log:
         if a.author == m.author:
@@ -32,7 +30,7 @@ def quote(Discow, msg):
                 desc+="\n"+a.content
         else:
             break
-    log = yield from Discow.logs_from(m.channel, limit=10, before=m)
+    log = await Discow.logs_from(m.channel, limit=10, before=m)
     log = list(log)
     for a in log:
         if a.author == m.author:
@@ -41,15 +39,14 @@ def quote(Discow, msg):
         else:
             break
     em.description = desc
-    yield from Discow.delete_message(msg)
-    yield from send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
+    await Discow.delete_message(msg)
+    await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
 
-@asyncio.coroutine
-def dictionary(Discow, msg):
+async def dictionary(Discow, msg):
     link="https://www.merriam-webster.com/dictionary/"
     x = strip_command(msg.content).replace(' ', '%20')
     em = Embed(title="Definition for "+x+".", description="Retrieving Definition...", colour=0x4e91fc)
-    dictm = yield from send_embed(Discow, msg, em)
+    dictm = await send_embed(Discow, msg, em)
 
     try:
         response = req.get(link+x)
@@ -64,35 +61,35 @@ def dictionary(Discow, msg):
             words = soup.find("ol", {"class":"definition-list"}).get_text().split()
             for i in range(0, len(words)):
                 em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
-            dictm = yield from edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Discow, dictm, em)
             while True:
-                vm = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                vm = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
                 if not vm:
                     return
                 v = vm.content
                 if v == 'cancel':
                     em.description = "*Operation Cancelled*"
-                    yield from Discow.delete_message(vm)
-                    dictm = yield from edit_embed(Discow, dictm, em)
+                    await Discow.delete_message(vm)
+                    dictm = await edit_embed(Discow, dictm, em)
                     return
                 elif isInteger(v):
                     if int(v)>=1 and int(v) <=len(words):
                         x = words[int(v)-1].replace(' ', "%20")
-                        yield from Discow.delete_message(vm)
+                        await Discow.delete_message(vm)
                         break
                 else:
                     if v in words:
                         x = v.replace(' ', "%20")
-                        yield from Discow.delete_message(vm)
+                        await Discow.delete_message(vm)
                         break
             html_doc = req.get(link+x).text
             soup = BeautifulSoup(html_doc, 'html.parser')
             em.title = "Definition for "+x+"."
             em.description = "Retrieving Definition..."
-            dictm = yield from edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Discow, dictm, em)
         except AttributeError:
             em.description = "Could not find "+x+" in the dictionary."
-            dictm = yield from edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Discow, dictm, em)
             return
 
     em.description = ""
@@ -118,34 +115,37 @@ def dictionary(Discow, msg):
 
         em.description+= '\n'+st
     em.description+="\n\nDefinitions retrieved from [The Merriam-Webster Dictionary](https://www.merriam-webster.com/) using [Dictionary](https://github.com/UnsignedByte/Dictionary) by [UnsignedByte](https://github.com/UnsignedByte)."
-    dictm = yield from edit_embed(Discow, dictm, em)
+    dictm = await edit_embed(Discow, dictm, em)
 
 
-@asyncio.coroutine
-def purge(Discow, msg):
+async def purge(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_messages or msg.author.id in ["418827664304898048", "418667403396775936"]:
-        num = max(1,min(99,int(parse_command(msg.content, 1)[1])))+1
-        msgs = yield from Discow.logs_from(msg.channel, limit=num)
-        msgs = list(msgs)
-        if num == 1:
-            yield from Discow.delete_message(msgs[0])
-        else:
-            yield from Discow.delete_messages(msgs)
-        m = yield from Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
-        yield from asyncio.sleep(2)
-        yield from Discow.delete_message(m)
+        num = int(parse_command(msg.content, 1)[1])+1
+        if num < 2:
+            await Discow.send_message("There is no reason to delete 0 messages!")
+        deletechunks = []
+        async for m in  Discow.logs_from(msg.channel, limit=num):
+            deletechunks.append(m)
+        deletechunks = list(chunkify(deletechunks, 100))
+        for chunk in deletechunks:
+            if len(chunk) > 1:
+                await Discow.delete_messages(chunk)
+            else:
+                await Discow.delete_message(chunk[0])
+        m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
+        await asyncio.sleep(2)
+        await Discow.delete_message(m)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
 
-@asyncio.coroutine
-def save(Discow, msg, overrideperms = False):
+async def save(Discow, msg, overrideperms = False):
     if overrideperms or msg.author.id in ["418827664304898048", "418667403396775936"]:
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
-            msg = yield from send_embed(Discow, msg, em)
-            yield from asyncio.sleep(1)
+            msg = await send_embed(Discow, msg, em)
+            await asyncio.sleep(1)
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
             pickle.dump(data[0], f)
@@ -159,21 +159,20 @@ def save(Discow, msg, overrideperms = False):
             pickle.dump(data[4], f)
         if not overrideperms:
             em.description = "Complete!"
-            msg = yield from edit_embed(Discow, msg, embed=em)
-            yield from asyncio.sleep(0.5)
-            yield from Discow.delete_message(msg)
+            msg = await edit_embed(Discow, msg, embed=em)
+            await asyncio.sleep(0.5)
+            await Discow.delete_message(msg)
         return True
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
         return False
 
-@asyncio.coroutine
-def shutdown(Discow, msg):
+async def shutdown(Discow, msg):
     flip_shutdown()
-    istrue = yield from save(Discow, msg)
+    istrue = await save(Discow, msg)
     if istrue:
-        yield from Discow.logout()
+        await Discow.logout()
 
 
 add_message_handler(info, "hi")

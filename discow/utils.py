@@ -102,6 +102,9 @@ def isInteger(s):
     except ValueError:
         return False
 
+def chunkify(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i+n]
 
 class Question:
     def __init__(self, q, o, s):

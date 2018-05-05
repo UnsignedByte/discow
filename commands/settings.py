@@ -5,19 +5,17 @@ from discord import Embed, ChannelType
 
 settings_handlers = {}
 
-@asyncio.coroutine
-def settings(Discow, msg):
+async def settings(Discow, msg):
     newmsg = strip_command(msg.content).split(" ")
     try:
-        yield from settings_handlers[newmsg[0]](Discow, msg, newmsg)
+        await settings_handlers[newmsg[0]](Discow, msg, newmsg)
     except KeyError:
         em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
-        yield from Discow.send_message(msg.channel, embed=em)
+        await Discow.send_message(msg.channel, embed=em)
 
 
 #SUBCOMMANDS DEFINED HERE
-@asyncio.coroutine
-def disable(Discow, msg, newmsg):
+async def disable(Discow, msg, newmsg):
     if is_command(newmsg[1]):
         todisable = msg.channel_mentions
         if newmsg[2] == 'all':
@@ -26,13 +24,12 @@ def disable(Discow, msg, newmsg):
         disable_command(cmdname, todisable)
         em = Embed(title="Command Disabled", colour=0x12AA24)
         em.description = cmdname+" has now been disabled in "+','.join(map(lambda x:x.mention, todisable))+"."
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
 
-@asyncio.coroutine
-def enable(Discow, msg, newmsg):
+async def enable(Discow, msg, newmsg):
     if is_command(newmsg[1]):
         toenable = msg.channel_mentions
         if newmsg[2] == 'all':
@@ -41,10 +38,10 @@ def enable(Discow, msg, newmsg):
         enable_command(cmdname, toenable)
         em = Embed(title="Command Enabled", colour=0x12AA24)
         em.description = cmdname+" has now been enabled in "+','.join(map(lambda x:x.mention, toenable))+"."
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        yield from send_embed(Discow, msg, em)
+        await send_embed(Discow, msg, em)
 
 settings_handlers["disable"] = disable
 settings_handlers["enable"] = enable

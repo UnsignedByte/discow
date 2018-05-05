@@ -46,10 +46,9 @@ for key, value in helpvals.items():
 print("\t\tFinished Parsing")
 helpembed.add_field(name='\a', value=desc+'```')
 
-@asyncio.coroutine
-def gethelp(Discow, msg):
-    yield from Discow.send_message(msg.channel, "Sent you command information!")
-    yield from Discow.send_message(msg.author, embed=helpembed)
+async def gethelp(Discow, msg):
+    await Discow.send_message(msg.channel, "Sent you command information!")
+    await Discow.send_message(msg.author, embed=helpembed)
 
 
 add_message_handler(gethelp, "commands")

@@ -54,8 +54,7 @@ class Trivia:
 triviaAPI = Trivia()
 print("\t\tFinished Trivia Classes")
 
-@asyncio.coroutine
-def trivia(Discow, msg):
+async def trivia(Discow, msg):
     cont = strip_command(msg.content)
     cont = (cont.split(' ') if ' ' in cont else [cont])
     diff = None
@@ -70,7 +69,7 @@ def trivia(Discow, msg):
             cat = Data.categories.value[cont.lower()]
         else:
             em = Embed(title="Unknown Category", description="Could not find the specified category. Valid categories include:\n\n"+'\n'.join(Data.categories.value.keys()), colour=0xff7830)
-            yield from Discow.send_message(msg.channel, embed=em)
+            await Discow.send_message(msg.channel, embed=em)
             return
     question = triviaAPI.getquestion(category=cat, difficulty=diff)[0]
     options = {question["correct_answer"]:True}
@@ -78,10 +77,10 @@ def trivia(Discow, msg):
     questionOBJ = Question(question['question'], options, True)
     questionOBJ.optshuf()
     em = Embed(title="Trivia Question", description = questionOBJ.getstr(), colour=0xff7830)
-    msgEmbed = yield from Discow.send_message(msg.channel, embed=em)
+    msgEmbed = await Discow.send_message(msg.channel, embed=em)
     def check(s):
         return len(s.content) == 1 and 0<=ord(s.content.lower())-ord('a')<len(options)
-    response = yield from Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+    response = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
     selection = ord(response.content.lower())-ord('a')
     em.description = questionOBJ.getstr(selected=selection, showCorrect=True)
     if list(questionOBJ.options.values())[selection] == True:
@@ -92,8 +91,8 @@ def trivia(Discow, msg):
     else:
         set_element(msg.author.id, "answerstreak", 0)
         em.description+='\n\nYour answer was incorrect! Your answer streak is now `0`.'
-    yield from edit_embed(Discow, msgEmbed, em)
-    yield from save(Discow, msg, overrideperms=True)
+    await edit_embed(Discow, msgEmbed, em)
+    await save(Discow, msg, overrideperms=True)
 
 add_private_message_handler(trivia, 'trivia')
 print("\tTrivia Command Initialized")
