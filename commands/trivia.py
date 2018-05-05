@@ -57,16 +57,17 @@ print("\t\tFinished Trivia Classes")
 @asyncio.coroutine
 def trivia(Discow, msg):
     cont = strip_command(msg.content)
-    cont = (cont.rsplit(' ', 1) if ' ' in cont else [cont])
+    cont = (cont.split(' ') if ' ' in cont else [cont])
     diff = None
     cat = None
-    if cont[0].lower() not in Data.difficulties.value:
-        cont = [' '.join(cont)]
-    else:
+    if cont[0].lower() in Data.difficulties.value:
         diff = Data.difficulties.value[cont.pop(0).lower()]
-    if len(cont) > 0:
-        if cont[0].lower() in Data.categories.value:
-            cat = Data.categories.value[cont[0].lower()]
+    elif cont[-1].lower() in Data.difficulties.value:
+        diff = Data.difficulties.value[cont.pop().lower()]
+    cont = ' '.join(cont)
+    if not cont.isspace():
+        if cont.lower() in Data.categories.value:
+            cat = Data.categories.value[cont.lower()]
         else:
             em = Embed(title="Unknown Category", description="Could not find the specified category. Valid categories include:\n\n"+'\n'.join(Data.categories.value.keys()), colour=0xff7830)
             yield from Discow.send_message(msg.channel, embed=em)
