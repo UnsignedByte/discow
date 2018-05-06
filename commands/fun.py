@@ -43,7 +43,7 @@ async def reaction(Discow, msg):
 
 async def easteregg(Discow, msg):
     msgs = [
-        "**BIG BROTHER** is **WATCHING YOU",
+        "**BIG BROTHER** is **WATCHING YOU**",
         "Nice!",
         "I agree",
         format_response("{_mention} is right, obviously", _msg=msg),

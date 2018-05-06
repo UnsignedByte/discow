@@ -2,7 +2,7 @@ import asyncio
 import pickle
 from discow.utils import *
 from discow.handlers import add_message_handler, flip_shutdown, get_data
-from discord import Embed, NotFound
+from discord import Embed, NotFound, HTTPError
 import requests as req
 from bs4 import BeautifulSoup
 
@@ -121,21 +121,20 @@ async def dictionary(Discow, msg):
 async def purge(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_messages or msg.author.id in ["418827664304898048", "418667403396775936"]:
-        num = int(parse_command(msg.content, 1)[1])+1
+        num = int(parse_command(msg.content, 1)[1].split(' ')[0])+1
         if num < 2:
             await Discow.send_message("There is no reason to delete 0 messages!")
         deletechunks = []
-        async for m in  Discow.logs_from(msg.channel, limit=num):
-            deletechunks.append(m)
-        deletechunks = list(chunkify(deletechunks, 100))
-        for chunk in deletechunks:
-            if len(chunk) > 1:
-                await Discow.delete_messages(chunk)
-            else:
-                await Discow.delete_message(chunk[0])
-        m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
-        await asyncio.sleep(2)
-        await Discow.delete_message(m)
+        def check(message):
+            return not msg.mentions or msg.mentions[0].id == message.author.id
+        try:
+            await Discow.purge_from(msg.channel, limit=num, check=check)
+            m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
+        except discord.HTTPError:
+            m = await Discow.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!")
+        finally:
+            await asyncio.sleep(2)
+            await Discow.delete_message(m)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         await send_embed(Discow, msg, em)
