@@ -132,9 +132,8 @@ async def purge(Discow, msg):
             m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
         except discord.HTTPError:
             m = await Discow.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!")
-        finally:
-            await asyncio.sleep(2)
-            await Discow.delete_message(m)
+        await asyncio.sleep(2)
+        await Discow.delete_message(m)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         await send_embed(Discow, msg, em)
