@@ -2,7 +2,7 @@ import asyncio
 import pickle
 from discow.utils import *
 from discow.handlers import add_message_handler, flip_shutdown, get_data
-from discord import Embed, NotFound, HTTPError
+from discord import Embed, NotFound, HTTPException
 import requests as req
 from bs4 import BeautifulSoup
 
@@ -130,8 +130,9 @@ async def purge(Discow, msg):
         try:
             await Discow.purge_from(msg.channel, limit=num, check=check)
             m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
-        except discord.HTTPError:
-            m = await Discow.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!")
+        except discord.HTTPException:
+            m = await Discow.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!"))
+
         await asyncio.sleep(2)
         await Discow.delete_message(m)
     else:
