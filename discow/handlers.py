@@ -132,11 +132,6 @@ def britsub(s):
     return s
 
 async def on_message(Discow, msg):
-    notbritish = britsub(msg.content)
-    if notbritish != msg.content:
-        await Discow.delete_message(msg)
-        await Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! You are using the wrong version of english. Here, I have fixed it for you:\n\n"+notbritish)
-        return
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             hatingRegex = re.compile(r'\b(\*|_|~)*hat(?P<ending>(e(d|rs*|s|ful(ness)?)?|ing|red))(\*|_|~)*\b', re.I)
@@ -145,7 +140,6 @@ async def on_message(Discow, msg):
             async for a in Discow.logs_from(msg.channel, limit=5, before=msg):
                 if a.author.id == msg.author.id and a.content == msg.content:
                         countbad+=1
-
 
             if countbad >= 3:
                 await Discow.delete_message(msg)
@@ -165,6 +159,11 @@ async def on_message(Discow, msg):
                 randms = ["I was called?", "Hi to you too, "+msg.author.mention, "Please don't disturb me, I'm busy being worked on.", "What do you want?", "Hey! Bots don't like being pinged either!", "Stop mentioning me! :rage:", "...", "If you need help, just do `"+discow_prefix+"help` and stop pinging me!", "Stop distracting me, do `"+discow_prefix+"help` if you want help.", "Silence!!!", "Leave me alone!", "Yes, I AM "+Discow.user.mention+'.', "Do you have a death wish?"]
                 await Discow.send_message(msg.channel, randms[randint(0,len(randms)-1)])
             elif allowed_command("easteregg", msg.channel):
+                notbritish = britsub(msg.content)
+                if notbritish != msg.content:
+                    await Discow.delete_message(msg)
+                    await Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! You are using the wrong version of english. Here, I have fixed it for you:\n\n"+notbritish)
+                    return
                 if newHatingRe != msg.content:
                     await Discow.send_message(msg.channel, 'Woah '+msg.author.mention+'! Hating is rude! Don\'t be so negative, try this:\n"'+newHatingRe.lower()+'"')
                     await Discow.add_reaction(msg, "👎")
