@@ -8,35 +8,33 @@ from bs4 import BeautifulSoup
 
 async def info(Discow, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
-    em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048> and <@418667403396775936>.\nOn this server, I am known as "+nickname(Discow.user, msg.server)+'.'
+    em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048>.\nOn this server, I am known as "+nickname(Discow.user, msg.server)+'.'
     em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
     await send_embed(Discow, msg, em)
 
 async def quote(Discow, msg):
     try:
-        async with Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0]) as m:
-            em = Embed(colour=0x3b7ce5)
-            em.title = "Message Quoted by "+msg.author.display_name+":"
-            desc = m.content
-            log = await Discow.logs_from(m.channel, limit=20, after=m)
-            log = reversed(list(log))
-            for a in log:
-                if a.author == m.author:
-                    if a.content:
-                        desc+="\n"+a.content
-                else:
-                    break
-            log = await Discow.logs_from(m.channel, limit=10, before=m)
-            log = list(log)
-            for a in log:
-                if a.author == m.author:
-                    if a.content:
-                        desc=a.content+"\n"+desc
-                else:
-                    break
-            em.description = desc
-            await Discow.delete_message(msg)
-            await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
+        m = await Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+        em = Embed(title="Message Quoted by "+msg.author.display_name+":", colour=0x3b7ce5)
+        desc = m.content
+        print(desc)
+        log = reversed(list(a async for a in Discow.logs_from(m.channel, limit=20, after=m)))
+        print(log)
+        for a in log:
+            if a.author == m.author:
+                if a.content:
+                    desc+="\n"+a.content
+            else:
+                break
+        async for a in Discow.logs_from(m.channel, limit=20, before=m):
+            if a.author == m.author:
+                if a.content:
+                    desc=a.content+"\n"+desc
+            else:
+                break
+        em.description = desc
+        await Discow.delete_message(msg)
+        await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
     except NotFound:
         em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
         await send_embed(Discow, msg, em)
