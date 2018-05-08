@@ -5,11 +5,11 @@ echo "Logging to $logs."
 echo "" > "$logs"/log.txt
 echo "Build started at $(date).\n" >> "$logs"/log.txt
 echo "Running python " >> "$logs"/log.txt
-python3 -V >> "$logs"/log.txt
+python3.6 -V >> "$logs"/log.txt
 echo "\n" >> "$logs"/log.txt
 
 cd ..
-python3 -u test.py >> "$logs"/log.txt 2>&1 &
+python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
 cd server
 
 control_c() {
@@ -41,13 +41,13 @@ do
 
        echo "Build started at $(date).\n" >> "$logs"/log.txt
        echo "Running python " >> "$logs"/log.txt
-       python3 -V >> "$logs"/log.txt
+       python3.6 -V >> "$logs"/log.txt
        echo "\n" >> "$logs"/log.txt
 
        pkill -f test.py
 
        cd ..
-       python3 -u test.py >> "$logs"/log.txt 2>&1 &
+       python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
        cd server
 
        echo "Build finished at "
