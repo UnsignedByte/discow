@@ -18,7 +18,7 @@ async def quote(Discow, msg):
         em = Embed(title="Message Quoted by "+msg.author.display_name+":", colour=0x3b7ce5)
         desc = m.content
         print(desc)
-        log = reversed(list(a async for a in Discow.logs_from(m.channel, limit=20, after=m)))
+        log = reversed([a async for a in Discow.logs_from(m.channel, limit=20, after=m)])
         print(log)
         for a in log:
             if a.author == m.author:
@@ -33,6 +33,7 @@ async def quote(Discow, msg):
             else:
                 break
         em.description = desc
+        print(desc)
         await Discow.delete_message(msg)
         await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
     except NotFound:
