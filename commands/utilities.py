@@ -14,33 +14,32 @@ async def info(Discow, msg):
 
 async def quote(Discow, msg):
     try:
-        m = await Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+        async with Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0]) as m:
+            em = Embed(colour=0x3b7ce5)
+            em.title = "Message Quoted by "+msg.author.display_name+":"
+            desc = m.content
+            log = await Discow.logs_from(m.channel, limit=20, after=m)
+            log = reversed(list(log))
+            for a in log:
+                if a.author == m.author:
+                    if a.content:
+                        desc+="\n"+a.content
+                else:
+                    break
+            log = await Discow.logs_from(m.channel, limit=10, before=m)
+            log = list(log)
+            for a in log:
+                if a.author == m.author:
+                    if a.content:
+                        desc=a.content+"\n"+desc
+                else:
+                    break
+            em.description = desc
+            await Discow.delete_message(msg)
+            await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
     except NotFound:
         em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
         await send_embed(Discow, msg, em)
-        return
-    em = Embed(colour=0x3b7ce5)
-    em.title = "Message Quoted by "+msg.author.display_name+":"
-    desc = m.content
-    log = await Discow.logs_from(m.channel, limit=20, after=m)
-    log = reversed(list(log))
-    for a in log:
-        if a.author == m.author:
-            if a.content:
-                desc+="\n"+a.content
-        else:
-            break
-    log = await Discow.logs_from(m.channel, limit=10, before=m)
-    log = list(log)
-    for a in log:
-        if a.author == m.author:
-            if a.content:
-                desc=a.content+"\n"+desc
-        else:
-            break
-    em.description = desc
-    await Discow.delete_message(msg)
-    await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
 
 async def dictionary(Discow, msg):
     link="https://www.merriam-webster.com/dictionary/"
