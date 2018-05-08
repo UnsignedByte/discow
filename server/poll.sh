@@ -4,6 +4,9 @@ logs=$(dirname "$(pwd)")/logs
 echo "Logging to $logs."
 echo "" > "$logs"/log.txt
 echo "Build started at $(date).\n" >> "$logs"/log.txt
+echo "Running python " >> "$logs"/log.txt
+python3 -V >> "$logs"/log.txt
+echo "\n" >> "$logs"/log.txt
 
 cd ..
 python3 -u test.py >> "$logs"/log.txt 2>&1 &
@@ -37,6 +40,9 @@ do
        echo ".\n" >> "$logs"/build.html
 
        echo "Build started at $(date).\n" >> "$logs"/log.txt
+       echo "Running python " >> "$logs"/log.txt
+       python3 -V >> "$logs"/log.txt
+       echo "\n" >> "$logs"/log.txt
 
        pkill -f test.py
 
