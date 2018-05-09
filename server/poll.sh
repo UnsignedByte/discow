@@ -10,6 +10,7 @@ echo "\n" >> "$logs"/log.txt
 
 cd ..
 python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
+pid=$!
 cd server
 
 control_c() {
@@ -23,10 +24,20 @@ echo "" > "$logs"/build_log.txt
 
 while :
 do
+  if kill -0 "$pid"; then
+    echo "Server has crashed. Restarting...\nBuild started at $(date).\n" >> "$logs"/log.txt
+    echo "Running python " >> "$logs"/log.txt
+    python3.6 -V >> "$logs"/log.txt
+    echo "\n" >> "$logs"/log.txt
+
+    cd ..
+    python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
+    pid=$!
+    cd server
+  fi
   blog=$(md5sum "$logs"/build_log.txt)
   git fetch >> "$logs"/build_log.txt 2>&1
-  if [ $? -eq  0 ]
-  then
+  if [ $? -eq  0 ]; then
     newblog=$(md5sum "$logs"/build_log.txt)
     if [ "$blog" != "$newblog" ]
     then
@@ -48,6 +59,7 @@ do
 
        cd ..
        python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
+       pid=$!
        cd server
 
        echo "Build finished at "
