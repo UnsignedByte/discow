@@ -138,7 +138,7 @@ async def purge(Discow, msg):
         await send_embed(Discow, msg, em)
 
 async def save(Discow, msg, overrideperms = False):
-    if overrideperms or msg.author.id in ["418827664304898048", "418667403396775936"]:
+    if overrideperms or msg.author.id == "418827664304898048":
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
             msg = await send_embed(Discow, msg, em)

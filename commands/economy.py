@@ -72,8 +72,7 @@ async def transfer(Discow, msg):
         await send_embed(Discow, msg, em)
 
 async def addMooney(Discow, msg):
-    perms = msg.channel.permissions_for(msg.author)
-    if perms.manage_server or msg.author.id in ["418827664304898048", "418667403396775936"]:
+    if msg.author.id == "418827664304898048":
         try:
             amt = int(float(strip_command(msg.content).split(' ', 1)[0])*100)
             give(amt, msg.mentions[0].id)
