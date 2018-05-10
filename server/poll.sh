@@ -24,13 +24,14 @@ echo "" > "$logs"/build_log.txt
 
 while :
 do
-  if kill -0 "$pid"; then
-    pkill -f test.py
+  if ! kill -0 "$pid"; then
     echo "Server has crashed. Restarting..."  >> "$logs"/log.txt
     echo "Build started at $(date)." >> "$logs"/log.txt
     echo "Running python " >> "$logs"/log.txt
     python3.6 -V >> "$logs"/log.txt
     echo "" >> "$logs"/log.txt
+
+    pkill -f test.py >> "$logs"/log.txt
 
     cd ..
     python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
@@ -57,7 +58,7 @@ do
        python3.6 -V >> "$logs"/log.txt
        echo "" >> "$logs"/log.txt
 
-       pkill -f test.py
+       pkill -f test.py >> "$logs"/log.txt
 
        cd ..
        python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
