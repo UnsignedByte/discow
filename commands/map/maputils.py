@@ -223,10 +223,12 @@ class World:
     def addPlayer(self, pos=None, id=None):
         if not pos:
             chunkid = random.randint(0, len(self.chunks)-1)
-            while True:
+            initchunkid = chunkid
+            for i in range(0, len(self.chunks)):
                 x, y = divmod(chunkid, len(self.chunks))
                 if self.chunks[x][y].hasvillage:
                     pos = (y+random.randint(0, self.chunksize-1), x+random.randint(0, self.chunksize-1))
+                    break
                 chunkid+=1
                 chunkid%=len(self.chunks)*len(self.chunks[0])
         if not id:

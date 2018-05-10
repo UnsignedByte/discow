@@ -3,10 +3,10 @@
 logs=$(dirname "$(pwd)")/logs
 echo "Logging to $logs."
 echo "" > "$logs"/log.txt
-echo "Build started at $(date).\n" >> "$logs"/log.txt
+echo "Build started at $(date)." >> "$logs"/log.txt
 echo "Running python " >> "$logs"/log.txt
 python3.6 -V >> "$logs"/log.txt
-echo "\n" >> "$logs"/log.txt
+echo "" >> "$logs"/log.txt
 
 cd ..
 python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
@@ -25,10 +25,12 @@ echo "" > "$logs"/build_log.txt
 while :
 do
   if kill -0 "$pid"; then
-    echo "Server has crashed. Restarting...\nBuild started at $(date).\n" >> "$logs"/log.txt
+    pkill -f test.py
+    echo "Server has crashed. Restarting..."  >> "$logs"/log.txt
+    echo "Build started at $(date)." >> "$logs"/log.txt
     echo "Running python " >> "$logs"/log.txt
     python3.6 -V >> "$logs"/log.txt
-    echo "\n" >> "$logs"/log.txt
+    echo "" >> "$logs"/log.txt
 
     cd ..
     python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
@@ -50,10 +52,10 @@ do
        echo $(date) >> "$logs"/build.html
        echo ".\n" >> "$logs"/build.html
 
-       echo "Build started at $(date).\n" >> "$logs"/log.txt
+       echo "Build started at $(date)." >> "$logs"/log.txt
        echo "Running python " >> "$logs"/log.txt
        python3.6 -V >> "$logs"/log.txt
-       echo "\n" >> "$logs"/log.txt
+       echo "" >> "$logs"/log.txt
 
        pkill -f test.py
 
