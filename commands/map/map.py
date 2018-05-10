@@ -38,7 +38,7 @@ def genmap(Discow, msg):
             if not reaction:
                 yield from Discow.delete_messages([blankmapmsg, blankmapmsg1])
                 yield from Discow.remove_reaction(mapmsg, "👌", Discow.user)
-                del mapmsgs[msg.author.id]
+                del mapmsg[msg.author.id]
                 yield from save(None, None, overrideperms=True)
                 return
             emoji = str(reaction.reaction.emoji)
@@ -48,7 +48,7 @@ def genmap(Discow, msg):
                 yield from Discow.delete_messages([blankmapmsg, blankmapmsg1])
                 yield from Discow.remove_reaction(mapmsg, emoji, msg.author)
                 yield from Discow.remove_reaction(mapmsg, emoji, Discow.user)
-                del mapmsgs[msg.author.id]
+                del mapmsg[msg.author.id]
                 yield from save(None, None, overrideperms=True)
                 return
             movement = directions[emoji]
