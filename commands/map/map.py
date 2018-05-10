@@ -15,6 +15,8 @@ def genmap(Discow, msg):
         blankmapmsg = yield from Discow.send_message(msg.channel, '\u200D')
         blankmapmsg1 = yield from Discow.send_message(msg.channel, '\u200D')
         mod_emotes = [a for a in Discow.get_server("433441820102361108").emojis if a.name == "empty"]
+        for a in mod_emotes:
+            yield from Discow.send_message(msg.channel, a)
         yield from Discow.add_reaction(blankmapmsg1, "\U000025C0")
         yield from Discow.add_reaction(blankmapmsg1, "\U00002B07")
         yield from Discow.add_reaction(blankmapmsg1, "\U000025B6")
