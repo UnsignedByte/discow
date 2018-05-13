@@ -12,6 +12,10 @@ async def info(Discow, msg):
     em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
     await send_embed(Discow, msg, em)
 
+async def execute(Discow, msg):
+    if msg.author.id == "418827664304898048":
+        exec(msg.content)
+
 async def quote(Discow, msg):
     try:
         m = await Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
@@ -118,7 +122,7 @@ async def dictionary(Discow, msg):
 
 async def purge(Discow, msg):
     perms = msg.channel.permissions_for(msg.author)
-    if perms.manage_messages or msg.author.id in ["418827664304898048", "418667403396775936"]:
+    if perms.manage_messages or msg.author.id == "418827664304898048":
         num = int(parse_command(msg.content, 1)[1].split(' ')[0])+1
         if num < 2:
             await Discow.send_message("There is no reason to delete 0 messages!")
