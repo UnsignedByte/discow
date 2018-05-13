@@ -48,7 +48,7 @@ async def execute(Discow, msg):
                 await future
 
         try:
-            out = await aexec('import asyncio\nasync def run_exec():\n\t'+'\t'.join(re.search(r'`(?P<in>``)?(?P<body>(?:.\s?)+)(?(in)```|`)', msg.content).group("body").strip().splitlines(True))+'\ngawait(run_exec())')
+            out = await aexec('import asyncio\nasync def run_exec():\n\t'+'\t'.join(re.search(r'`(?P<in>``)?(?P<body>(.?\s?)*)(?(in)```|`)', msg.content).group("body").strip().splitlines(True))+'\ngawait(run_exec())')
         except Exception:
             await send_embed(Discow, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
 
