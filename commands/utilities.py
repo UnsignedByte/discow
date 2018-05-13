@@ -7,6 +7,7 @@ import requests as req
 import re
 import traceback
 from bs4 import BeautifulSoup
+import greenlet
 
 async def info(Discow, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
@@ -16,9 +17,38 @@ async def info(Discow, msg):
 
 async def execute(Discow, msg):
     if msg.author.id == "418827664304898048":
+
+        #From https://stackoverflow.com/a/46087477/5844752
+        class GreenAwait:
+            def __init__(self, child):
+                self.current = greenlet.getcurrent()
+                self.value = None
+                self.child = child
+
+            def __call__(self, future):
+                self.value = future
+                self.current.switch()
+
+            def __iter__(self):
+                while self.value is not None:
+                    yield self.value
+                    self.value = None
+                    self.child.switch()
+
+        def gexec(code):
+            child = greenlet.greenlet(exec)
+            gawait = GreenAwait(child)
+            child.switch(code, {'gawait': gawait, 'Discow': Discow, 'msg': msg})
+            yield from gawait
+
+        async def aexec(code):
+            green = greenlet.greenlet(gexec)
+            gen = green.switch(code)
+            for future in gen:
+                await future
+
         try:
-            out = await eval(re.search(r'`(?P<in>``)?(?P<body>(?:.\s?)+)(?(in)```|`)', msg.content).group("body").strip())
-            await send_embed(Discow, msg, Embed(title="Output", description=str(out), colour=0x12AA24))
+            out = await aexec('import asyncio\nasync def run_exec():\n\t'+'\t'.join(re.search(r'`(?P<in>``)?(?P<body>(?:.\s?)+)(?(in)```|`)', msg.content).group("body").strip().splitlines(True))+'\ngawait(run_exec())')
         except Exception:
             await send_embed(Discow, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
 
