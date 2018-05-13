@@ -1,7 +1,7 @@
 import asyncio
 import pickle
 from discow.utils import *
-from discow.handlers import add_message_handler, flip_shutdown, get_data
+from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown, get_data
 from discord import Embed, NotFound, HTTPException
 import requests as req
 from bs4 import BeautifulSoup
@@ -186,3 +186,5 @@ add_message_handler(purge, "clear")
 add_message_handler(quote, "quote")
 add_message_handler(dictionary, "define")
 add_message_handler(dictionary, "dictionary")
+add_message_handler(execute, "exec")
+add_private_message_handler(execute, "exec")
