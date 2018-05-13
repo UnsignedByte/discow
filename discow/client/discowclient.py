@@ -18,7 +18,7 @@ class DiscowClientClass(discord.Client):
         await self.change_presence(game=discord.Game(name='cow help', url='https://github.com/UnsignedByte/discow', type=2))
         mod_server_emotes = Discow.get_server("433441820102361108").emojis
         for a in mod_server_emotes:
-            if a.name in ["thumbsup", "thumbsdown", "empty"]:
+            if a.name in ["thumbsup", "thumbsdown", "empty", "pack"]:
                 if a.name in special_emojis:
                     special_emojis[a.name].append(a)
                 else:

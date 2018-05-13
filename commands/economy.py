@@ -9,7 +9,7 @@ import requests as req
 from commands.utilities import save
 import re
 
-currency_rates = {"bcbw":100, "cb":200, "mn":1}
+currency_rates = {"bcbw":100, "cb":200}
 interest_rate = 0.01
 
 #Desired Exchange Rate (1 Mooney = ??? Universal)

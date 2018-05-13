@@ -78,29 +78,26 @@ class PoissonDisc:
     def find(self, x, y):
         return (int(x/self.cSize), int(y/self.cSize))
     def getAll(self):
-        pts = []
-        for a in range(len(self.grid)):
-            if self.grid[a]:
-                q, r = divmod(a, self.gw)
-                pts.append((r, q))
-        return pts
+        return [tuple(reversed(divmod(a, self.gw))) for a in range(len(self.grid)) if self.grid[a]]
 
 class Village:
     def __init__(self, chunksize, houses=random.randint(32, 48), spread=random.randint(2,5), townhalls = random.randint(1, 5)):
-        self.homes = PoissonDisc(chunksize, chunksize, spread, cSize=1)
+        self.homepoisson = PoissonDisc(chunksize, chunksize, spread, cSize=1)
         self.townhall = []
         for i in range(houses):
             if i < townhalls:
-                self.townhall.append(self.homes.find(*self.homes.addPoint()))
+                self.townhall.append(self.homepoisson.find(*self.homepoisson.addPoint()))
             else:
-                self.homes.addPoint()
-        self.homes = self.homes.getAll()
+                self.homepoisson.addPoint()
+        self.homes = self.homepoisson.getAll()
 
 class Chunk:
-    def __init__(self, hasvillage=random.randint(0,1), chunksize = 64):
+    def __init__(self, hasvillage=None, chunksize = 64):
         self.map = list([' ']*chunksize for x in range(chunksize))
         self.weightmap = list([0]*chunksize for x in range(chunksize))
         self.chunksize = chunksize
+        if not hasvillage:
+            hasvillage = random.randint(0,1)
         self.hasvillage = hasvillage
         self.plain = PoissonDisc(chunksize, chunksize, 0.8, cSize=1)
         self.grass = random.randint(400, 800)
@@ -170,7 +167,9 @@ class Chunk:
         outgrid = list([' ']*(xmax-xmin) for a in range(ymax-ymin))
         for y in range(ymin, ymax):
             for x in range(xmin, xmax):
-                if (x-center[0])**2 + (y-center[1])**2 <= radius**2:
+                if x == center[0] and y == center[1]:
+                    outgrid[y-ymin][x-xmin] = "X"
+                elif (x-center[0])**2 + (y-center[1])**2 <= radius**2:
                     outgrid[y-ymin][x-xmin] = self.map[y][x]
         return '\n'.join(list(' '.join(v) for v in outgrid))
 
@@ -192,12 +191,14 @@ class Player:
         self.pos = tuple(map(lambda x, y: x + y, self.pos, tuple(dst*x for x in [(0,-1), (1,0), (0,1), (-1,0)][dir])))
         if self.attribs["health"] == 0:
             self.__init__(self.id, pos=self.save)
-        elif self.attribs["thirst"] == 0 or self.attribs["hunger"] == 0:
-            self.attribs["health"]=max(0, self.attribs["health"]-1/self.attribs["maxhealth"])
-        else:
-            self.attribs["health"]=min(1, self.attribs["health"]+1/self.attribs["maxhealth"])
-            self.attribs["hunger"]=max(0, self.attribs["hunger"]-1/self.attribs["maxhunger"])
-            self.attribs["thirst"]=max(0, self.attribs["thirst"]-1/self.attribs["maxthirst"])
+            return
+        if self.attribs["thirst"] == 0:
+            self.attribs["health"]=max(0, self.attribs["health"]-0.5/self.attribs["maxhealth"])
+        if self.attribs["hunger"] == 0:
+            self.attribs["health"]=max(0, self.attribs["health"]-0.5/self.attribs["maxhealth"])
+        self.attribs["health"]=min(1, self.attribs["health"]+1/self.attribs["maxhealth"])
+        self.attribs["hunger"]=max(0, self.attribs["hunger"]-1/self.attribs["maxhunger"])
+        self.attribs["thirst"]=max(0, self.attribs["thirst"]-1/self.attribs["maxthirst"])
     def useItem(self, item):
         if item in self.inventory and self.inventory[item] >= 1:
             self.inventory[item]-=1
@@ -224,10 +225,14 @@ class World:
         if not pos:
             chunkid = random.randint(0, len(self.chunks)-1)
             initchunkid = chunkid
-            for i in range(0, len(self.chunks)):
+            for i in range(0, len(self.chunks)*len(self.chunks[0])):
                 x, y = divmod(chunkid, len(self.chunks))
                 if self.chunks[x][y].hasvillage:
-                    pos = (y+random.randint(0, self.chunksize-1), x+random.randint(0, self.chunksize-1))
+                    while True:
+                        rhouse = random.choice(self.chunks[x][y].village.homes)
+                        if rhouse not in self.chunks[x][y].village.townhall:
+                            break
+                    pos = (x*len(self.chunks)+rhouse[0], y*len(self.chunks[0])+rhouse[1])
                     break
                 chunkid+=1
                 chunkid%=len(self.chunks)*len(self.chunks[0])
@@ -236,12 +241,14 @@ class World:
         if not pos:
             pos = (random.randint(0, len(self.chunks)*self.chunksize-1),random.randint(0, len(self.chunks[0])*self.chunksize-1))
         self.players[id] = Player(id, pos=pos)
+    def reqPlayerInv(self, id):
+        return '\n'.join(['%s: %s' % (k, v) for (k, v) in sorted(self.players[id].inventory.items(), key=lambda x:x[1], reverse=True)])
     def reqPlayer(self, id, radius=10):
         pos = self.players[id].pos
         cx, x = divmod(pos[0], self.chunksize)
         cy, y = divmod(pos[1], self.chunksize)
         def getchunk(cx, cy, x, y):
-            return self.chunks[smartmod(cy, len(self.chunks))][smartmod(cx, len(self.chunks[0]))].getCircle(radius, (x, y))
+            return self.chunks[smartmod(cx, len(self.chunks[0]))][smartmod(cy, len(self.chunks[1]))].getCircle(radius, (x, y))
         def blockRow(cx, cy, y):
             return addblock(addblock(getchunk(cx-1, cy, x+self.chunksize, y), getchunk(cx, cy, x, y)), getchunk(cx+1, cy, x-self.chunksize, y))
         return str(self.players[id])+'\n'+'\n'.join([blockRow(cx, cy-1, y+self.chunksize), blockRow(cx, cy, y), blockRow(cx, cy+1, y-self.chunksize)])
