@@ -4,6 +4,8 @@ from discow.utils import *
 from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown, get_data
 from discord import Embed, NotFound, HTTPException
 import requests as req
+import re
+import traceback
 from bs4 import BeautifulSoup
 
 async def info(Discow, msg):
@@ -14,7 +16,11 @@ async def info(Discow, msg):
 
 async def execute(Discow, msg):
     if msg.author.id == "418827664304898048":
-        exec(msg.content)
+        try:
+            out = await eval(re.search(r'`(?P<in>``)?(?P<body>(?:.\s?)+)(?(in)```|`)', msg.content).group("body").strip())
+            await send_embed(Discow, msg, Embed(title="Output", description=str(out), colour=0x12AA24))
+        except Exception:
+            await send_embed(Discow, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
 
 async def quote(Discow, msg):
     try:
