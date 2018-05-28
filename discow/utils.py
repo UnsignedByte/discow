@@ -70,26 +70,26 @@ def nickname(usr, srv):
         return usr.name
     return n
 
-@asyncio.coroutine
-def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
+async def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
     if not usr:
         usr = Discow.user
     txt = "Created by "+nickname(usr, msg.server)+" on "+convertTime(time, msg)+"."
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     try:
-        m = yield from Discow.send_message(msg.channel, embed=embed)
+        m = await Discow.send_message(msg.channel, embed=embed)
         return m
     except Forbidden:
-        yield from Discow.send_message(msg.channel, "**Missing Permissions**\nDiscow is missing permissions to perform this task.")
+        await Discow.send_message(msg.channel,
+                                       "**Missing Permissions**\nDiscow is missing permissions to perform this task.")
         return None
 
-@asyncio.coroutine
-def edit_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
+
+async def edit_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=None):
     if not usr:
         usr = Discow.user
     txt = "Edited by "+nickname(usr, msg.server)+" on "+convertTime(time, msg)+"."
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
-    m = yield from Discow.edit_message(msg, embed=embed)
+    m = await Discow.edit_message(msg, embed=embed)
     return m
 
 def group(lst, n):
