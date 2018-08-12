@@ -1,6 +1,6 @@
 from commands.map.maputils import World
 import asyncio
-from discow.handlers import add_message_handler, world, special_emojis, map_messages
+from discow.handlers import add_message_handler, world, special_emojis, map_messages, add_private_message_handler
 from commands.utilities import save
 
 directions = {"\U000025C0":(3, 0), "\U000023EA":(3, 1), "\U000025B6":(1, 0), "\U000023E9":(1, 1), "\U00002B06":(0, 0), "\U000023EB":(0, 1), "\U00002B07":(2, 0), "\U000023EC":(2, 1)}
