@@ -113,7 +113,6 @@ print("Begin Command Initialization")
 # Add modules here
 from commands import *
 import commands.map.map
-import commands.gunn_schedule.schedule
 import discord
 print("Command Initialization Finished")
 import re
