@@ -41,20 +41,6 @@ async def reaction(Discow, msg):
     for i in range(0, min(len(e), num, 20-len(m.reactions))):
         await Discow.add_reaction(m, e[i])
 
-async def easteregg(Discow, msg):
-    msgs = [
-        "**BIG BROTHER** is **WATCHING YOU**",
-        "Nice!",
-        "I agree",
-        format_response("{_mention} is right, obviously", _msg=msg),
-        "Hello!",
-        "Eggs are superior",
-        "Bananas are the supreme fruit!",
-        "🍌",
-        "Hi!"
-    ]
-    await Discow.send_message(msg.channel, msgs[randint(0,len(msgs)-1)])
-
 #From https://github.com/UnsignedByte/Thesaurus-er
 async def thesaurus(Discow, msg):
     #Taken from https://stackoverflow.com/questions/19790188/expanding-english-language-contractions-in-python
@@ -225,6 +211,5 @@ async def thesaurus(Discow, msg):
 add_message_handler(rps, "rps")
 add_message_handler(reaction, "reaction")
 add_message_handler(reaction, "react")
-add_message_handler(easteregg, "easteregg")
 add_message_handler(invite, "invite")
 add_message_handler(thesaurus, "thesaurus")
