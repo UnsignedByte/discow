@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   18:59:11, 18-Apr-2018
+# @Filename: utilities.py
+# @Last modified by:   edl
+# @Last modified time: 15:55:28, 12-Aug-2018
+
+
 import asyncio
 import pickle
 from discow.utils import *

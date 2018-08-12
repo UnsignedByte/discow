@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   18:59:11, 18-Apr-2018
+# @Filename: trivia.py
+# @Last modified by:   edl
+# @Last modified time: 15:55:32, 12-Aug-2018
+
+
 import requests
 from base64 import b64decode
 from enum import Enum

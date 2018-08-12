@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   18:59:11, 18-Apr-2018
+# @Filename: fun.py
+# @Last modified by:   edl
+# @Last modified time: 15:55:29, 12-Aug-2018
+
+
 import asyncio
 from discow.utils import *
 from discow.handlers import add_message_handler

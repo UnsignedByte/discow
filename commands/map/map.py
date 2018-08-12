@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   13:44:12, 21-Apr-2018
+# @Filename: map.py
+# @Last modified by:   edl
+# @Last modified time: 15:56:43, 12-Aug-2018
+
+
 from commands.map.maputils import World
 import asyncio
 from discow.handlers import add_message_handler, world, special_emojis, map_messages, add_private_message_handler

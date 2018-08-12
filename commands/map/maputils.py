@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   06:50:24, 02-May-2018
+# @Filename: maputils.py
+# @Last modified by:   edl
+# @Last modified time: 15:56:41, 12-Aug-2018
+
+
 import math
 import string
 import random

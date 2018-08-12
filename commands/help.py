@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   19:01:44, 02-Apr-2018
+# @Filename: help.py
+# @Last modified by:   edl
+# @Last modified time: 15:55:30, 12-Aug-2018
+
+
 import asyncio
 from discord import Embed
 from discow.handlers import add_message_handler, add_private_message_handler

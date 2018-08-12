@@ -1,3 +1,10 @@
+# @Author: Edmund Lam <edl>
+# @Date:   15:30:36, 12-Aug-2018
+# @Filename: utils.py
+# @Last modified by:   edl
+# @Last modified time: 15:56:29, 12-Aug-2018
+
+
 discow_prefix = "cow "
 
 from discord import ServerRegion, Forbidden
