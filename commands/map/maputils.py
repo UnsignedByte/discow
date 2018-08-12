@@ -2,13 +2,19 @@ import math
 import string
 import random
 
-iteminfo = {"food":{"🍖":(6, 2), "🍗":(3, 2), "🍞":(2, 0), "🍌":(4, 3), "🌽":(1, 1), "🥛":(0, 6), "🥃":(0, 3), "🍹":(0, 4)}}
+iteminfo = {"food":{"🍖":(6, 2), "🍗":(3, 2), "🍞":(2, 0), "🍌":(4, 3), "🌽":(1, 1), "🥔":(3, 4), "🥛":(0, 6), "🥃":(0, 3), "🍹":(0, 4)}}
 
 def smartmod(a, b):
     if a >= 0:
         return a % b
     else:
         return b-(-1*a % b)
+
+def closest_factors(a):
+    n = int(math.sqrt(a))
+    while a % n != 0:
+        n-=1
+    return n
 
 def addblock(a, b):
     return '\n'.join(map(lambda x, y:x+' '+y, a.split('\n'), b.split('\n')))
@@ -179,7 +185,7 @@ class Player:
         self.save = pos
         self.id = id
         self.attribs = {"hunger":hunger, "health":health, "thirst":thirst, "speed":speed, "maxhealth":maxhealth, "maxthirst":maxthirst, "maxhunger":maxhunger}
-        self.inventory = {"🍖":0, "🍗":0, "🍞":0, "🍌":0, "🌽":0, "🥛":0, "🥃":0, "🍹":0}
+        self.inventory = {"🍖":0, "🍗":0, "🍞":0, "🍌":0, "🌽":0, "🥔":0, "🥛":0, "🥃":0, "🍹":0}
     def __str__(self):
         return "health:  ["+getbar(self.attribs["health"], 30)+"]\nhunger:  ["+getbar(self.attribs["hunger"], 30)+"]\nthirst:  ["+getbar(self.attribs["thirst"], 30)+']\nPosition:'+str(self.pos)
     def add(self, elem, amount):
@@ -242,7 +248,9 @@ class World:
             pos = (random.randint(0, len(self.chunks)*self.chunksize-1),random.randint(0, len(self.chunks[0])*self.chunksize-1))
         self.players[id] = Player(id, pos=pos)
     def reqPlayerInv(self, id):
-        return '\n'.join(['%s: %s' % (k, v) for (k, v) in sorted(self.players[id].inventory.items(), key=lambda x:x[1], reverse=True)])
+        l = ['%s: %s' % (k, v) for (k, v) in sorted(self.players[id].inventory.items(), key=lambda x:x[1], reverse=True)]
+        n = closest_factors(len(l))
+        return '\n\n'.join(['\t\t\t'.join(l[i:i+n]) for i in range(0, len(l), n)])
     def reqPlayer(self, id, radius=10):
         pos = self.players[id].pos
         cx, x = divmod(pos[0], self.chunksize)
