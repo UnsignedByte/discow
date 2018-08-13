@@ -1,6 +1,7 @@
 import os
 
-_keyfile = "discow/client/data/key.txt"
+_keyfile = "discow/client/data/keys/key.txt"
+
 if not os.path.exists(_keyfile):
     print("It seems your bot key is unknown. Please input it below.")
     open(_keyfile, 'w+').write(input("Bot Key:"))
@@ -10,13 +11,10 @@ def readKey():
 
 _keyvalue = None
 
-def key(cache = True):
+def key():
     global _keyvalue
 
     if not _keyvalue:
-        if cache:
-            _keyvalue = readKey().strip()
-            return _keyvalue
         return readKey()
     else:
         return _keyvalue
