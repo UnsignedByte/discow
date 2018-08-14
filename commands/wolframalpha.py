@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 21:23:52, 13-Aug-2018
+# @Last modified time: 21:29:42, 13-Aug-2018
 
 import asyncio
 import os
@@ -38,7 +38,10 @@ imgur_client = pyimgur.Imgur(imgur_app_id)
 async def query(Discow, msg):
 
     question = strip_command(msg.content)
+    em = Embed(title=question, description="Requesting Data", colour=0xe4671b)
+    oldem = await send_embed(Discow, msg, em)
     res = wa_client.query(question)
+
 
     titles = []
     images = []
@@ -91,7 +94,7 @@ async def query(Discow, msg):
 
     em = Embed(title=question, colour = 0xe4671b)
     em.set_image(url=res_img.link)
-    await send_embed(Discow, msg, em)
+    await edit_embed(Discow, oldem, em)
 
 add_message_handler(query, "wolfram")
 add_message_handler(query, "wolframalpha")
