@@ -2,7 +2,7 @@
 # @Date:   15:30:36, 12-Aug-2018
 # @Filename: utils.py
 # @Last modified by:   edl
-# @Last modified time: 15:56:29, 12-Aug-2018
+# @Last modified time: 21:09:00, 13-Aug-2018
 
 
 discow_prefix = "cow "
@@ -15,6 +15,7 @@ import itertools
 import asyncio
 from random import shuffle
 from collections import OrderedDict
+from PIL import Image, ImageDraw
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -87,7 +88,7 @@ async def send_embed(Discow, msg, embed, time=datetime.datetime.utcnow(), usr=No
         return m
     except Forbidden:
         await Discow.send_message(msg.channel,
-                                       "**Missing Permissions**\nDiscow is missing permissions to perform this task.")
+                                       "**Missing Permissions**\nDiscow is missing permissions to send embeds.")
         return None
 
 
@@ -153,3 +154,23 @@ class Question:
                 else:
                     outstr+="\n<<"+chr(a+65)+">> ["+list(self.options.keys())[a].center(46)+"]()"
         return outstr+'```'
+
+
+# http://web.archive.org/web/20130306020911/http://nadiana.com/pil-tutorial-basic-advanced-drawing#Drawing_Rounded_Corners_Rectangle
+def round_corner(radius, fill):
+    """Draw a round corner"""
+    corner = Image.new('RGBA', (radius, radius), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(corner)
+    draw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=fill)
+    return corner
+
+def round_rectangle(size, radius, fill):
+    """Draw a rounded rectangle"""
+    width, height = size
+    rectangle = Image.new('RGBA', size, fill)
+    corner = round_corner(radius, fill)
+    rectangle.paste(corner, (0, 0))
+    rectangle.paste(corner.rotate(90), (0, height - radius)) # Rotate the corner and paste it
+    rectangle.paste(corner.rotate(180), (width - radius, height - radius))
+    rectangle.paste(corner.rotate(270), (width - radius, 0))
+    return rectangle
