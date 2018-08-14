@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 21:10:50, 13-Aug-2018
+# @Last modified time: 21:23:52, 13-Aug-2018
 
 import asyncio
 import os
@@ -66,7 +66,7 @@ async def query(Discow, msg):
 
     new_im = round_rectangle((max_width, total_height), item_padding, "white")
 
-    font = ImageFont.truetype("/Library/Fonts/Arial.ttf", font_size)
+    font = ImageFont.truetype("discow/client/data/Roboto-Regular.ttf", font_size)
 
     total_pods = 0
 

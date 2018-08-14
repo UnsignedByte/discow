@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 21:08:24, 13-Aug-2018
+# @Last modified time: 21:24:36, 13-Aug-2018
 
 
 from random import randint
@@ -193,9 +193,9 @@ async def on_message(Discow, msg):
                 await send_embed(Discow, msg, em)
             except discord.Forbidden:
                 pass
-        # except Exception as e:
-        #     em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
-        #     await send_embed(Discow, msg, em)
+        except Exception as e:
+            em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
+            await send_embed(Discow, msg, em)
     else:
         if msg.author != Discow.user and msg.channel.id == "433441820102361110" and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
             try:
