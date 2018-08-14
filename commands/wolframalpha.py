@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 07:50:06, 14-Aug-2018
+# @Last modified time: 10:49:11, 14-Aug-2018
 
 import asyncio
 import os
@@ -47,12 +47,18 @@ async def query(Discow, msg):
     titles = []
     images = []
 
-    for pod in res.pods:
-        titles.append(textwrap.wrap(pod.title, width=50))
-        subimgs = []
-        for sub in pod.subpods:
-            subimgs.append(Image.open(BytesIO(requests.get(sub['img']['@src']).content)))
-        images.append(subimgs)
+    try:
+
+        for pod in res.pods:
+            titles.append(textwrap.wrap(pod.title, width=50))
+            subimgs = []
+            for sub in pod.subpods:
+                subimgs.append(Image.open(BytesIO(requests.get(sub['img']['@src']).content)))
+            images.append(subimgs)
+    except AttributeError:
+        em = Embed(title=question, description="No results", colour=0xe4671b)
+        await edit_embed(Discow, oldem, em)
+        return
 
     chained_imgs = list(itertools.chain.from_iterable(images))
 
