@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 21:29:42, 13-Aug-2018
+# @Last modified time: 07:50:06, 14-Aug-2018
 
 import asyncio
 import os
@@ -15,6 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 import requests
 from io import BytesIO
 import itertools
+import textwrap
 
 _wakey = "discow/client/data/keys/wolframalphakey.txt"
 _imgurkey = "discow/client/data/keys/imgurkey.txt"
@@ -47,7 +48,7 @@ async def query(Discow, msg):
     images = []
 
     for pod in res.pods:
-        titles.append(pod.title)
+        titles.append(textwrap.wrap(pod.title, width=50))
         subimgs = []
         for sub in pod.subpods:
             subimgs.append(Image.open(BytesIO(requests.get(sub['img']['@src']).content)))
@@ -61,11 +62,12 @@ async def query(Discow, msg):
     widths, heights = zip(*(i.size for i in chained_imgs))
 
     item_padding = 20
-    font_size = 20
+    font_size = 15
+    font_padding = 3
 
 
     max_width = max(widths)+2*item_padding
-    total_height = sum(heights)+item_padding*(len(chained_imgs)+2)+(item_padding+font_size)*len(titles)
+    total_height = sum(heights)+item_padding*(len(chained_imgs)+2+len(titles))+(font_padding+font_size)*len(list(itertools.chain.from_iterable(titles)))
 
     new_im = round_rectangle((max_width, total_height), item_padding, "white")
 
@@ -77,9 +79,11 @@ async def query(Discow, msg):
     y_offset = item_padding
     for i in range(len(titles)):
         pod = images[i]
-        draw.text((item_padding*1.5, y_offset), titles[i], fill=(119, 165, 182), font=font)
+        for line in titles[i]:
+            draw.text((item_padding, y_offset), line, fill=(119, 165, 182), font=font)
+            y_offset+=font_size+font_padding
 
-        y_offset+=item_padding+font_size
+        y_offset+=item_padding
         for im in pod:
             total_pods+=1
             new_im.paste(im, (item_padding,y_offset))
