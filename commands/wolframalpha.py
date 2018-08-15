@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 17:20:56, 14-Aug-2018
+# @Last modified time: 21:04:00, 14-Aug-2018
 
 import asyncio
 import os
@@ -16,6 +16,7 @@ import requests
 from io import BytesIO
 import itertools
 import textwrap
+import urllib
 
 _wakey = "discow/client/data/keys/wolframalphakey.txt"
 _imgurkey = "discow/client/data/keys/imgurkey.txt"
@@ -43,6 +44,11 @@ async def query(Discow, msg):
     oldem = await send_embed(Discow, msg, em)
     res = wa_client.query(question)
 
+    if "@pods" not in res:
+        resp = urllib.request.urlopen(res["@recalculate"])
+        assert resp.headers.get_content_type() == 'text/xml'
+        assert resp.headers.get_param('charset') == 'utf-8'
+        res = wolframalpha.Result(resp)
 
     titles = []
     images = []
@@ -102,7 +108,7 @@ async def query(Discow, msg):
 
     res_img = imgur_client.upload_image("discow/client/data/wa_save.png", title=question)
 
-    em = Embed(title=question, colour = 0xe4671b)
+    em = Embed(title=question, url=res_img.link, colour = 0xe4671b)
     em.set_image(url=res_img.link)
     await edit_embed(Discow, oldem, em)
 
