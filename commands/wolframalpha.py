@@ -2,13 +2,13 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 10:49:11, 14-Aug-2018
+# @Last modified time: 17:20:56, 14-Aug-2018
 
 import asyncio
 import os
 import pyimgur
 from discow.utils import *
-from discow.handlers import add_message_handler
+from discow.handlers import add_message_handler, add_private_message_handler
 from discord import Embed
 import wolframalpha
 from PIL import Image, ImageDraw, ImageFont
@@ -109,3 +109,6 @@ async def query(Discow, msg):
 add_message_handler(query, "wolfram")
 add_message_handler(query, "wolframalpha")
 add_message_handler(query, "wa")
+add_private_message_handler(query, "wolfram")
+add_private_message_handler(query, "wolframalpha")
+add_private_message_handler(query, "wa")
