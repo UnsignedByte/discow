@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 21:04:00, 14-Aug-2018
+# @Last modified time: 21:26:17, 14-Aug-2018
 
 import asyncio
 import os
@@ -45,10 +45,14 @@ async def query(Discow, msg):
     res = wa_client.query(question)
 
     if "@pods" not in res:
-        resp = urllib.request.urlopen(res["@recalculate"])
-        assert resp.headers.get_content_type() == 'text/xml'
-        assert resp.headers.get_param('charset') == 'utf-8'
-        res = wolframalpha.Result(resp)
+        print(res)
+        try:
+            resp = urllib.request.urlopen(res["@recalculate"])
+            assert resp.headers.get_content_type() == 'text/xml'
+            assert resp.headers.get_param('charset') == 'utf-8'
+            res = wolframalpha.Result(resp)
+        except ValueError:
+            pass
 
     titles = []
     images = []
