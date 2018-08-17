@@ -2,7 +2,7 @@
 # @Date:   11:04:49, 05-Apr-2018
 # @Filename: settings.py
 # @Last modified by:   edl
-# @Last modified time: 19:09:41, 16-Aug-2018
+# @Last modified time: 19:15:43, 16-Aug-2018
 
 
 import asyncio
@@ -13,12 +13,14 @@ from discord import Embed, ChannelType
 settings_handlers = {}
 
 async def settings(Discow, msg):
-    newmsg = strip_command(msg.content).split(" ")
-    try:
-        await settings_handlers[newmsg[0]](Discow, msg, newmsg)
-    except KeyError:
-        em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
-        await Discow.send_message(msg.channel, embed=em)
+    perms = msg.channel.permissions_for(msg.author)
+    if perms.manage_server:
+        newmsg = strip_command(msg.content).split(" ")
+        try:
+            await settings_handlers[newmsg[0]](Discow, msg, newmsg)
+        except KeyError:
+            em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
+            await Discow.send_message(msg.channel, embed=em)
 
 
 #SUBCOMMANDS DEFINED HERE

@@ -39,7 +39,7 @@ Remember to delete `{}` and `()`.
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
-|settings|`cow settings {subcommand} (args)`|Settings for the bot. Requires the 
+|settings|`cow settings {subcommand} (args)`|Settings for the bot. Requires the `manage server` permission. | `settings`|
 |disable|`cow settings disable {cmd} {channel(s)}`|Disables a command in the specified channels.|`disable`|
 |enable|`cow settings enable {cmd} {channel(s)}`|Enables a command in the specified channels.|`enable`|
 
