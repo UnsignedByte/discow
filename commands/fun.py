@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: fun.py
 # @Last modified by:   edl
-# @Last modified time: 15:55:29, 12-Aug-2018
+# @Last modified time: 19:05:09, 16-Aug-2018
 
 
 import asyncio
@@ -37,16 +37,6 @@ async def rps(Discow, msg):
         await Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
     else:
         await Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
-
-async def reaction(Discow, msg):
-    num = int(parse_command(msg.content, 1)[1])
-    e = msg.server.emojis
-    shuffle(e)
-    await Discow.delete_message(msg)
-    m = await Discow.logs_from(msg.channel, limit=1)
-    m = list(m)[0]
-    for i in range(0, min(len(e), num, 20-len(m.reactions))):
-        await Discow.add_reaction(m, e[i])
 
 #From https://github.com/UnsignedByte/Thesaurus-er
 async def thesaurus(Discow, msg):
@@ -216,7 +206,5 @@ async def thesaurus(Discow, msg):
     await edit_embed(Discow, m, em)
 
 add_message_handler(rps, "rps")
-add_message_handler(reaction, "reaction")
-add_message_handler(reaction, "react")
 add_message_handler(invite, "invite")
 add_message_handler(thesaurus, "thesaurus")
