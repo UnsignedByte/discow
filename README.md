@@ -10,8 +10,6 @@ Add this bot to your server [here](https://discordapp.com/api/oauth2/authorize?c
   * Moderation!
   * Gambling!
   * And more!
-* Easter eggs (Discow will respond and react to messages occasionally)!
-* Creating a better discord - Don't ***hate, dislike*** instead!
 
 ## Commands
 Prefix: `cow`
