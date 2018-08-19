@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 21:26:17, 14-Aug-2018
+# @Last modified time: 15:22:25, 19-Aug-2018
 
 import asyncio
 import os
@@ -45,7 +45,6 @@ async def query(Discow, msg):
     res = wa_client.query(question)
 
     if "@pods" not in res:
-        print(res)
         try:
             resp = urllib.request.urlopen(res["@recalculate"])
             assert resp.headers.get_content_type() == 'text/xml'
