@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 21:24:47, 14-Aug-2018
+# @Last modified time: 16:06:54, 19-Aug-2018
 
 
 from random import randint
@@ -125,17 +125,6 @@ print("Command Initialization Finished")
 import re
 
 import asyncio
-
-EXTREMEBRITISHREGEX = {
-re.compile(r'\b(?P<START>(?:(?:(?:[l1]\W*)+(?:[il!1]\W*)+|(?:m\W*)+(?:[e3]\W*)+|(?:c\W*)+(?:[e3]\W*)+(?:n\W*)+)(?:t\W*)+|(?:t\W*)+(?:h\W*)+(?:[e3]\W*)+(?:a\W*)+(?:t\W*)+|(?:m\W*)+(?:a\W*)+(?:n\W*)+(?:[e3]\W*)+(?:u\W*)+(?:v\W*)+))(?P<MID>(?:[e3]\W*)+)(?P<MID2>r+)(?P<END>(?:[e3]?s?\W*)+)\b', re.I) : r'\g<START>\g<MID2>\g<MID>\g<END>',
-re.compile(r'\b(?P<START>(?:(?P<r>(?:c\W*)+(?:[o0]\W*)+(?:[l1]\W*)+|(?:[l1]\W*)+(?:a\W*)+(?:b\W*)+|(?:f\W*)+(?:[l1]\W*)+(?:a\W*)+(?:v\W*)+|(?:[o0]\W*)+(?:d\W*)+|(?:v\W*)+(?:a\W*)+(?:(?:p\W*)+|(?:[l1]\W*)+)|(?:p\W*)+(?:a\W*)+(?:r\W*)+(?:[l1]\W*)+|(?:t\W*)+(?:u\W*)+(?:m\W*)+|(?:a\W*)+(?:r\W*)+(?:m\W*)+)|(?P<rite>(?:f\W*)+(?:a\W*)+(?:v\W*)+)))(?P<MID>(?:[o0]\W*)+)(?P<END>(?(r)(?:r\W*)+|(?(rite)(?:r\W*)+(?:[il1!]\W*)+(?:t\W*)+(?:[e3]\W*)+)))', re.I) : r'\g<START>\g<MID>u\g<END>',
-re.compile(r'\b(?P<START>(?:(?P<maneuvre>(?:m\W*)+(?:a\W*)+(?:n\W*)+)|(?P<ameba>(?:a\W*)+(?:m\W*)+)))(?P<MID>(?:[e3]\W*)+)(?P<END>\W*(?(maneuvre)(?:u\W*)+(?:v\W*)+(?:r\W*)+(?:[e3]\W*)+|(?(ameba)(?:b\W*)+(?:a\W*)+)))\b', re.I) : r'\g<START>o\g<MID>\g<END>',
-re.compile(r'\b((?:(?:b\W*)+(?:[e3]\W*)?)?(?:c\W*)+(?:u\W*)+(?:\W*z)+)\b', re.I) : r'because',
-}
-def britsub(s):
-    for k, v in EXTREMEBRITISHREGEX.items():
-        s = k.sub(v, s)
-    return s
 
 async def on_message(Discow, msg):
     if not msg.author.bot:

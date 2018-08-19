@@ -5,7 +5,7 @@ import re
 
 import discow.client.getkey as _getkey
 import discow.handlers
-from discow.handlers import britsub, special_emojis
+from discow.handlers import special_emojis
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -23,14 +23,6 @@ class DiscowClientClass(discord.Client):
                     special_emojis[a.name].append(a)
                 else:
                     special_emojis[a.name] = [a]
-        for a in Discow.get_all_members():
-            if a.nick:
-                newnick = britsub(a.nick)
-                if newnick != a.nick:
-                    try:
-                        await self.change_nickname(a, newnick)
-                    except discord.Forbidden:
-                        pass
         await discow.handlers.timed_msg(self)
     async def on_message(self, message):
         await discow.handlers.on_message(self, message)
@@ -40,14 +32,6 @@ class DiscowClientClass(discord.Client):
         await discow.handlers.on_reaction(self, reaction, user)
     async def on_reaction_remove(self, reaction, user):
         await discow.handlers.on_unreaction(self, reaction, user)
-    async def on_member_update(self, before, after):
-        if after.nick and before.nick != after.nick:
-            newnick = britsub(after.nick)
-            if newnick != after.nick:
-                try:
-                    await self.change_nickname(after, newnick)
-                except (discord.Forbidden, TypeError):
-                    pass
 Discow = DiscowClientClass()
 
 def runDiscow():
