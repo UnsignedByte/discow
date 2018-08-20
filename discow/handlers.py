@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 16:06:54, 19-Aug-2018
+# @Last modified time: 16:22:26, 20-Aug-2018
 
 
 from random import randint
@@ -140,7 +140,7 @@ async def on_message(Discow, msg):
                 await Discow.delete_message(nospammsg)
                 return
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
-                await Discow.send_message(msg.channel, newHatingRe.split(':', 1)[1])
+                await Discow.send_message(msg.channel, msg.content.split(':', 1)[1])
                 return
             if Discow.user in msg.mentions:
                 await Discow.send_message(msg.channel, "Type `cow help` if you need help.")
