@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 16:22:26, 20-Aug-2018
+# @Last modified time: 20:20:37, 23-Aug-2018
 
 
 from random import randint
@@ -129,16 +129,6 @@ import asyncio
 async def on_message(Discow, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
-            countbad=0
-            async for a in Discow.logs_from(msg.channel, limit=5, before=msg):
-                if a.author.id == msg.author.id and a.content == msg.content:
-                        countbad+=1
-            if countbad >= 3:
-                await Discow.delete_message(msg)
-                nospammsg = await Discow.send_message(msg.channel, "Hey "+msg.author.mention+"! Stop spamming the same message over and over again!")
-                await asyncio.sleep(1)
-                await Discow.delete_message(nospammsg)
-                return
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
                 await Discow.send_message(msg.channel, msg.content.split(':', 1)[1])
                 return
