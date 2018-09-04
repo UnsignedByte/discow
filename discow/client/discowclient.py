@@ -1,18 +1,18 @@
 import discord
 import asyncio
-import logging
+# import logging
 import re
 
 import discow.client.getkey as _getkey
 import discow.handlers
 from discow.handlers import special_emojis
 
-open('logs/discord.log', 'w').close()
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+# open('logs/discord.log', 'w').close()
+# logger = logging.getLogger('discord')
+# logger.setLevel(logging.DEBUG)
+# handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
+# handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+# logger.addHandler(handler)
 
 class DiscowClientClass(discord.Client):
     async def on_ready(self):
