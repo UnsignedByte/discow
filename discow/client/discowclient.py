@@ -7,7 +7,6 @@ import discow.client.getkey as _getkey
 import discow.handlers
 from discow.handlers import special_emojis
 
-open('logs/discord.log', 'w').close()
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
