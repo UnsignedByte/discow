@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: trivia.py
 # @Last modified by:   edl
-# @Last modified time: 15:55:32, 12-Aug-2018
+# @Last modified time: 20:39:47, 24-Oct-2018
 
 
 import requests
 from base64 import b64decode
 from enum import Enum
-from discow.handlers import add_private_message_handler, user_data
+from discow.handlers import add_private_message_handler, user_data, add_message_handler
 from discow.utils import *
 import asyncio
 from discord import Embed
@@ -101,5 +101,6 @@ async def trivia(Discow, msg):
     await edit_embed(Discow, msgEmbed, em)
     await save(Discow, msg, overrideperms=True)
 
+add_message_handler(trivia, 'trivia')
 add_private_message_handler(trivia, 'trivia')
 print("\tTrivia Command Initialized")

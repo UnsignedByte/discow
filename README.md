@@ -54,9 +54,9 @@ Remember to delete `{}` and `()`.
 
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
-|setmod|`cow settings setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
-|add|`cow settings add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
-|take|`cow settings take (category)`|Take a quiz! Follow the Quiz Wizard's instructions.|`take`|
+|setmod|`cow quiz setmod {role mention}`|Choose a role for moderating quiz questions, categories, etc.|`setmod`, `modrole`|
+|add|`cow quiz add {question}`|Adds a quiz question to your server! Follow the Question Wizard's instructions.|`add`|
+|take|`cow quiz take (category)`|Take a quiz! Follow the Quiz Wizard's instructions.|`take`|
 
 ### Gambling/Economy
 | **Name** | **Usage** | **Description** | **Aliases** |
