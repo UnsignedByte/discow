@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 15:22:25, 19-Aug-2018
+# @Last modified time: 17:52:59, 31-Oct-2018
 
 import asyncio
 import os
@@ -37,11 +37,11 @@ else:
 wa_client = wolframalpha.Client(wa_app_id)
 imgur_client = pyimgur.Imgur(imgur_app_id)
 
-async def query(Discow, msg):
+async def query(Bot, msg):
 
     question = strip_command(msg.content)
     em = Embed(title=question, description="Requesting Data", colour=0xe4671b)
-    oldem = await send_embed(Discow, msg, em)
+    oldem = await send_embed(Bot, msg, em)
     res = wa_client.query(question)
 
     if "@pods" not in res:
@@ -66,7 +66,7 @@ async def query(Discow, msg):
             images.append(subimgs)
     except AttributeError:
         em = Embed(title=question, description="No results", colour=0xe4671b)
-        await edit_embed(Discow, oldem, em)
+        await edit_embed(Bot, oldem, em)
         return
 
     chained_imgs = list(itertools.chain.from_iterable(images))
@@ -113,7 +113,7 @@ async def query(Discow, msg):
 
     em = Embed(title=question, url=res_img.link, colour = 0xe4671b)
     em.set_image(url=res_img.link)
-    await edit_embed(Discow, oldem, em)
+    await edit_embed(Bot, oldem, em)
 
 add_message_handler(query, "wolfram")
 add_message_handler(query, "wolframalpha")

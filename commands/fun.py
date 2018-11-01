@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: fun.py
 # @Last modified by:   edl
-# @Last modified time: 19:05:09, 16-Aug-2018
+# @Last modified time: 17:51:45, 31-Oct-2018
 
 
 import asyncio
@@ -15,12 +15,12 @@ from bs4 import BeautifulSoup
 import re
 import string
 
-async def invite(Discow, msg):
-    inv = await Discow.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
+async def invite(Bot, msg):
+    inv = await Bot.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
     outstr = "You have been invited to **"+msg.server.name+"**!\nJoin with this link:\n"+inv.url
-    await Discow.send_message(msg.channel, outstr)
+    await Bot.send_message(msg.channel, outstr)
 
-async def rps(Discow, msg):
+async def rps(Bot, msg):
     valid = ["rock", "paper", "scissors"]
     mine = valid[randint(0, 2)]
     yours = parse_command(msg.content, 1)[1]
@@ -34,12 +34,12 @@ async def rps(Discow, msg):
         else:
             result = "I win!"
     if yours in valid:
-        await Discow.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
+        await Bot.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
     else:
-        await Discow.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
+        await Bot.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
 
 #From https://github.com/UnsignedByte/Thesaurus-er
-async def thesaurus(Discow, msg):
+async def thesaurus(Bot, msg):
     #Taken from https://stackoverflow.com/questions/19790188/expanding-english-language-contractions-in-python
     contractions = {
     "ain't": ["am not", "are not", "is not", "has not", "have not"],
@@ -168,7 +168,7 @@ async def thesaurus(Discow, msg):
     em.add_field(name="Input Sentence", value=sentence, inline=False)
     em.add_field(name="Output Sentence", value="Converting...", inline=False)
 
-    m = await send_embed(Discow, msg, em)
+    m = await send_embed(Bot, msg, em)
 
     for k in sorted(contractions, key=len, reverse=True): # Through keys sorted by length
         sentence = sentence.replace(k, choice(contractions[k]))
@@ -203,7 +203,7 @@ async def thesaurus(Discow, msg):
         newsentence.append(lets)
 
     em.set_field_at(1, name="Output Sentence", value=' '.join(newsentence), inline=False)
-    await edit_embed(Discow, m, em)
+    await edit_embed(Bot, m, em)
 
 add_message_handler(rps, "rps")
 add_message_handler(invite, "invite")

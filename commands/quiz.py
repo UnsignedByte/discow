@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: quiz.py
 # @Last modified by:   edl
-# @Last modified time: 15:55:30, 12-Aug-2018
+# @Last modified time: 17:52:17, 31-Oct-2018
 
 
 import asyncio
@@ -18,7 +18,7 @@ print("\tInitializing Quiz Command")
 quiz_handlers = {}
 quiz_users = []
 
-async def quiz(Discow, msg):
+async def quiz(Bot, msg):
     if not msg.server.id in quiz_data:
         quiz_data[msg.server.id] = [None, {}]
     else:
@@ -29,35 +29,35 @@ async def quiz(Discow, msg):
         newmsg = strip_command(msg.content).split(" ")
     except IndexError:
         em = Embed(title="Missing subcommand", description=format_response("You must specify a subcommand!\nValid options include `cow quiz add` and `cow quiz take`.", _msg=msg), colour=0xff7830)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
         return
     try:
         if not msg.author.id in quiz_users:
             quiz_users.append(msg.author.id)
             try:
-                await quiz_handlers[newmsg[0]](Discow, msg)
+                await quiz_handlers[newmsg[0]](Bot, msg)
             except KeyError:
                 raise
             finally:
                 quiz_users.remove(msg.author.id)
         else:
-            await Discow.send_message(msg.channel, "You already have a quiz running!\nPlease cancel that command first.")
+            await Bot.send_message(msg.channel, "You already have a quiz running!\nPlease cancel that command first.")
     except KeyError:
         em = Embed(title="ERROR", description="Unknown subcommand **%s**." % newmsg[0], colour=0xd32323)
-        await Discow.send_message(msg.channel, embed=em)
+        await Bot.send_message(msg.channel, embed=em)
 
-async def setmod(Discow, msg):
+async def setmod(Bot, msg):
     if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
         return
     try:
         quiz_data[msg.server.id][0] = msg.role_mentions[0]
-        await Discow.send_message(msg.channel, "Quiz moderator role has succesfully been set to "+msg.role_mentions[0].mention+".")
+        await Bot.send_message(msg.channel, "Quiz moderator role has succesfully been set to "+msg.role_mentions[0].mention+".")
     except IndexError:
-        await Discow.send_message(msg.channel, "Please mention a role.")
+        await Bot.send_message(msg.channel, "Please mention a role.")
 
-async def take(Discow, msg):
+async def take(Bot, msg):
     try:
         cat = strip_command(msg.content).split(" ", 1)[1].title()
         questions = quiz_data[msg.server.id][1][cat]
@@ -70,33 +70,33 @@ async def take(Discow, msg):
         else:
             desc += '\nNone'
         em.description = desc
-        qmsg = await send_embed(Discow, msg, em)
+        qmsg = await send_embed(Bot, msg, em)
         def check(s):
             return s.content.title() in quiz_data[msg.server.id][1] or s.content.lower() == 'cancel'
-        newm = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+        newm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         if not newm or newm.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)
-            await edit_embed(Discow, qmsg, em)
-            await Discow.delete_message(newm)
+            await edit_embed(Bot, qmsg, em)
+            await Bot.delete_message(newm)
             return
         cat = newm.content.title()
         questions = quiz_data[msg.server.id][1][cat]
-        await Discow.delete_messages([qmsg, newm])
+        await Bot.delete_messages([qmsg, newm])
 
     def formatDesc(cat="Unknown", ql="Unknown", score=100):
         return "Category: "+cat+"\nQuestions Left: "+str(ql)+"\nPercent Correct: "+'{0:.2f}'.format(score)+"%"
 
     em = Embed(title="Quiz", description=formatDesc(cat=cat)+"\n\nHow many questions do you want in your quiz? There "+("is" if len(questions) == 1 else "are")+" "+str(len(questions))+" question"+("s" if len(questions) == 1 else "")+" in total to choose from.\nType a number, or type `all` to get all questions in the category.", colour=0xff7830)
-    qmsg = await send_embed(Discow, msg, em)
+    qmsg = await send_embed(Bot, msg, em)
     def check(s):
         return (isInteger(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
-    nm = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+    nm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
     if not nm:
         return
     if nm.content != 'all':
         shuffle(questions)
         questions = questions[0:int(nm.content)]
-    await Discow.delete_message(nm)
+    await Bot.delete_message(nm)
     em.add_field(name="Question", value="NULL")
 
     totalscore = 0
@@ -105,31 +105,31 @@ async def take(Discow, msg):
     for a in range(len(questions)):
         questions[a].optshuf()
         em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr()+"\n\nTo select your answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nIf you don't know the answer, you can always guess!")
-        qmsg = await edit_embed(Discow, qmsg, em)
+        qmsg = await edit_embed(Bot, qmsg, em)
         def check(s):
             return len(s.content)==1 and 1<=ord(s.content.upper())-64<=len(questions[a].options)
         def yesnocheck(s):
             return s.content in ['y', 'n', 'yes', 'no']
         def confirmcheck(s):
             return check(s) or s.content in ['n', 'next']
-        select = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+        select = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         select.content = str(ord(select.content.upper())-64)
-        await Discow.delete_message(select)
+        await Bot.delete_message(select)
         while True:
             em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
-            qmsg = await edit_embed(Discow, qmsg, em)
-            newselect = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=confirmcheck)
-            await Discow.delete_message(newselect)
+            qmsg = await edit_embed(Bot, qmsg, em)
+            newselect = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=confirmcheck)
+            await Bot.delete_message(newselect)
             if newselect.content in ['n', 'next']:
                 if questions[a].isCorrect(int(select.content)):
                     totalscore += 1
                 em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1, showCorrect=True)+'\n\nWhen you are done viewing answers, type `next (n)` to move on.')
                 em.description = formatDesc(cat=cat, ql=len(questions)-a-1, score=100*totalscore/(a+1))
-                await edit_embed(Discow, qmsg, em)
+                await edit_embed(Bot, qmsg, em)
                 def moveoncheck(s):
                     return s.content in ['n', 'next']
-                moveon = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=moveoncheck)
-                await Discow.delete_message(moveon)
+                moveon = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=moveoncheck)
+                await Bot.delete_message(moveon)
                 break
             else:
                 newselect.content = str(ord(newselect.content.upper())-64)
@@ -139,14 +139,14 @@ async def take(Discow, msg):
     moneyrecieved = randint(round(totalscore/2)*100, round(totalscore*2)*100)
     em.title = 'Quiz Completed!'
     em.description = 'Congratulations! You completed a quiz in the '+cat+' category with '+str(len(questions))+' questions.\nYou recieved a score of '+'{0:.2f}'.format(100*totalscore/len(questions))+'%, or '+str(totalscore)+' out of '+str(len(questions))+'!\nAs you answered '+str(totalscore)+' questions correctly, you have recieved $'+str(moneyrecieved/100)+'!'
-    await edit_embed(Discow, qmsg, em)
+    await edit_embed(Bot, qmsg, em)
     give(moneyrecieved, msg.author.id)
 
 
-async def add(Discow, msg):
+async def add(Bot, msg):
     if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
         return
     question = strip_command(msg.content).split(" ", 1)[1]
     em = Embed(title="Add Quiz Question", description="Question:\n"+question, colour=0xff7830)
@@ -157,21 +157,21 @@ async def add(Discow, msg):
     else:
         desc = '\nNone'
     em.add_field(name="Question Category", value="Available Categories:"+desc+"\n\nIf your desired category is not listed, you may add one below.\n\nIf you want to cancel, type `cancel`.", inline=False)
-    qmsg = await send_embed(Discow, msg, em)
+    qmsg = await send_embed(Bot, msg, em)
 
-    cat = await getquestioncategory(Discow, msg, qmsg, em, add=True)
+    cat = await getquestioncategory(Bot, msg, qmsg, em, add=True)
     if not cat:
         return
     em.set_field_at(0, name="Question Category", value=cat, inline=False)
-    quest = await editquestion(Discow, msg, qmsg, em, cat, question)
+    quest = await editquestion(Bot, msg, qmsg, em, cat, question)
     quiz_data[msg.server.id][1][cat].append(quest)
-    await save(Discow, msg, overrideperms=True)
+    await save(Bot, msg, overrideperms=True)
 
-async def editquestion(Discow, msg, qmsg, em, cat, question):
+async def editquestion(Bot, msg, qmsg, em, cat, question):
     responsesvalue = "Type `add (a)`, `remove (r)`, and `edit (e)` to add, remove, and edit responses.\nType `back` to go back and edit your category, `cancel` to leave the Question Wizard, or `done` to finish and publish your question."
     optionresponses = "```css\n"
     em.add_field(name="Responses", value=responsesvalue)
-    await edit_embed(Discow, qmsg, em)
+    await edit_embed(Bot, qmsg, em)
     options = OrderedDict()
 
     def oformat(s, v, c):
@@ -183,40 +183,40 @@ async def editquestion(Discow, msg, qmsg, em, cat, question):
     while True:
         def check(s):
             return s.content.lower() in ['done', 'add', 'remove', 'edit', 'back', 'a', 'r', 'e', 'cancel']
-        out = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+        out = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         if not out or out.content == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
-            await edit_embed(Discow, qmsg, em)
-            await Discow.delete_message(out)
+            await edit_embed(Bot, qmsg, em)
+            await Bot.delete_message(out)
             return
         elif out.content == 'back':
-            await Discow.delete_message(out)
+            await Bot.delete_message(out)
             em.set_field_at(0, name="Question Category", value="Available Categories:"+desc+"\n\nIf your desired category is not listed, you may add one below.\n\nIf you want to cancel, type `cancel`.", inline=False)
             em.remove_field(1)
-            qmsg = await edit_embed(Discow, qmsg, em)
-            cat = await getquestioncategory(Discow, msg, qmsg, em, add=True)
+            qmsg = await edit_embed(Bot, qmsg, em)
+            cat = await getquestioncategory(Bot, msg, qmsg, em, add=True)
             if not cat:
                 return
             em.set_field_at(0, name="Question Category", value=cat, inline=False)
             em.add_field(name="Responses", value=optionresponses+'```\n\n'+responsesvalue)
-            await edit_embed(Discow, qmsg, em)
+            await edit_embed(Bot, qmsg, em)
         elif out.content in ('add', 'a'):
-            mm = await Discow.send_message(msg.channel, "What is the response you would like to add? Type `cancel` to cancel.")
+            mm = await Bot.send_message(msg.channel, "What is the response you would like to add? Type `cancel` to cancel.")
             while True:
-                option = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                option = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
                 if not option:
                     return
                 if option.content in options:
-                    _m = await Discow.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
+                    _m = await Bot.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
                     await asyncio.sleep(0.5)
-                    await Discow.delete_messages([option,_m])
+                    await Bot.delete_messages([option,_m])
                 else:
                     break
             if option.content.lower() != 'cancel':
                 def corrcheck(s):
                     return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
-                mmm = await Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
-                corr = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
+                mmm = await Bot.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
+                corr = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
                 if not corr:
                     return
                 if corr.content.lower() in ["correct", "c", "right"]:
@@ -225,30 +225,30 @@ async def editquestion(Discow, msg, qmsg, em, cat, question):
                     options[option.content] = False
                 optionresponses+= oformat(str(len(options)), option.content, options[option.content])
                 em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
-                await edit_embed(Discow, qmsg, em)
-                await Discow.delete_messages([out, option, mm, mmm, corr])
+                await edit_embed(Bot, qmsg, em)
+                await Bot.delete_messages([out, option, mm, mmm, corr])
             else:
-                mmm = await Discow.send_message(msg.channel, "*Operation Cancelled*")
+                mmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
                 await asyncio.sleep(0.25)
-                await Discow.delete_messages([out, option, mm, mmm])
+                await Bot.delete_messages([out, option, mm, mmm])
         elif out.content in ('remove', 'r'):
             if len(options) == 0:
-                mm = await Discow.send_embed(msg.channel, "You have no options to remove!")
+                mm = await Bot.send_embed(msg.channel, "You have no options to remove!")
                 await asyncio.sleep(0.25)
-                await Discow.delete_messages([mm, out])
+                await Bot.delete_messages([mm, out])
             else:
-                mm = await Discow.send_message(msg.channel, "What is the response you would like to remove? Type in its letter.\nType `cancel` to cancel.")
+                mm = await Bot.send_message(msg.channel, "What is the response you would like to remove? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
                     return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
-                option = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                option = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
                 if not option:
                     return
                 if option.content != 'cancel':
                     option.content = str(ord(option.content.upper())-64)
-                    mmm = await Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
+                    mmm = await Bot.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
-                    yesorno = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                    yesorno = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
                     if not yesorno:
                         return
                     if yesorno.content.lower() in ['yes', 'y']:
@@ -260,51 +260,51 @@ async def editquestion(Discow, msg, qmsg, em, cat, question):
                             em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
                         else:
                             em.set_field_at(1, name="Responses", value=responsesvalue)
-                        await edit_embed(Discow, qmsg, em)
-                        await Discow.delete_messages([out, mm, mmm, option, yesorno])
+                        await edit_embed(Bot, qmsg, em)
+                        await Bot.delete_messages([out, mm, mmm, option, yesorno])
                     else:
-                        mmmm = await Discow.send_message(msg.channel, "*Operation Cancelled*")
-                        await Discow.delete_messages([out, mm, mmm, option, yesorno, mmmm])
+                        mmmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
+                        await Bot.delete_messages([out, mm, mmm, option, yesorno, mmmm])
                 else:
-                    mmm = await Discow.send_message(msg.channel, "*Operation Cancelled*")
+                    mmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
                     await asyncio.sleep(0.25)
-                    await Discow.delete_messages([out, option, mm, mmm])
+                    await Bot.delete_messages([out, option, mm, mmm])
         elif out.content in ('edit', 'e'):
             if len(options) == 0:
-                mm = await Discow.send_embed(msg.channel, "You have no options to edit!")
+                mm = await Bot.send_embed(msg.channel, "You have no options to edit!")
                 await asyncio.sleep(0.25)
-                await Discow.delete_messages([mm, out])
+                await Bot.delete_messages([mm, out])
             else:
-                mm = await Discow.send_message(msg.channel, "What is the response you would like to edit? Type in its letter.\nType `cancel` to cancel.")
+                mm = await Bot.send_message(msg.channel, "What is the response you would like to edit? Type in its letter.\nType `cancel` to cancel.")
                 def check(s):
                     return s.content.lower() == 'cancel' or len(s.content) == 1 and 1 <= ord(s.content.upper())-64 <= len(options)
-                option = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                option = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
                 if not option:
                     return
                 if option.content != 'cancel':
                     option.content = str(ord(option.content.upper())-64)
-                    mmm = await Discow.send_message(msg.channel, "What would you like to replace it with?")
+                    mmm = await Bot.send_message(msg.channel, "What would you like to replace it with?")
                     while True:
-                        newoption = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                        newoption = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
                         if not newoption:
                             return
                         def corrcheck(s):
                             return s.content.lower() in ["correct", "c", "incorrect", "i", "right", "wrong"]
-                        mmmmmmmm = await Discow.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
-                        iscorrm = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
+                        mmmmmmmm = await Bot.send_message(msg.channel, "Would you like this option to be correct or incorrect? Type `correct (c)` or `incorrect (i)`.")
+                        iscorrm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=corrcheck)
                         if not iscorrm:
                             return
                         iscorr = iscorrm.content in ["correct", "c", "right"]
                         if newoption.content not in options or options[newoption.content] != iscorr:
                             break
                         else:
-                            _m = await Discow.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
+                            _m = await Bot.send_message(msg.channel, "That option already exists!\nPlease input a different option.")
                             await asyncio.sleep(0.5)
-                            await Discow.delete_messages([out, option, newoption, _m, iscorrm, mmmmmmmm])
-                    mmmm = await Discow.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
+                            await Bot.delete_messages([out, option, newoption, _m, iscorrm, mmmmmmmm])
+                    mmmm = await Bot.send_message(msg.channel, "Are you sure? This cannot be undone.\nRespond with `yes (y)` or `no (n)`")
                     def yesnocheck(s):
                         return s.content.lower() in ['yes', 'no', 'y', 'n']
-                    yesorno = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                    yesorno = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
                     if not yesorno:
                         return
                     if yesorno.content.lower() in ['yes', 'y']:
@@ -314,18 +314,18 @@ async def editquestion(Discow, msg, qmsg, em, cat, question):
                         for k, v in options.items():
                             optionresponses+= oformat(str(list(options.keys()).index(k)+1), k, v)
                         em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
-                        await edit_embed(Discow, qmsg, em)
-                    await Discow.delete_messages([out, option, newoption, mm, mmm, mmmm, yesorno, iscorrm, mmmmmmmm])
+                        await edit_embed(Bot, qmsg, em)
+                    await Bot.delete_messages([out, option, newoption, mm, mmm, mmmm, yesorno, iscorrm, mmmmmmmm])
                 else:
-                    mmm = await Discow.send_message(msg.channel, "*Operation Cancelled*")
+                    mmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
                     await asyncio.sleep(0.25)
-                    await Discow.delete_messages([out, option, mm, mmm])
+                    await Bot.delete_messages([out, option, mm, mmm])
         elif out.content == 'done':
             if len(options) > 1:
-                mooooooooocow = await Discow.send_message(msg.channel, "Should this question have shuffled responses?")
+                mooooooooocow = await Bot.send_message(msg.channel, "Should this question have shuffled responses?")
                 def yesnocheck(s):
                     return s.content.lower() in ['yes', 'no', 'y', 'n']
-                yesorno = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
+                yesorno = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=yesnocheck)
                 if not yesorno:
                     return
                 if yesorno.content.lower() in ['yes', 'y']:
@@ -333,42 +333,42 @@ async def editquestion(Discow, msg, qmsg, em, cat, question):
                 else:
                     shuffled = False
                 em.set_field_at(1, name="Responses", value=optionresponses+'```')
-                await edit_embed(Discow, qmsg, em)
-                await Discow.delete_messages([out, yesorno, mooooooooocow])
+                await edit_embed(Bot, qmsg, em)
+                await Bot.delete_messages([out, yesorno, mooooooooocow])
                 return Question(question, options, shuffled)
             else:
-                momomo = await Discow.send_message(msg.channel, "You must have at least 2 options!")
+                momomo = await Bot.send_message(msg.channel, "You must have at least 2 options!")
                 await asyncio.sleep(0.5)
-                await Discow.delete_messages([out, momomo])
+                await Bot.delete_messages([out, momomo])
 
 
-async def getquestioncategory(Discow, msg, qmsg, em, add=False):
+async def getquestioncategory(Bot, msg, qmsg, em, add=False):
     while True:
-        out = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+        out = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
         if not out or out.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
-            await edit_embed(Discow, qmsg, em)
-            await Discow.delete_message(out)
+            await edit_embed(Bot, qmsg, em)
+            await Bot.delete_message(out)
             return None
         elif out.content.title() not in quiz_data[msg.server.id][1]:
             if add:
-                m = await Discow.send_message(msg.channel, out.content.title()+" is not currently a category. Would you like to make a new category? Type` yes (y)` or `no (n)`.")
+                m = await Bot.send_message(msg.channel, out.content.title()+" is not currently a category. Would you like to make a new category? Type` yes (y)` or `no (n)`.")
                 def check(s):
                     return s.content.lower() in ["y", "n", "yes", "no"]
-                yesno = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+                yesno = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
                 if not yesno:
                     return
-                await Discow.delete_messages([yesno, m, out])
+                await Bot.delete_messages([yesno, m, out])
                 if yesno.content.lower() in ["y", "yes"]:
                     quiz_data[msg.server.id][1][out.content.title()] = []
                     return out.content.title()
             else:
-                m = await Discow.send_message(msg.channel, out.content.title()+" is not currently a category.")
+                m = await Bot.send_message(msg.channel, out.content.title()+" is not currently a category.")
                 await asyncio.sleep(0.25)
-                await Discow.delete_messages([m, out])
+                await Bot.delete_messages([m, out])
                 return None
         else:
-            await Discow.delete_message(out)
+            await Bot.delete_message(out)
             return out.content.title()
 
 quiz_handlers["take"] = take

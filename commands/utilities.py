@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 15:55:28, 12-Aug-2018
+# @Last modified time: 17:52:44, 31-Oct-2018
 
 
 import asyncio
@@ -16,13 +16,13 @@ import traceback
 from bs4 import BeautifulSoup
 import greenlet
 
-async def info(Discow, msg):
+async def info(Bot, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
-    em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048>.\nOn this server, I am known as "+nickname(Discow.user, msg.server)+'.'
+    em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048>.\nOn this server, I am known as "+nickname(Bot.user, msg.server)+'.'
     em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
-    await send_embed(Discow, msg, em)
+    await send_embed(Bot, msg, em)
 
-async def execute(Discow, msg):
+async def execute(Bot, msg):
     if msg.author.id == "418827664304898048":
 
         #From https://stackoverflow.com/a/46087477/5844752
@@ -45,7 +45,7 @@ async def execute(Discow, msg):
         def gexec(code):
             child = greenlet.greenlet(exec)
             gawait = GreenAwait(child)
-            child.switch(code, {'gawait': gawait, 'Discow': Discow, 'msg': msg})
+            child.switch(code, {'gawait': gawait, 'Bot': Bot, 'msg': msg})
             yield from gawait
 
         async def aexec(code):
@@ -57,15 +57,15 @@ async def execute(Discow, msg):
         try:
             out = await aexec('import asyncio\nasync def run_exec():\n\t'+'\t'.join(re.search(r'`(?P<in>``)?(?P<body>(.?\s?)*)(?(in)```|`)', msg.content).group("body").strip().splitlines(True))+'\ngawait(run_exec())')
         except Exception:
-            await send_embed(Discow, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
+            await send_embed(Bot, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
 
-async def quote(Discow, msg):
+async def quote(Bot, msg):
     try:
-        m = await Discow.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+        m = await Bot.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
         em = Embed(title="Message Quoted by "+msg.author.display_name+":", colour=0x3b7ce5)
         desc = m.content
         print(desc)
-        log = reversed([a async for a in Discow.logs_from(m.channel, limit=20, after=m)])
+        log = reversed([a async for a in Bot.logs_from(m.channel, limit=20, after=m)])
         print(log)
         for a in log:
             if a.author == m.author:
@@ -73,7 +73,7 @@ async def quote(Discow, msg):
                     desc+="\n"+a.content
             else:
                 break
-        async for a in Discow.logs_from(m.channel, limit=20, before=m):
+        async for a in Bot.logs_from(m.channel, limit=20, before=m):
             if a.author == m.author:
                 if a.content:
                     desc=a.content+"\n"+desc
@@ -81,17 +81,17 @@ async def quote(Discow, msg):
                 break
         em.description = desc
         print(desc)
-        await Discow.delete_message(msg)
-        await send_embed(Discow, msg, em, time=m.timestamp, usr=m.author)
+        await Bot.delete_message(msg)
+        await send_embed(Bot, msg, em, time=m.timestamp, usr=m.author)
     except NotFound:
         em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
 
-async def dictionary(Discow, msg):
+async def dictionary(Bot, msg):
     link="https://www.merriam-webster.com/dictionary/"
     x = strip_command(msg.content).replace(' ', '%20')
     em = Embed(title="Definition for "+x+".", description="Retrieving Definition...", colour=0x4e91fc)
-    dictm = await send_embed(Discow, msg, em)
+    dictm = await send_embed(Bot, msg, em)
 
     try:
         response = req.get(link+x)
@@ -106,35 +106,35 @@ async def dictionary(Discow, msg):
             words = soup.find("ol", {"class":"definition-list"}).get_text().split()
             for i in range(0, len(words)):
                 em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
-            dictm = await edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Bot, dictm, em)
             while True:
-                vm = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
+                vm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
                 if not vm:
                     return
                 v = vm.content
                 if v == 'cancel':
                     em.description = "*Operation Cancelled*"
-                    await Discow.delete_message(vm)
-                    dictm = await edit_embed(Discow, dictm, em)
+                    await Bot.delete_message(vm)
+                    dictm = await edit_embed(Bot, dictm, em)
                     return
                 elif isInteger(v):
                     if int(v)>=1 and int(v) <=len(words):
                         x = words[int(v)-1].replace(' ', "%20")
-                        await Discow.delete_message(vm)
+                        await Bot.delete_message(vm)
                         break
                 else:
                     if v in words:
                         x = v.replace(' ', "%20")
-                        await Discow.delete_message(vm)
+                        await Bot.delete_message(vm)
                         break
             html_doc = req.get(link+x).text
             soup = BeautifulSoup(html_doc, 'html.parser')
             em.title = "Definition for "+x+"."
             em.description = "Retrieving Definition..."
-            dictm = await edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Bot, dictm, em)
         except AttributeError:
             em.description = "Could not find "+x+" in the dictionary."
-            dictm = await edit_embed(Discow, dictm, em)
+            dictm = await edit_embed(Bot, dictm, em)
             return
 
     em.description = ""
@@ -160,35 +160,35 @@ async def dictionary(Discow, msg):
 
         em.description+= '\n'+st
     em.description+="\n\nDefinitions retrieved from [The Merriam-Webster Dictionary](https://www.merriam-webster.com/) using [Dictionary](https://github.com/UnsignedByte/Dictionary) by [UnsignedByte](https://github.com/UnsignedByte)."
-    dictm = await edit_embed(Discow, dictm, em)
+    dictm = await edit_embed(Bot, dictm, em)
 
 
-async def purge(Discow, msg):
+async def purge(Bot, msg):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_messages or msg.author.id == "418827664304898048":
         num = int(parse_command(msg.content, 1)[1].split(' ')[0])+1
         if num < 2:
-            await Discow.send_message("There is no reason to delete 0 messages!")
+            await Bot.send_message("There is no reason to delete 0 messages!")
         deletechunks = []
         def check(message):
             return not msg.mentions or msg.mentions[0].id == message.author.id
         try:
-            await Discow.purge_from(msg.channel, limit=num, check=check)
-            m = await Discow.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
+            await Bot.purge_from(msg.channel, limit=num, check=check)
+            m = await Bot.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
         except discord.HTTPException:
-            m = await Discow.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!"))
+            m = await Bot.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!"))
 
         await asyncio.sleep(2)
-        await Discow.delete_message(m)
+        await Bot.delete_message(m)
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
 
-async def save(Discow, msg, overrideperms = False):
+async def save(Bot, msg, overrideperms = False):
     if overrideperms or msg.author.id == "418827664304898048":
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
-            msg = await send_embed(Discow, msg, em)
+            msg = await send_embed(Bot, msg, em)
             await asyncio.sleep(1)
         data = get_data()
         with open("discow/client/data/settings.txt", "wb") as f:
@@ -203,20 +203,20 @@ async def save(Discow, msg, overrideperms = False):
             pickle.dump(data[4], f)
         if not overrideperms:
             em.description = "Complete!"
-            msg = await edit_embed(Discow, msg, embed=em)
+            msg = await edit_embed(Bot, msg, embed=em)
             await asyncio.sleep(0.5)
-            await Discow.delete_message(msg)
+            await Bot.delete_message(msg)
         return True
     else:
         em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Discow, msg, em)
+        await send_embed(Bot, msg, em)
         return False
 
-async def shutdown(Discow, msg):
+async def shutdown(Bot, msg):
     flip_shutdown()
-    istrue = await save(Discow, msg)
+    istrue = await save(Bot, msg)
     if istrue:
-        await Discow.logout()
+        await Bot.logout()
 
 
 add_message_handler(info, "hi")
