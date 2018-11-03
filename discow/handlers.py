@@ -2,15 +2,12 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 17:53:30, 31-Oct-2018
+# @Last modified time: 19:38:09, 02-Nov-2018
 
-
-from random import randint
-import os
 import pickle
+from random import randint
 from discow.utils import *
 from datetime import date
-from shutil import copyfile
 from commands.map.maputils import World
 
 print("Begin Handler Initialization")
@@ -24,45 +21,69 @@ map_messages = {}
 print("\tBegin Loading Files")
 closing = False
 
-print("\t\tLoading World Map")
-if os.path.isfile('discow/client/data/world.txt'):
-    with open('discow/client/data/world.txt', 'rb') as f:
-        world = pickle.load(f)
-else:
+if not os.path.exists("Data/Backup/"):
+    os.makedirs("Data/Backup/")
+
+world = load_data_file('world.txt')
+if not world:
     world = World()
-    with open('discow/client/data/world.txt', 'wb') as f:
+    with open("Data/world.txt", "wb") as f:
         pickle.dump(world, f)
-    copyfile("discow/client/data/world.txt", "discow/client/data/data_backup/world.txt")
-print("\t\tWorld Map Loaded")
 
-if not os.path.exists("discow/client/data/data_backup/"):
-    os.makedirs("discow/client/data/data_backup/")
-
-command_settings = {}
-if os.path.isfile("discow/client/data/settings.txt"):
-    with open("discow/client/data/settings.txt", "rb") as f:
-        command_settings = pickle.load(f)
-    copyfile("discow/client/data/settings.txt", "discow/client/data/data_backup/settings.txt")
-
-user_data = {}
-if os.path.isfile("discow/client/data/user_data.txt"):
-    with open("discow/client/data/user_data.txt", "rb") as f:
-        user_data = pickle.load(f)
-    copyfile("discow/client/data/user_data.txt", "discow/client/data/data_backup/user_data.txt")
-
-quiz_data = {}
-if os.path.isfile("discow/client/data/quiz_data.txt"):
-    with open("discow/client/data/quiz_data.txt", "rb") as f:
-        quiz_data = pickle.load(f)
-    copyfile("discow/client/data/quiz_data.txt", "discow/client/data/data_backup/quiz_data.txt")
-
-global_data = {}
-if os.path.isfile("discow/client/data/global_data.txt"):
-    with open("discow/client/data/global_data.txt", "rb") as f:
-        global_data = pickle.load(f)
-    copyfile("discow/client/data/global_data.txt", "discow/client/data/data_backup/global_data.txt")
+command_settings = load_data_file('settings.txt')
+user_data = load_data_file('user_data.txt')
+quiz_data = load_data_file('quiz_data.txt')
+global_data = load_data_file('global_data.txt')
 
 print("\tLoaded files")
+
+
+def nested_set(value, *keys):
+    dic = server_data
+    for key in keys[:-1]:
+        dic = dic.setdefault(key, {})
+    dic[keys[-1]] = value
+
+
+def nested_pop(*keys):
+    nested_get(*keys[:-1]).pop(keys[-1], None)
+
+
+def alt_pop(key, *keys):
+    nested_get(*keys).pop(key)
+
+
+def nested_get(*keys):
+    dic = server_data
+    for key in keys:
+        dic=dic.setdefault( key, {} )
+    return dic
+
+
+def nested_append(value, *keys):
+    v = nested_get(*keys)
+    if v:
+        v.append(value)
+    else:
+        nested_set([value], *keys)
+
+
+def nested_remove(value, *keys, **kwargs):
+    kwargs['func'] = kwargs.get('func', None)
+    v = nested_get(*keys)
+    if not v or isinstance(v, discord.Member):
+        return
+    try:
+        if not kwargs['func']:
+            v.remove(value)
+        else:
+            for x in v:
+                if kwargs['func'](x, value):
+                    v.remove(x)
+                    break
+    except ValueError:
+        return
+
 
 def flip_shutdown():
     global closing
