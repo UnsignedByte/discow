@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: trivia.py
 # @Last modified by:   edl
-# @Last modified time: 15:55:32, 12-Aug-2018
+# @Last modified time: 17:52:33, 31-Oct-2018
 
 
 import requests
 from base64 import b64decode
 from enum import Enum
-from discow.handlers import add_private_message_handler, user_data
+from discow.handlers import add_private_message_handler, user_data, add_message_handler
 from discow.utils import *
 import asyncio
 from discord import Embed
@@ -61,7 +61,7 @@ class Trivia:
 triviaAPI = Trivia()
 print("\t\tFinished Trivia Classes")
 
-async def trivia(Discow, msg):
+async def trivia(Bot, msg):
     cont = strip_command(msg.content)
     cont = (cont.split(' ') if ' ' in cont else [cont])
     diff = None
@@ -76,7 +76,7 @@ async def trivia(Discow, msg):
             cat = Data.categories.value[cont.lower()]
         else:
             em = Embed(title="Unknown Category", description="Could not find the specified category. Valid categories include:\n\n"+'\n'.join(Data.categories.value.keys()), colour=0xff7830)
-            await Discow.send_message(msg.channel, embed=em)
+            await Bot.send_message(msg.channel, embed=em)
             return
     question = triviaAPI.getquestion(category=cat, difficulty=diff)[0]
     options = {question["correct_answer"]:True}
@@ -84,10 +84,10 @@ async def trivia(Discow, msg):
     questionOBJ = Question(question['question'], options, True)
     questionOBJ.optshuf()
     em = Embed(title="Trivia Question", description = questionOBJ.getstr(), colour=0xff7830)
-    msgEmbed = await Discow.send_message(msg.channel, embed=em)
+    msgEmbed = await Bot.send_message(msg.channel, embed=em)
     def check(s):
         return len(s.content) == 1 and 0<=ord(s.content.lower())-ord('a')<len(options)
-    response = await Discow.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
+    response = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
     selection = ord(response.content.lower())-ord('a')
     em.description = questionOBJ.getstr(selected=selection, showCorrect=True)
     if list(questionOBJ.options.values())[selection] == True:
@@ -98,8 +98,9 @@ async def trivia(Discow, msg):
     else:
         set_element(msg.author.id, "answerstreak", 0)
         em.description+='\n\nYour answer was incorrect! Your answer streak is now `0`.'
-    await edit_embed(Discow, msgEmbed, em)
-    await save(Discow, msg, overrideperms=True)
+    await edit_embed(Bot, msgEmbed, em)
+    await save(Bot, msg, overrideperms=True)
 
+add_message_handler(trivia, 'trivia')
 add_private_message_handler(trivia, 'trivia')
 print("\tTrivia Command Initialized")

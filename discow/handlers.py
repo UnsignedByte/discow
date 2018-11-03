@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 20:20:37, 23-Aug-2018
+# @Last modified time: 17:53:30, 31-Oct-2018
 
 
 from random import randint
@@ -18,8 +18,6 @@ print("Begin Handler Initialization")
 message_handlers = {}
 private_message_handlers = {}
 bot_message_handlers = {}
-reaction_handlers = []
-unreaction_handlers = []
 special_emojis = {}
 map_messages = {}
 
@@ -66,8 +64,6 @@ if os.path.isfile("discow/client/data/global_data.txt"):
 
 print("\tLoaded files")
 
-persistent_variables = {}
-
 def flip_shutdown():
     global closing
     closing = not closing
@@ -102,19 +98,6 @@ def add_bot_message_handler(handler, keyword):
 def add_settings_handler(handler, keyword):
     command_settings[keyword] = handler
 
-def add_reaction_handler(handler, name):
-    name += "$reaction_handler"
-    if name not in persistent_variables:
-        reaction_handlers.append(handler)
-        persistent_variables[name] = True
-
-def add_unreaction_handler(handler, name):
-    name += "$unreaction_handler"
-    if name not in persistent_variables:
-        unreaction_handlers.append(handler)
-        persistent_variables[name] = True
-
-
 print("Handler initialized")
 print("Begin Command Initialization")
 # Add modules here
@@ -126,71 +109,63 @@ import re
 
 import asyncio
 
-async def on_message(Discow, msg):
+async def on_message(Bot, msg):
     if not msg.author.bot:
         if msg.content[:len(discow_prefix)].lower() != discow_prefix:
             if msg.content.startswith("echo:") and msg.content.strip() != 'echo:':
-                await Discow.send_message(msg.channel, msg.content.split(':', 1)[1])
+                await Bot.send_message(msg.channel, msg.content.split(':', 1)[1])
                 return
-            if Discow.user in msg.mentions:
-                await Discow.send_message(msg.channel, "Type `cow help` if you need help.")
+            if Bot.user in msg.mentions:
+                await Bot.send_message(msg.channel, "Type `cow help` if you need help.")
             return
         if closing:
             em = discord.Embed(title="Bot Shutting Down", description="Not accepting commands, bot is saving data.", colour=0xd32323)
-            await send_embed(Discow, msg, em)
+            await send_embed(Bot, msg, em)
             return
         try:
             cmd = parse_command(msg.content)[0].lower()
             if msg.channel.is_private:
                 try:
-                    await private_message_handlers[cmd](Discow, msg)
+                    await private_message_handlers[cmd](Bot, msg)
                 except KeyError:
                     if cmd in message_handlers:
-                        await Discow.send_message(msg.channel, "The **"+cmd+"** command cannot be used in private channels!")
+                        await Bot.send_message(msg.channel, "The **"+cmd+"** command cannot be used in private channels!")
                 return
             if cmd in command_settings and msg.channel in command_settings[cmd]:
                 em = discord.Embed(title="Command Disabled", colour=0xd32323)
                 em.description = "I'm sorry, but the command "+cmd+" cannot be used in "+msg.channel.mention+"."
-                await send_embed(Discow, msg, em)
+                await send_embed(Bot, msg, em)
             else:
                 try:
-                    await message_handlers[cmd](Discow, msg)
+                    await message_handlers[cmd](Bot, msg)
                 except KeyError:
                     if cmd in private_message_handlers:
-                        await Discow.send_message(msg.channel, "The **"+cmd+"** command can only be used in private channels!")
+                        await Bot.send_message(msg.channel, "The **"+cmd+"** command can only be used in private channels!")
                 if cmd != 'save' and randint(1,50)==1:
-                    await message_handlers["save"](Discow, msg, overrideperms=True)
+                    await message_handlers["save"](Bot, msg, overrideperms=True)
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
-            await send_embed(Discow, msg, em)
+            await send_embed(Bot, msg, em)
         except (TypeError, ValueError):
             em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % parse_command(msg.content)[0], colour=0xd32323)
-            await send_embed(Discow, msg, em)
+            await send_embed(Bot, msg, em)
         except discord.Forbidden:
             em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
             try:
-                await send_embed(Discow, msg, em)
+                await send_embed(Bot, msg, em)
             except discord.Forbidden:
                 pass
         except Exception as e:
             em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (parse_command(msg.content)[0], e), colour=0xd32323)
-            await send_embed(Discow, msg, em)
+            await send_embed(Bot, msg, em)
     else:
-        if msg.author != Discow.user and msg.channel.id == "433441820102361110" and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
+        if msg.author != Bot.user and msg.channel.id == "433441820102361110" and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
             try:
-                await bot_message_handlers[msg.embeds[0]["title"]](Discow, msg)
+                await bot_message_handlers[msg.embeds[0]["title"]](Bot, msg)
             except Exception:
                 pass
 
-async def on_reaction(Discow, reaction, user):
-    for handler in reaction_handlers:
-        await handler(Discow, reaction, user)
-
-async def on_unreaction(Discow, reaction, user):
-    for handler in reaction_handlers:
-        await handler(Discow, reaction, user)
-
-async def timed_msg(Discow):
+async def timed_msg(Bot):
     while True:
         if 'interest' not in global_data or global_data['interest'] < date.today():
             global_data['interest'] = date.today()

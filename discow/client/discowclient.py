@@ -13,10 +13,10 @@ handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mod
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-class DiscowClientClass(discord.Client):
+class BotClientClass(discord.Client):
     async def on_ready(self):
         await self.change_presence(game=discord.Game(name='cow help', url='https://github.com/UnsignedByte/discow', type=2))
-        mod_server_emotes = Discow.get_server("433441820102361108").emojis
+        mod_server_emotes = Bot.get_server("433441820102361108").emojis
         for a in mod_server_emotes:
             if a.name in ["thumbsup", "thumbsdown", "empty", "pack"]:
                 if a.name in special_emojis:
@@ -28,14 +28,10 @@ class DiscowClientClass(discord.Client):
         await discow.handlers.on_message(self, message)
     async def on_message_edit(self, before, after):
         await discow.handlers.on_message(self, after)
-    async def on_reaction_add(self, reaction, user):
-        await discow.handlers.on_reaction(self, reaction, user)
-    async def on_reaction_remove(self, reaction, user):
-        await discow.handlers.on_unreaction(self, reaction, user)
-Discow = DiscowClientClass()
+Bot = BotClientClass()
 
-def runDiscow():
-    Discow.run(_getkey.key())
+def runBot():
+    Bot.run(_getkey.key())
 
 if __name__ == "__main__":
     print("Auth key is %s" % _getkey.key())
