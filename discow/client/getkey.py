@@ -1,6 +1,6 @@
 import os
 
-_keyfile = "discow/client/data/keys/key.txt"
+_keyfile = "Data/keys/key.txt"
 
 if not os.path.exists(_keyfile):
     print("It seems your bot key is unknown. Please input it below.")

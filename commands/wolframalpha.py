@@ -2,7 +2,7 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 17:52:59, 31-Oct-2018
+# @Last modified time: 19:39:45, 02-Nov-2018
 
 import asyncio
 import os
@@ -18,8 +18,8 @@ import itertools
 import textwrap
 import urllib
 
-_wakey = "discow/client/data/keys/wolframalphakey.txt"
-_imgurkey = "discow/client/data/keys/imgurkey.txt"
+_wakey = "Data/keys/wolframalphakey.txt"
+_imgurkey = "Data/keys/imgurkey.txt"
 wa_app_id = None
 
 if not os.path.exists(_wakey):
@@ -86,7 +86,7 @@ async def query(Bot, msg):
 
     new_im = round_rectangle((max_width, total_height), item_padding, "white")
 
-    font = ImageFont.truetype("discow/client/data/Roboto-Regular.ttf", font_size)
+    font = ImageFont.truetype("Data/Roboto-Regular.ttf", font_size)
 
     total_pods = 0
 
@@ -107,9 +107,9 @@ async def query(Bot, msg):
                 draw.line((0,y_offset-item_padding/2,max_width,y_offset-item_padding/2),fill=(233,233,233),width=1)
 
 
-    new_im.save("discow/client/data/wa_save.png")
+    new_im.save("Data/wa_save.png")
 
-    res_img = imgur_client.upload_image("discow/client/data/wa_save.png", title=question)
+    res_img = imgur_client.upload_image("Data/wa_save.png", title=question)
 
     em = Embed(title=question, url=res_img.link, colour = 0xe4671b)
     em.set_image(url=res_img.link)

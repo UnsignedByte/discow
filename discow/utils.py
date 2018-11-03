@@ -2,11 +2,14 @@
 # @Date:   15:30:36, 12-Aug-2018
 # @Filename: utils.py
 # @Last modified by:   edl
-# @Last modified time: 21:09:00, 13-Aug-2018
+# @Last modified time: 19:32:57, 02-Nov-2018
 
 
 discow_prefix = "cow "
 
+import os
+import pickle
+from shutil import copyfile
 from discord import ServerRegion, Forbidden
 import datetime
 from pytz import timezone
@@ -154,6 +157,20 @@ class Question:
                 else:
                     outstr+="\n<<"+chr(a+65)+">> ["+list(self.options.keys())[a].center(46)+"]()"
         return outstr+'```'
+
+def load_data_file(file):
+    res = {}
+    print('\t\tLoading %s' % file)
+    if os.path.isfile('Data/'+file):
+        with open('Data/'+file, 'rb') as f:
+            res = pickle.load(f)
+    else:
+        with open('Data/'+file, 'wb') as f:
+            pickle.dump(res, f)
+    copyfile('Data/'+file, 'Data/Backup/'+file)
+    print('\t\t%s Loaded' % file)
+    return res
+
 
 
 # http://web.archive.org/web/20130306020911/http://nadiana.com/pil-tutorial-basic-advanced-drawing#Drawing_Rounded_Corners_Rectangle

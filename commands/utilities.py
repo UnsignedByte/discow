@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 17:52:44, 31-Oct-2018
+# @Last modified time: 19:39:55, 02-Nov-2018
 
 
 import asyncio
@@ -191,15 +191,15 @@ async def save(Bot, msg, overrideperms = False):
             msg = await send_embed(Bot, msg, em)
             await asyncio.sleep(1)
         data = get_data()
-        with open("discow/client/data/settings.txt", "wb") as f:
+        with open("Data/settings.txt", "wb") as f:
             pickle.dump(data[0], f)
-        with open("discow/client/data/user_data.txt", "wb") as f:
+        with open("Data/user_data.txt", "wb") as f:
             pickle.dump(data[1], f)
-        with open("discow/client/data/quiz_data.txt", "wb") as f:
+        with open("Data/quiz_data.txt", "wb") as f:
             pickle.dump(data[2], f)
-        with open("discow/client/data/global_data.txt", "wb") as f:
+        with open("Data/global_data.txt", "wb") as f:
             pickle.dump(data[3], f)
-        with open("discow/client/data/world.txt", "wb") as f:
+        with open("Data/world.txt", "wb") as f:
             pickle.dump(data[4], f)
         if not overrideperms:
             em.description = "Complete!"
