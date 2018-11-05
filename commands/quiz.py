@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: quiz.py
 # @Last modified by:   edl
-# @Last modified time: 17:52:17, 31-Oct-2018
+# @Last modified time: 19:57:55, 04-Nov-2018
 
 
 import asyncio
 from discord import Embed
-from discow.handlers import add_message_handler, quiz_data
-from discow.utils import *
+from discow.handlers import add_message_handler, bot_data
+from utils import msgutils, strutils
 from collections import OrderedDict
 from commands.utilities import save
 from commands.economy import give
@@ -18,18 +18,64 @@ print("\tInitializing Quiz Command")
 quiz_handlers = {}
 quiz_users = []
 
+print("\t\tCreating Trivia Classes")
+
+class Question:
+    def __init__(self, q, o, s):
+        self.question = q
+        self.options = o
+        self.shuffle = s
+    def isCorrect(self, option):
+        return list(self.options.values())[option-1]
+    def optshuf(self):
+        if self.shuffle:
+            keeeeys = list(self.options.keys())
+            shuffle(keeeeys)
+            newoptions = OrderedDict()
+            for k in keeeeys:
+                newoptions[k] = self.options[k]
+            self.options = newoptions
+    def getstr(self, selected=None, showCorrect=False):
+        if showCorrect:
+            outstr = "```css\n{Question: '"+self.question.replace('\'', '’')+"'}"
+        else:
+            outstr = "```markdown\n# "+self.question
+        for a in range(len(self.options)):
+            kee = list(self.options.keys())[a]
+            if a == selected:
+                if showCorrect:
+                    outstr+="\n."+chr(a+65)+":  "
+                    if self.isCorrect(a+1):
+                        outstr+="("+kee.center(48)+")"
+                    else:
+                        outstr+="["+kee.center(48)+"]"
+                else:
+                    outstr+="\n<["+chr(a+65)+"]>["+kee.center(45)+"]()"
+            else:
+                if showCorrect:
+                    outstr+="\n{"+chr(a+65)+":} "
+                    if self.isCorrect(a+1):
+                        outstr+="("+kee.center(48)+")"
+                    else:
+                        outstr+="["+kee.center(48)+"]"
+                else:
+                    outstr+="\n<<"+chr(a+65)+">>["+kee.center(45)+"]()"
+        return outstr+'```'
+print("\t\tFinished Quiz Classes")
+
+
 async def quiz(Bot, msg):
-    if not msg.server.id in quiz_data:
-        quiz_data[msg.server.id] = [None, {}]
+    if not msg.server.id in bot_data['quiz_data']:
+        bot_data['quiz_data'][msg.server.id] = [None, {}]
     else:
-        for k in quiz_data[msg.server.id][1].keys():
-            if not quiz_data[msg.server.id][1][k]:
-                del quiz_data[msg.server.id][1][k]
+        for k in bot_data['quiz_data'][msg.server.id][1].keys():
+            if not bot_data['quiz_data'][msg.server.id][1][k]:
+                del bot_data['quiz_data'][msg.server.id][1][k]
     try:
-        newmsg = strip_command(msg.content).split(" ")
+        newmsg = strutils.strip_command(msg.content).split(" ")
     except IndexError:
-        em = Embed(title="Missing subcommand", description=format_response("You must specify a subcommand!\nValid options include `cow quiz add` and `cow quiz take`.", _msg=msg), colour=0xff7830)
-        await send_embed(Bot, msg, em)
+        em = Embed(title="Missing subcommand", description=strutils.format_response("You must specify a subcommand!\nValid options include `cow quiz add` and `cow quiz take`.", _msg=msg), colour=0xff7830)
+        await msgutils.send_embed(Bot, msg, em)
         return
     try:
         if not msg.author.id in quiz_users:
@@ -47,47 +93,47 @@ async def quiz(Bot, msg):
         await Bot.send_message(msg.channel, embed=em)
 
 async def setmod(Bot, msg):
-    if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
-        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Bot, msg, em)
+    if (bot_data['quiz_data'][msg.server.id][0] and bot_data['quiz_data'][msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
+        em = Embed(title="Insufficient Permissions", description=strutils.format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        await msgutils.send_embed(Bot, msg, em)
         return
     try:
-        quiz_data[msg.server.id][0] = msg.role_mentions[0]
+        bot_data['quiz_data'][msg.server.id][0] = msg.role_mentions[0]
         await Bot.send_message(msg.channel, "Quiz moderator role has succesfully been set to "+msg.role_mentions[0].mention+".")
     except IndexError:
         await Bot.send_message(msg.channel, "Please mention a role.")
 
 async def take(Bot, msg):
     try:
-        cat = strip_command(msg.content).split(" ", 1)[1].title()
-        questions = quiz_data[msg.server.id][1][cat]
+        cat = strutils.strip_command(msg.content).split(" ", 1)[1].title()
+        questions = bot_data['quiz_data'][msg.server.id][1][cat]
     except (KeyError, IndexError):
         em = Embed(title="Available Categories", colour=0xff7830)
         desc = 'We could not find the specified category in this server. Please choose one of the available options listed below.\n'
-        if len(quiz_data[msg.server.id][1]) > 0:
-            for k,v in quiz_data[msg.server.id][1].items():
+        if len(bot_data['quiz_data'][msg.server.id][1]) > 0:
+            for k,v in bot_data['quiz_data'][msg.server.id][1].items():
                 desc+='\n'+k
         else:
             desc += '\nNone'
         em.description = desc
-        qmsg = await send_embed(Bot, msg, em)
+        qmsg = await msgutils.send_embed(Bot, msg, em)
         def check(s):
-            return s.content.title() in quiz_data[msg.server.id][1] or s.content.lower() == 'cancel'
+            return s.content.title() in bot_data['quiz_data'][msg.server.id][1] or s.content.lower() == 'cancel'
         newm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         if not newm or newm.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description='*Operation Cancelled*', colour=0xff7830)
-            await edit_embed(Bot, qmsg, em)
+            await msgutils.edit_embed(Bot, qmsg, em)
             await Bot.delete_message(newm)
             return
         cat = newm.content.title()
-        questions = quiz_data[msg.server.id][1][cat]
+        questions = bot_data['quiz_data'][msg.server.id][1][cat]
         await Bot.delete_messages([qmsg, newm])
 
     def formatDesc(cat="Unknown", ql="Unknown", score=100):
         return "Category: "+cat+"\nQuestions Left: "+str(ql)+"\nPercent Correct: "+'{0:.2f}'.format(score)+"%"
 
     em = Embed(title="Quiz", description=formatDesc(cat=cat)+"\n\nHow many questions do you want in your quiz? There "+("is" if len(questions) == 1 else "are")+" "+str(len(questions))+" question"+("s" if len(questions) == 1 else "")+" in total to choose from.\nType a number, or type `all` to get all questions in the category.", colour=0xff7830)
-    qmsg = await send_embed(Bot, msg, em)
+    qmsg = await msgutils.send_embed(Bot, msg, em)
     def check(s):
         return (isInteger(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
     nm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
@@ -105,7 +151,7 @@ async def take(Bot, msg):
     for a in range(len(questions)):
         questions[a].optshuf()
         em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr()+"\n\nTo select your answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nIf you don't know the answer, you can always guess!")
-        qmsg = await edit_embed(Bot, qmsg, em)
+        qmsg = await msgutils.edit_embed(Bot, qmsg, em)
         def check(s):
             return len(s.content)==1 and 1<=ord(s.content.upper())-64<=len(questions[a].options)
         def yesnocheck(s):
@@ -117,7 +163,7 @@ async def take(Bot, msg):
         await Bot.delete_message(select)
         while True:
             em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1)+"\n\nTo select another answer, type in the option letter (from A to "+chr(len(questions[a].options)+64)+").\nWhen you are ready to move on, type `next (n)`.\nIf you don't know the answer, you can always guess!")
-            qmsg = await edit_embed(Bot, qmsg, em)
+            qmsg = await msgutils.edit_embed(Bot, qmsg, em)
             newselect = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=confirmcheck)
             await Bot.delete_message(newselect)
             if newselect.content in ['n', 'next']:
@@ -125,7 +171,7 @@ async def take(Bot, msg):
                     totalscore += 1
                 em.set_field_at(0, name="Question "+str(a+1), value=questions[a].getstr(selected=int(select.content)-1, showCorrect=True)+'\n\nWhen you are done viewing answers, type `next (n)` to move on.')
                 em.description = formatDesc(cat=cat, ql=len(questions)-a-1, score=100*totalscore/(a+1))
-                await edit_embed(Bot, qmsg, em)
+                await msgutils.edit_embed(Bot, qmsg, em)
                 def moveoncheck(s):
                     return s.content in ['n', 'next']
                 moveon = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=moveoncheck)
@@ -139,39 +185,39 @@ async def take(Bot, msg):
     moneyrecieved = randint(round(totalscore/2)*100, round(totalscore*2)*100)
     em.title = 'Quiz Completed!'
     em.description = 'Congratulations! You completed a quiz in the '+cat+' category with '+str(len(questions))+' questions.\nYou recieved a score of '+'{0:.2f}'.format(100*totalscore/len(questions))+'%, or '+str(totalscore)+' out of '+str(len(questions))+'!\nAs you answered '+str(totalscore)+' questions correctly, you have recieved $'+str(moneyrecieved/100)+'!'
-    await edit_embed(Bot, qmsg, em)
+    await msgutils.edit_embed(Bot, qmsg, em)
     give(moneyrecieved, msg.author.id)
 
 
 async def add(Bot, msg):
-    if (quiz_data[msg.server.id][0] and quiz_data[msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
-        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Bot, msg, em)
+    if (bot_data['quiz_data'][msg.server.id][0] and bot_data['quiz_data'][msg.server.id][0] not in msg.author.roles) and not msg.channel.permissions_for(msg.author).manage_messages:
+        em = Embed(title="Insufficient Permissions", description=strutils.format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        await msgutils.send_embed(Bot, msg, em)
         return
-    question = strip_command(msg.content).split(" ", 1)[1]
+    question = strutils.strip_command(msg.content).split(" ", 1)[1]
     em = Embed(title="Add Quiz Question", description="Question:\n"+question, colour=0xff7830)
     desc = ''
-    if len(quiz_data[msg.server.id][1]) > 0:
-        for k,v in quiz_data[msg.server.id][1].items():
+    if len(bot_data['quiz_data'][msg.server.id][1]) > 0:
+        for k,v in bot_data['quiz_data'][msg.server.id][1].items():
             desc+='\n'+k
     else:
         desc = '\nNone'
     em.add_field(name="Question Category", value="Available Categories:"+desc+"\n\nIf your desired category is not listed, you may add one below.\n\nIf you want to cancel, type `cancel`.", inline=False)
-    qmsg = await send_embed(Bot, msg, em)
+    qmsg = await msgutils.send_embed(Bot, msg, em)
 
     cat = await getquestioncategory(Bot, msg, qmsg, em, add=True)
     if not cat:
         return
     em.set_field_at(0, name="Question Category", value=cat, inline=False)
     quest = await editquestion(Bot, msg, qmsg, em, cat, question)
-    quiz_data[msg.server.id][1][cat].append(quest)
+    bot_data['quiz_data'][msg.server.id][1][cat].append(quest)
     await save(Bot, msg, overrideperms=True)
 
 async def editquestion(Bot, msg, qmsg, em, cat, question):
     responsesvalue = "Type `add (a)`, `remove (r)`, and `edit (e)` to add, remove, and edit responses.\nType `back` to go back and edit your category, `cancel` to leave the Question Wizard, or `done` to finish and publish your question."
     optionresponses = "```css\n"
     em.add_field(name="Responses", value=responsesvalue)
-    await edit_embed(Bot, qmsg, em)
+    await msgutils.edit_embed(Bot, qmsg, em)
     options = OrderedDict()
 
     def oformat(s, v, c):
@@ -186,20 +232,20 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
         out = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
         if not out or out.content == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
-            await edit_embed(Bot, qmsg, em)
+            await msgutils.edit_embed(Bot, qmsg, em)
             await Bot.delete_message(out)
             return
         elif out.content == 'back':
             await Bot.delete_message(out)
             em.set_field_at(0, name="Question Category", value="Available Categories:"+desc+"\n\nIf your desired category is not listed, you may add one below.\n\nIf you want to cancel, type `cancel`.", inline=False)
             em.remove_field(1)
-            qmsg = await edit_embed(Bot, qmsg, em)
+            qmsg = await msgutils.edit_embed(Bot, qmsg, em)
             cat = await getquestioncategory(Bot, msg, qmsg, em, add=True)
             if not cat:
                 return
             em.set_field_at(0, name="Question Category", value=cat, inline=False)
             em.add_field(name="Responses", value=optionresponses+'```\n\n'+responsesvalue)
-            await edit_embed(Bot, qmsg, em)
+            await msgutils.edit_embed(Bot, qmsg, em)
         elif out.content in ('add', 'a'):
             mm = await Bot.send_message(msg.channel, "What is the response you would like to add? Type `cancel` to cancel.")
             while True:
@@ -225,7 +271,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                     options[option.content] = False
                 optionresponses+= oformat(str(len(options)), option.content, options[option.content])
                 em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
-                await edit_embed(Bot, qmsg, em)
+                await msgutils.edit_embed(Bot, qmsg, em)
                 await Bot.delete_messages([out, option, mm, mmm, corr])
             else:
                 mmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
@@ -233,7 +279,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                 await Bot.delete_messages([out, option, mm, mmm])
         elif out.content in ('remove', 'r'):
             if len(options) == 0:
-                mm = await Bot.send_embed(msg.channel, "You have no options to remove!")
+                mm = await Bot.msgutils.send_embed(msg.channel, "You have no options to remove!")
                 await asyncio.sleep(0.25)
                 await Bot.delete_messages([mm, out])
             else:
@@ -260,7 +306,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                             em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
                         else:
                             em.set_field_at(1, name="Responses", value=responsesvalue)
-                        await edit_embed(Bot, qmsg, em)
+                        await msgutils.edit_embed(Bot, qmsg, em)
                         await Bot.delete_messages([out, mm, mmm, option, yesorno])
                     else:
                         mmmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
@@ -271,7 +317,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                     await Bot.delete_messages([out, option, mm, mmm])
         elif out.content in ('edit', 'e'):
             if len(options) == 0:
-                mm = await Bot.send_embed(msg.channel, "You have no options to edit!")
+                mm = await Bot.msgutils.send_embed(msg.channel, "You have no options to edit!")
                 await asyncio.sleep(0.25)
                 await Bot.delete_messages([mm, out])
             else:
@@ -314,7 +360,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                         for k, v in options.items():
                             optionresponses+= oformat(str(list(options.keys()).index(k)+1), k, v)
                         em.set_field_at(1, name="Responses", value=optionresponses+"```\n\n"+responsesvalue)
-                        await edit_embed(Bot, qmsg, em)
+                        await msgutils.edit_embed(Bot, qmsg, em)
                     await Bot.delete_messages([out, option, newoption, mm, mmm, mmmm, yesorno, iscorrm, mmmmmmmm])
                 else:
                     mmm = await Bot.send_message(msg.channel, "*Operation Cancelled*")
@@ -333,7 +379,7 @@ async def editquestion(Bot, msg, qmsg, em, cat, question):
                 else:
                     shuffled = False
                 em.set_field_at(1, name="Responses", value=optionresponses+'```')
-                await edit_embed(Bot, qmsg, em)
+                await msgutils.edit_embed(Bot, qmsg, em)
                 await Bot.delete_messages([out, yesorno, mooooooooocow])
                 return Question(question, options, shuffled)
             else:
@@ -347,10 +393,10 @@ async def getquestioncategory(Bot, msg, qmsg, em, add=False):
         out = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
         if not out or out.content.lower() == 'cancel':
             em = Embed(title="Question Wizard", description="*Operation Cancelled*", colour=0xff7830)
-            await edit_embed(Bot, qmsg, em)
+            await msgutils.edit_embed(Bot, qmsg, em)
             await Bot.delete_message(out)
             return None
-        elif out.content.title() not in quiz_data[msg.server.id][1]:
+        elif out.content.title() not in bot_data['quiz_data'][msg.server.id][1]:
             if add:
                 m = await Bot.send_message(msg.channel, out.content.title()+" is not currently a category. Would you like to make a new category? Type` yes (y)` or `no (n)`.")
                 def check(s):
@@ -360,7 +406,7 @@ async def getquestioncategory(Bot, msg, qmsg, em, add=False):
                     return
                 await Bot.delete_messages([yesno, m, out])
                 if yesno.content.lower() in ["y", "yes"]:
-                    quiz_data[msg.server.id][1][out.content.title()] = []
+                    bot_data['quiz_data'][msg.server.id][1][out.content.title()] = []
                     return out.content.title()
             else:
                 m = await Bot.send_message(msg.channel, out.content.title()+" is not currently a category.")

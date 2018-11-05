@@ -2,10 +2,9 @@
 # @Date:   17:50:00, 16-Oct-2018
 # @Filename: ascii_art.py
 # @Last modified by:   edl
-# @Last modified time: 13:41:41, 01-Nov-2018
+# @Last modified time: 17:14:59, 04-Nov-2018
 
 import asyncio
-from discow.utils import *
 from discow.handlers import add_message_handler
 from discord import Embed
 from PIL import Image,ImageDraw,ImageFont,ImageEnhance, ImageOps

@@ -2,11 +2,11 @@
 # @Date:   11:04:49, 05-Apr-2018
 # @Filename: settings.py
 # @Last modified by:   edl
-# @Last modified time: 17:52:24, 31-Oct-2018
+# @Last modified time: 20:04:32, 04-Nov-2018
 
 
 import asyncio
-from discow.utils import *
+from utils import msgutils, strutils, datautils
 from discow.handlers import enable_command, disable_command, add_message_handler, is_command, message_handlers
 from discord import Embed, ChannelType
 
@@ -15,7 +15,7 @@ settings_handlers = {}
 async def settings(Bot, msg):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_server:
-        newmsg = strip_command(msg.content).split(" ")
+        newmsg = strutils.strip_command(msg.content).split(" ")
         try:
             await settings_handlers[newmsg[0]](Bot, msg, newmsg)
         except KeyError:
@@ -33,10 +33,10 @@ async def disable(Bot, msg, newmsg):
         disable_command(cmdname, todisable)
         em = Embed(title="Command Disabled", colour=0x12AA24)
         em.description = cmdname+" has now been disabled in "+','.join(map(lambda x:x.mention, todisable))+"."
-        await send_embed(Bot, msg, em)
+        await msgutils.send_embed(Bot, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        await send_embed(Bot, msg, em)
+        await msgutils.send_embed(Bot, msg, em)
 
 async def enable(Bot, msg, newmsg):
     if is_command(newmsg[1]):
@@ -47,10 +47,10 @@ async def enable(Bot, msg, newmsg):
         enable_command(cmdname, toenable)
         em = Embed(title="Command Enabled", colour=0x12AA24)
         em.description = cmdname+" has now been enabled in "+','.join(map(lambda x:x.mention, toenable))+"."
-        await send_embed(Bot, msg, em)
+        await msgutils.send_embed(Bot, msg, em)
     else:
         em = Embed(title="ERROR", description="%s is not a command. View all commands using `cow commands`" % newmsg[1], colour=0xd32323)
-        await send_embed(Bot, msg, em)
+        await msgutils.send_embed(Bot, msg, em)
 
 settings_handlers["disable"] = disable
 settings_handlers["enable"] = enable

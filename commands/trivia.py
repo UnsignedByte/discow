@@ -2,19 +2,20 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: trivia.py
 # @Last modified by:   edl
-# @Last modified time: 17:52:33, 31-Oct-2018
+# @Last modified time: 19:52:39, 04-Nov-2018
 
 
 import requests
 from base64 import b64decode
 from enum import Enum
-from discow.handlers import add_private_message_handler, user_data, add_message_handler
-from discow.utils import *
+from discow.handlers import add_private_message_handler, bot_data, add_message_handler
+from utils import msgutils, strutils
 import asyncio
 from discord import Embed
 from commands.economy import increment, give, set_element
 from commands.utilities import save
 from random import randint
+from commands.quiz import Question
 
 print("\tInitializing Trivia Command")
 print("\t\tCreating Trivia Classes")
@@ -62,7 +63,7 @@ triviaAPI = Trivia()
 print("\t\tFinished Trivia Classes")
 
 async def trivia(Bot, msg):
-    cont = strip_command(msg.content)
+    cont = strutils.strip_command(msg.content)
     cont = (cont.split(' ') if ' ' in cont else [cont])
     diff = None
     cat = None
@@ -92,13 +93,13 @@ async def trivia(Bot, msg):
     em.description = questionOBJ.getstr(selected=selection, showCorrect=True)
     if list(questionOBJ.options.values())[selection] == True:
         increment(msg.author.id, "answerstreak", 1)
-        reward = randint(0, 250*user_data[msg.author.id]['answerstreak']*(['easy', 'medium', 'hard'].index(question['difficulty'])+1))
+        reward = randint(0, 250*bot_data['user_data'][msg.author.id]['answerstreak']*(['easy', 'medium', 'hard'].index(question['difficulty'])+1))
         give(reward, msg.author.id)
-        em.description+='\n\nYou answered correctly! Your answer streak is now `'+str(user_data[msg.author.id]['answerstreak'])+'` and you have recieved '+'{0:.2f}'.format(reward/100)+' Mooney!\nYou now have '+'{0:.2f}'.format(user_data[msg.author.id]["money"]/100)+' Mooney.'
+        em.description+='\n\nYou answered correctly! Your answer streak is now `'+str(bot_data['user_data'][msg.author.id]['answerstreak'])+'` and you have recieved '+'{0:.2f}'.format(reward/100)+' Mooney!\nYou now have '+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["money"]/100)+' Mooney.'
     else:
         set_element(msg.author.id, "answerstreak", 0)
         em.description+='\n\nYour answer was incorrect! Your answer streak is now `0`.'
-    await edit_embed(Bot, msgEmbed, em)
+    await msgutils.edit_embed(Bot, msgEmbed, em)
     await save(Bot, msg, overrideperms=True)
 
 add_message_handler(trivia, 'trivia')

@@ -2,11 +2,11 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: fun.py
 # @Last modified by:   edl
-# @Last modified time: 17:51:45, 31-Oct-2018
+# @Last modified time: 19:59:33, 04-Nov-2018
 
 
 import asyncio
-from discow.utils import *
+from utils import msgutils, strutils
 from discow.handlers import add_message_handler
 from discord import Embed
 from random import randint, shuffle, choice
@@ -14,6 +14,8 @@ import requests as req
 from bs4 import BeautifulSoup
 import re
 import string
+
+print("\tInitializing Fun Commands")
 
 async def invite(Bot, msg):
     inv = await Bot.create_invite(msg.channel, max_age=360, max_uses=0, unique=False)
@@ -23,18 +25,18 @@ async def invite(Bot, msg):
 async def rps(Bot, msg):
     valid = ["rock", "paper", "scissors"]
     mine = valid[randint(0, 2)]
-    yours = parse_command(msg.content, 1)[1]
+    yours = strutils.parse_command(msg.content, 1)[1]
     result = ""
     if mine == yours:
         result = "It's a tie!"
     else:
         comb = mine+yours
         if comb in ["rockpaper", "scissorsrock", "paperscissors"]:
-            result = format_response("{_mention} wins!", _msg=msg)
+            result = strutils.format_response("{_mention} wins!", _msg=msg)
         else:
             result = "I win!"
     if yours in valid:
-        await Bot.send_message(msg.channel, format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
+        await Bot.send_message(msg.channel, strutils.format_response("**{_mention}** chooses **{yours}**, while I choose **{mine}**. {result}", yours=yours, mine=mine, _msg = msg, result=result))
     else:
         await Bot.send_message(msg.channel, "Your input was invalid. Please choose **rock**, **paper**, or **scissors.**")
 
@@ -163,12 +165,12 @@ async def thesaurus(Bot, msg):
 
     link = "http://www.thesaurus.com/browse/"
 
-    sentence = strip_command(msg.content)
+    sentence = strutils.strip_command(msg.content)
     em = Embed(title="Thesaurus-ifier", description="Completely overuses the thesaurus on a sentence.\nCheck out the program at [Thesaurus-er](https://github.com/UnsignedByte/Thesaurus-er) by [UnsignedByte](https://github.com/UnsignedByte)!",colour=0x4e91fc)
     em.add_field(name="Input Sentence", value=sentence, inline=False)
     em.add_field(name="Output Sentence", value="Converting...", inline=False)
 
-    m = await send_embed(Bot, msg, em)
+    m = await msgutils.send_embed(Bot, msg, em)
 
     for k in sorted(contractions, key=len, reverse=True): # Through keys sorted by length
         sentence = sentence.replace(k, choice(contractions[k]))
@@ -203,8 +205,9 @@ async def thesaurus(Bot, msg):
         newsentence.append(lets)
 
     em.set_field_at(1, name="Output Sentence", value=' '.join(newsentence), inline=False)
-    await edit_embed(Bot, m, em)
+    await msgutils.edit_embed(Bot, m, em)
 
 add_message_handler(rps, "rps")
 add_message_handler(invite, "invite")
 add_message_handler(thesaurus, "thesaurus")
+print("\tFun Commands Initialized")
