@@ -2,12 +2,12 @@
 # @Date:   15:55:15, 12-Aug-2018
 # @Filename: wolframalpha.py
 # @Last modified by:   edl
-# @Last modified time: 19:39:45, 02-Nov-2018
+# @Last modified time: 19:58:42, 04-Nov-2018
 
 import asyncio
 import os
 import pyimgur
-from discow.utils import *
+from utils import imgutils, msgutils, strutils
 from discow.handlers import add_message_handler, add_private_message_handler
 from discord import Embed
 import wolframalpha
@@ -17,6 +17,8 @@ from io import BytesIO
 import itertools
 import textwrap
 import urllib
+
+print("\tInitializing Wolfram Alpha Command")
 
 _wakey = "Data/keys/wolframalphakey.txt"
 _imgurkey = "Data/keys/imgurkey.txt"
@@ -39,9 +41,9 @@ imgur_client = pyimgur.Imgur(imgur_app_id)
 
 async def query(Bot, msg):
 
-    question = strip_command(msg.content)
+    question = strutils.strip_command(msg.content)
     em = Embed(title=question, description="Requesting Data", colour=0xe4671b)
-    oldem = await send_embed(Bot, msg, em)
+    oldem = await msgutils.send_embed(Bot, msg, em)
     res = wa_client.query(question)
 
     if "@pods" not in res:
@@ -66,7 +68,7 @@ async def query(Bot, msg):
             images.append(subimgs)
     except AttributeError:
         em = Embed(title=question, description="No results", colour=0xe4671b)
-        await edit_embed(Bot, oldem, em)
+        await msgutils.edit_embed(Bot, oldem, em)
         return
 
     chained_imgs = list(itertools.chain.from_iterable(images))
@@ -84,7 +86,7 @@ async def query(Bot, msg):
     max_width = max(widths)+2*item_padding
     total_height = sum(heights)+item_padding*(len(chained_imgs)+2+len(titles))+(font_padding+font_size)*len(list(itertools.chain.from_iterable(titles)))
 
-    new_im = round_rectangle((max_width, total_height), item_padding, "white")
+    new_im = imgutils.round_rectangle((max_width, total_height), item_padding, "white")
 
     font = ImageFont.truetype("Data/Roboto-Regular.ttf", font_size)
 
@@ -113,7 +115,7 @@ async def query(Bot, msg):
 
     em = Embed(title=question, url=res_img.link, colour = 0xe4671b)
     em.set_image(url=res_img.link)
-    await edit_embed(Bot, oldem, em)
+    await msgutils.edit_embed(Bot, oldem, em)
 
 add_message_handler(query, "wolfram")
 add_message_handler(query, "wolframalpha")
@@ -121,3 +123,4 @@ add_message_handler(query, "wa")
 add_private_message_handler(query, "wolfram")
 add_private_message_handler(query, "wolframalpha")
 add_private_message_handler(query, "wa")
+print("\tWolfram Alpha Command Initialized")

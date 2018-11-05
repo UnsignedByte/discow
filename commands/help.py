@@ -2,13 +2,12 @@
 # @Date:   19:01:44, 02-Apr-2018
 # @Filename: help.py
 # @Last modified by:   edl
-# @Last modified time: 17:51:50, 31-Oct-2018
+# @Last modified time: 17:12:29, 04-Nov-2018
 
 
 import asyncio
 from discord import Embed
 from discow.handlers import add_message_handler, add_private_message_handler
-from discow.utils import *
 from collections import OrderedDict
 
 print("\tInitializing Help Command")

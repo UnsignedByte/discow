@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 19:39:55, 02-Nov-2018
+# @Last modified time: 20:19:55, 04-Nov-2018
 
-
+from pprint import pformat
 import asyncio
 import pickle
-from discow.utils import *
-from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown, get_data
+from utils import msgutils, strutils, datautils, userutils
+from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown
 from discord import Embed, NotFound, HTTPException
 import requests as req
 import re
@@ -20,7 +20,7 @@ async def info(Bot, msg):
     em = Embed(title="Who am I?", colour=0x9542f4)
     em.description = "Hi, I'm [discow](https://github.com/UnsignedByte/discow), a discord bot created by <@418827664304898048>.\nOn this server, I am known as "+nickname(Bot.user, msg.server)+'.'
     em.add_field(name="Features", value="For information about my features do `"+discow_prefix+"help` or take a look at [our readme](https://github.com/UnsignedByte/discow/blob/master/README.md)!")
-    await send_embed(Bot, msg, em)
+    await msgutils.send_embed(Bot, msg, em)
 
 async def execute(Bot, msg):
     if msg.author.id == "418827664304898048":
@@ -57,11 +57,11 @@ async def execute(Bot, msg):
         try:
             out = await aexec('import asyncio\nasync def run_exec():\n\t'+'\t'.join(re.search(r'`(?P<in>``)?(?P<body>(.?\s?)*)(?(in)```|`)', msg.content).group("body").strip().splitlines(True))+'\ngawait(run_exec())')
         except Exception:
-            await send_embed(Bot, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
+            await msgutils.send_embed(Bot, msg, Embed(title="Output", description=traceback.format_exc(), colour=0xd32323))
 
 async def quote(Bot, msg):
     try:
-        m = await Bot.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strip_command(msg.content).split(" ")[0])
+        m = await Bot.get_message((msg.channel if len(msg.channel_mentions) == 0 else msg.channel_mentions[0]), strutils.strutils.strip_command(msg.content).split(" ")[0])
         em = Embed(title="Message Quoted by "+msg.author.display_name+":", colour=0x3b7ce5)
         desc = m.content
         print(desc)
@@ -82,16 +82,16 @@ async def quote(Bot, msg):
         em.description = desc
         print(desc)
         await Bot.delete_message(msg)
-        await send_embed(Bot, msg, em, time=m.timestamp, usr=m.author)
+        await msgutils.send_embed(Bot, msg, em, time=m.timestamp, usr=m.author)
     except NotFound:
         em = Embed(title="Unable to Find Message", description="Could not find a message with that id.", colour=0xd32323)
-        await send_embed(Bot, msg, em)
+        await msgutils.send_embed(Bot, msg, em)
 
 async def dictionary(Bot, msg):
     link="https://www.merriam-webster.com/dictionary/"
-    x = strip_command(msg.content).replace(' ', '%20')
+    x = strutils.strutils.strip_command(msg.content).replace(' ', '%20')
     em = Embed(title="Definition for "+x+".", description="Retrieving Definition...", colour=0x4e91fc)
-    dictm = await send_embed(Bot, msg, em)
+    dictm = await msgutils.send_embed(Bot, msg, em)
 
     try:
         response = req.get(link+x)
@@ -106,7 +106,7 @@ async def dictionary(Bot, msg):
             words = soup.find("ol", {"class":"definition-list"}).get_text().split()
             for i in range(0, len(words)):
                 em.description+='\n**'+str(i+1)+":** *"+words[i]+'*'
-            dictm = await edit_embed(Bot, dictm, em)
+            dictm = await msgutils.send_embed(Bot, dictm, em)
             while True:
                 vm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel)
                 if not vm:
@@ -115,7 +115,7 @@ async def dictionary(Bot, msg):
                 if v == 'cancel':
                     em.description = "*Operation Cancelled*"
                     await Bot.delete_message(vm)
-                    dictm = await edit_embed(Bot, dictm, em)
+                    dictm = await msgutils.send_embed(Bot, dictm, em)
                     return
                 elif isInteger(v):
                     if int(v)>=1 and int(v) <=len(words):
@@ -131,10 +131,10 @@ async def dictionary(Bot, msg):
             soup = BeautifulSoup(html_doc, 'html.parser')
             em.title = "Definition for "+x+"."
             em.description = "Retrieving Definition..."
-            dictm = await edit_embed(Bot, dictm, em)
+            dictm = await msgutils.send_embed(Bot, dictm, em)
         except AttributeError:
             em.description = "Could not find "+x+" in the dictionary."
-            dictm = await edit_embed(Bot, dictm, em)
+            dictm = await msgutils.send_embed(Bot, dictm, em)
             return
 
     em.description = ""
@@ -160,13 +160,13 @@ async def dictionary(Bot, msg):
 
         em.description+= '\n'+st
     em.description+="\n\nDefinitions retrieved from [The Merriam-Webster Dictionary](https://www.merriam-webster.com/) using [Dictionary](https://github.com/UnsignedByte/Dictionary) by [UnsignedByte](https://github.com/UnsignedByte)."
-    dictm = await edit_embed(Bot, dictm, em)
+    dictm = await msgutils.send_embed(Bot, dictm, em)
 
 
 async def purge(Bot, msg):
     perms = msg.channel.permissions_for(msg.author)
     if perms.manage_messages or msg.author.id == "418827664304898048":
-        num = int(parse_command(msg.content, 1)[1].split(' ')[0])+1
+        num = int(strutils.parse_command(msg.content, 1)[1].split(' ')[0])+1
         if num < 2:
             await Bot.send_message("There is no reason to delete 0 messages!")
         deletechunks = []
@@ -174,42 +174,35 @@ async def purge(Bot, msg):
             return not msg.mentions or msg.mentions[0].id == message.author.id
         try:
             await Bot.purge_from(msg.channel, limit=num, check=check)
-            m = await Bot.send_message(msg.channel, format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
+            m = await Bot.send_message(msg.channel, strutils.format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
         except discord.HTTPException:
-            m = await Bot.send_message(msg.channel, format_response("You cannot bulk delete messages that are over 14 days old!!"))
+            m = await Bot.send_message(msg.channel, strutils.format_response("You cannot bulk delete messages that are over 14 days old!!"))
 
         await asyncio.sleep(2)
         await Bot.delete_message(m)
     else:
-        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Bot, msg, em)
+        em = Embed(title="Insufficient Permissions", description=strutils.format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        await msgutils.send_embed(Bot, msg, em)
 
 async def save(Bot, msg, overrideperms = False):
     if overrideperms or msg.author.id == "418827664304898048":
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
-            msg = await send_embed(Bot, msg, em)
+            msg = await msgutils.send_embed(Bot, msg, em)
             await asyncio.sleep(1)
-        data = get_data()
-        with open("Data/settings.txt", "wb") as f:
-            pickle.dump(data[0], f)
-        with open("Data/user_data.txt", "wb") as f:
-            pickle.dump(data[1], f)
-        with open("Data/quiz_data.txt", "wb") as f:
-            pickle.dump(data[2], f)
-        with open("Data/global_data.txt", "wb") as f:
-            pickle.dump(data[3], f)
-        with open("Data/world.txt", "wb") as f:
-            pickle.dump(data[4], f)
+        data = datautils.get_data()
+        for k, v in data.items():
+            with open('Data/%s.txt' % k, 'wb') as f:
+                pickle.dump(v, f)
         if not overrideperms:
             em.description = "Complete!"
-            msg = await edit_embed(Bot, msg, embed=em)
+            msg = await msgutils.send_embed(Bot, msg, embed=em)
             await asyncio.sleep(0.5)
             await Bot.delete_message(msg)
         return True
     else:
-        em = Embed(title="Insufficient Permissions", description=format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
-        await send_embed(Bot, msg, em)
+        em = Embed(title="Insufficient Permissions", description=strutils.format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
+        await msgutils.send_embed(Bot, msg, em)
         return False
 
 async def shutdown(Bot, msg):
@@ -218,6 +211,20 @@ async def shutdown(Bot, msg):
     if istrue:
         await Bot.logout()
 
+async def getData(Bot, msg):
+    if (await userutils.is_mod(Bot, msg.author)):
+        dat = pformat(datautils.get_data())
+        a_l = 0
+        a_s = '```xml'
+        for a in dat.splitlines():
+            if a_l+len(a)+1 <= 1991:
+                a_l+=len(a)+1
+                a_s+='\n'+a
+            else:
+                await Bot.send_message(msg.channel, a_s+'```')
+                a_l = len(a)+1
+                a_s = '```xml\n'+a
+        await Bot.send_message(msg.channel, a_s+'```')
 
 add_message_handler(info, "hi")
 add_message_handler(info, "info")
@@ -229,5 +236,6 @@ add_message_handler(purge, "clear")
 add_message_handler(quote, "quote")
 add_message_handler(dictionary, "define")
 add_message_handler(dictionary, "dictionary")
+add_message_handler(getData, "getdata")
 add_message_handler(execute, "exec")
 add_private_message_handler(execute, "exec")
