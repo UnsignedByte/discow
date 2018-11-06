@@ -2,11 +2,11 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: economy.py
 # @Last modified by:   edl
-# @Last modified time: 19:59:49, 04-Nov-2018
+# @Last modified time: 18:00:15, 05-Nov-2018
 
 
 import asyncio
-from utils import msgutils, strutils
+from utils import msgutils, strutils, utils, objutils
 from discow.handlers import add_message_handler, bot_data, add_bot_message_handler, add_private_message_handler
 from discord import Embed
 import time
@@ -376,7 +376,7 @@ async def stock(Bot, msg):
                             el.append(a.findChildren()[0].decode_contents(formatter="html"))
                         except IndexError:
                             el.append(a.decode_contents(formatter="html"))
-        el = group(el, 3)
+        el = utils.group(el, 3)
         if len(el) > 1:
             em = Embed(title="Multiple results found. Choose one. Type `cancel` to cancel", description="", colour=0xffd747)
             for a in range(0, len(el)):
@@ -386,7 +386,8 @@ async def stock(Bot, msg):
                 s = s.content
                 if s == 'cancel':
                     return True
-                return isInteger(s) and int(s) <= len(el) and int(s) > 0
+                return objutils.integer(s) and int(s) <= len(el) and int(s) > 0
+
             stock = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
             if not stock:
                 return
@@ -422,7 +423,7 @@ async def stock(Bot, msg):
                     s = s.content
                     if s == 'cancel':
                         return True
-                    return isInteger(s) and int(s) > 0
+                    return objutils.integer(s) and int(s) > 0
                 em = Embed(title="Buying Shares...", description="How many shares would you like to buy? Input an integer.", colour=0xffd747)
                 em.add_field(name=name, value=info)
                 while True:
@@ -461,7 +462,7 @@ async def stock(Bot, msg):
                     s = s.content
                     if s == 'cancel':
                         return True
-                    return isInteger(s) and int(s) > 0
+                    return objutils.integer(s) and int(s) > 0
                 em = Embed(title="Selling Shares...", description="How many shares would you like to sell? Input an integer.", colour=0xffd747)
                 em.add_field(name=name, value=info)
                 while True:

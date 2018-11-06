@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: quiz.py
 # @Last modified by:   edl
-# @Last modified time: 19:57:55, 04-Nov-2018
+# @Last modified time: 18:02:11, 05-Nov-2018
 
 
 import asyncio
 from discord import Embed
 from discow.handlers import add_message_handler, bot_data
-from utils import msgutils, strutils
+from utils import msgutils, strutils, objutils
 from collections import OrderedDict
 from commands.utilities import save
 from commands.economy import give
@@ -135,7 +135,7 @@ async def take(Bot, msg):
     em = Embed(title="Quiz", description=formatDesc(cat=cat)+"\n\nHow many questions do you want in your quiz? There "+("is" if len(questions) == 1 else "are")+" "+str(len(questions))+" question"+("s" if len(questions) == 1 else "")+" in total to choose from.\nType a number, or type `all` to get all questions in the category.", colour=0xff7830)
     qmsg = await msgutils.send_embed(Bot, msg, em)
     def check(s):
-        return (isInteger(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
+        return (objutils.integer(s.content) and 0<int(s.content)<=len(questions)) or s.content == 'all'
     nm = await Bot.wait_for_message(timeout=600, author=msg.author, channel=msg.channel, check=check)
     if not nm:
         return
