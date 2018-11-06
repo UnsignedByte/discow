@@ -2,12 +2,12 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 20:19:55, 04-Nov-2018
+# @Last modified time: 18:02:29, 05-Nov-2018
 
 from pprint import pformat
 import asyncio
 import pickle
-from utils import msgutils, strutils, datautils, userutils
+from utils import msgutils, strutils, datautils, userutils, objutils
 from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown
 from discord import Embed, NotFound, HTTPException
 import requests as req
@@ -117,7 +117,7 @@ async def dictionary(Bot, msg):
                     await Bot.delete_message(vm)
                     dictm = await msgutils.send_embed(Bot, dictm, em)
                     return
-                elif isInteger(v):
+                elif objutils.integer(v):
                     if int(v)>=1 and int(v) <=len(words):
                         x = words[int(v)-1].replace(' ', "%20")
                         await Bot.delete_message(vm)
@@ -147,11 +147,11 @@ async def dictionary(Bot, msg):
                 st+=' '.join(a.strip().split())
             else:
                 v1 = a.split()
-                if isInteger(v1[0]):
+                if objutils.integer(v1[0]):
                     st+="\n**__"+v1[0]+"__**"
                     v1 = v1[1:]
                 for n in v1:
-                    if isInteger(n.strip("()")):
+                    if objutils.integer(n.strip("()")):
                         st+="\n\t\t***"+n+"***"
                     elif len(n)==1:
                         st+="\n\t**"+n+"**"
