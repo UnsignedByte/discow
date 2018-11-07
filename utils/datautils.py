@@ -2,7 +2,7 @@
 # @Date:   15:30:46, 04-Nov-2018
 # @Filename: fileutils.py
 # @Last modified by:   edl
-# @Last modified time: 19:39:37, 04-Nov-2018
+# @Last modified time: 22:15:43, 06-Nov-2018
 
 import os
 import pickle
@@ -59,6 +59,11 @@ def nested_extend(value, *keys):
     else:
         nested_set([value], *keys)
 
+def nested_addition(to_add, *keys, default=0):
+    nested_set(nested_get(*keys, default=default)+to_add, *keys)
+
+def nested_multiplication(to_mult, *keys, default=0):
+    nested_set(nested_get(*keys, default=default)*to_mult, *keys)
 
 def nested_remove(value, *keys, **kwargs):
     kwargs['func'] = kwargs.get('func', None)
