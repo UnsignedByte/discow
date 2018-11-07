@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 22:49:22, 06-Nov-2018
+# @Last modified time: 22:50:16, 06-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -140,18 +140,18 @@ async def on_message(Bot, msg):
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % strutils.parse_command(msg.content)[0], colour=0xd32323)
             await msgutils.send_embed(Bot, msg, em)
-        # except (TypeError, ValueError):
-        #     em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % strutils.parse_command(msg.content)[0], colour=0xd32323)
-        #     await msgutils.send_embed(Bot, msg, em)
-        # except discord.Forbidden:
-        #     em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
-        #     try:
-        #         await msgutils.send_embed(Bot, msg, em)
-        #     except discord.Forbidden:
-        #         pass
-        # except Exception as e:
-        #     em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (strutils.parse_command(msg.content)[0], e), colour=0xd32323)
-        #     await msgutils.send_embed(Bot, msg, em)
+        except (TypeError, ValueError):
+            em = discord.Embed(title="Invalid Inputs", description="Invalid inputs provided for **%s**." % strutils.parse_command(msg.content)[0], colour=0xd32323)
+            await msgutils.send_embed(Bot, msg, em)
+        except discord.Forbidden:
+            em = discord.Embed(title="Missing Permissions", description="Discow is missing permissions to perform this task.", colour=0xd32323)
+            try:
+                await msgutils.send_embed(Bot, msg, em)
+            except discord.Forbidden:
+                pass
+        except Exception as e:
+            em = discord.Embed(title="Unknown Error", description="An unknown error occurred in command **%s**. Trace:\n%s" % (strutils.parse_command(msg.content)[0], e), colour=0xd32323)
+            await msgutils.send_embed(Bot, msg, em)
     else:
         if msg.author != Bot.user and msg.channel.id == "433441820102361110" and msg.embeds and 'title' in msg.embeds[0] and msg.embeds[0]["title"] in bot_message_handlers:
             try:
