@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 22:39:17, 06-Nov-2018
+# @Last modified time: 22:47:28, 06-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -28,4 +28,4 @@ async def last_mention(Bot, msg, reg):
     return
 
 add_regex_message_handler(echo, r'echo:(.*)')
-add_regex_message_handler(last_mention, r'who pinged.*')
+add_regex_message_handler(last_mention, r'who\s*ping.*')

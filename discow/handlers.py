@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 22:07:28, 06-Nov-2018
+# @Last modified time: 22:47:35, 06-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -99,9 +99,15 @@ async def on_message(Bot, msg):
                 if reg:
                     await regex_message_handlers[a](Bot, msg, reg)
                     break
-            for m in msg.mentions:
-                if not m.bot:
-                    datautils.nested_set(msg, 'user_data', m.id, 'last_mention')
+            if msg.role_mentions or msg.mention_everyone:
+                for m in msg.server.members:
+                    if not m.bot and m.mentioned_in(msg):
+                        datautils.nested_set(msg, 'user_data', m.id, 'last_mention')
+                await message_handlers["save"](Bot, msg, overrideperms=True)
+            else:
+                for m in msg.mentions:
+                    if not m.bot:
+                        datautils.nested_set(msg, 'user_data', m.id, 'last_mention')
                 await message_handlers["save"](Bot, msg, overrideperms=True)
             if Bot.user in msg.mentions:
                 await Bot.send_message(msg.channel, "Type `cow help` if you need help.")
