@@ -2,11 +2,11 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: economy.py
 # @Last modified by:   edl
-# @Last modified time: 18:00:15, 05-Nov-2018
+# @Last modified time: 22:16:45, 06-Nov-2018
 
 
 import asyncio
-from utils import msgutils, strutils, utils, objutils
+from utils import msgutils, strutils, utils, objutils, datautils
 from discow.handlers import add_message_handler, bot_data, add_bot_message_handler, add_private_message_handler
 from discord import Embed
 import time
@@ -36,7 +36,7 @@ def updateworldsum():
     global UNIVERSAL_CONVERSION_RATE
     total = 0
     for a in bot_data['user_data']:
-        total+=bot_data['user_data'][a]["money"]+(bot_data['user_data'][a]["bank"] if "bank" in bot_data['user_data'][a] else 0)
+        total+=datautils.nested_get('user_data', a, 'money', default=0)+datautils.nested_get('user_data', a, 'bank', default=0)
     MOONEY_TOTAL = total/100
     UNIVERSAL_CONVERSION_RATE = 1/((1/MAXIMUM_EXCHANGE_RATE)+MOONEY_TOTAL/(DESIRED_EXCHANGE_RATE*NORMALIZED_MONEY_AMOUNT))
 updateworldsum()
@@ -102,8 +102,8 @@ async def addMooney(Bot, msg):
 
 async def interest():
     for a in bot_data['user_data']:
-        if "bank" in bot_data['user_data'][a]:
-            bot_data['user_data'][a]["bank"]+=round(bot_data['user_data'][a]["bank"]*interest_rate)
+        bbal = datautils.nested_get('user_data', a, 'bank', default=0)
+        bbal += round(bbal*interest_rate)
     await save(None, None, overrideperms=True)
 
 
@@ -117,14 +117,9 @@ async def economy(Bot, msg):
 
 async def daily(Bot, msg):
     if msg.author.id in bot_data['user_data']:
-        if "daily" not in bot_data['user_data'][msg.author.id]:
-            bot_data['user_data'][msg.author.id]["daily"]=-86400
-        if (round(time.time())-bot_data['user_data'][msg.author.id]["daily"]) > 86400:
+        if (round(time.time())-datautils.nested_get('user_data', msg.author.id, 'daily', default=-86400)) > 86400:
             if (round(time.time())-bot_data['user_data'][msg.author.id]["daily"]) < 172800:
-                if not "streak" in bot_data['user_data'][msg.author.id]:
-                    bot_data['user_data'][msg.author.id]["streak"] = 1
-                else:
-                    bot_data['user_data'][msg.author.id]["streak"] += 1
+                datautils.nested_addition(1, 'user_data', msg.author.id, 'streak', default=0)
             else:
                 bot_data['user_data'][msg.author.id]["streak"] = 1
             addedmoney = randint(10000*bot_data['user_data'][msg.author.id]["streak"], 40000+10000*bot_data['user_data'][msg.author.id]["streak"])
@@ -146,9 +141,7 @@ async def daily(Bot, msg):
 async def work(Bot, msg):
     addedmoney = randint(1000, 7500)
     if msg.author.id in bot_data['user_data']:
-        if not "work" in bot_data['user_data'][msg.author.id]:
-            bot_data['user_data'][msg.author.id]["work"] = 0
-        if (round(time.time())-bot_data['user_data'][msg.author.id]["work"]) > 3600:
+        if (round(time.time())-datautils.nested_get('user_data', msg.author.id, 'work', default=0)) > 3600:
             bot_data['user_data'][msg.author.id]["money"]+=addedmoney
             bot_data['user_data'][msg.author.id]["work"]=round(time.time())
             await Bot.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
@@ -173,10 +166,7 @@ async def deposit(Bot, msg):
                 await Bot.send_message(msg.channel, "Your input was invalid! Please input a number.")
                 return
         if amount <= bot_data['user_data'][msg.author.id]["money"]:
-            if "bank" in bot_data['user_data'][msg.author.id]:
-                bot_data['user_data'][msg.author.id]["bank"] += amount
-            else:
-                bot_data['user_data'][msg.author.id]["bank"] = amount
+            datautils.nested_addition(amount, 'user_data', msg.author.id, 'bank', default=0)
             bot_data['user_data'][msg.author.id]["money"]-=amount
             await Bot.send_message(msg.channel, "Deposited `"+'{0:.2f}'.format(amount/100)+"` Mooney to your Bovine Bank account.\nYour new bank balance is `"+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["bank"]/100)+"` Mooney.")
             await save(Bot, msg, overrideperms=True)
@@ -318,10 +308,7 @@ async def slots(Bot, msg):
                 await Bot.send_message(msg.channel, msg.author.mention+" won "+'{0:.2f}'.format(moneychange/100)+" Mooney. Nice job!")
             else:
                 await Bot.send_message(msg.channel, msg.author.mention+" lost "+'{0:.2f}'.format(-1*moneychange/100)+" Mooney. Better luck next time!")
-            if msg.author.id in bot_data['user_data']:
-                bot_data['user_data'][msg.author.id]["money"]+=moneychange
-            else:
-                bot_data['user_data'][msg.author.id] = {"usr": msg.author, "work": 0, "bank": 0, "daily": -86400, "money": moneychange}
+            datautils.nested_addition(moneychange, 'user_data', msg.author.id, 'money', default=0)
     else:
         await Bot.send_message(msg.channel, "You have no mooney yet! Do `cow daily` to recieve your daily reward.")
 
