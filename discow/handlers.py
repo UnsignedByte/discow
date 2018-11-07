@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 13:22:18, 07-Nov-2018
+# @Last modified time: 15:44:16, 07-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -36,6 +36,7 @@ if not world:
     with open("Data/world.txt", "wb") as f:
         pickle.dump(world, f)
 
+bot_data['world'] = world
 bot_data['settings'] = datautils.load_data_file('settings.txt')
 bot_data['user_data'] = datautils.load_data_file('user_data.txt')
 bot_data['quiz_data'] = datautils.load_data_file('quiz_data.txt')

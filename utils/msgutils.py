@@ -2,7 +2,7 @@
 # @Date:   10:01:53, 03-Nov-2018
 # @Filename: msgutils.py
 # @Last modified by:   edl
-# @Last modified time: 15:31:37, 04-Nov-2018
+# @Last modified time: 15:36:12, 07-Nov-2018
 
 import asyncio
 import datetime
@@ -66,3 +66,12 @@ async def edit_embed(Bot, msg, embed, time=datetime.datetime.utcnow(), usr=None)
     embed.set_footer(text=txt, icon_url=(usr.avatar_url if usr.avatar_url else usr.default_avatar_url))
     m = await Bot.edit_message(msg, embed=embed)
     return m
+
+async def send_large_message(Bot, channel, content, prefix='', suffix=''):
+    cchunk = ""
+    for l in content.splitlines():
+        if len(cchunk)+len(l)> 2000-len(prefix)-len(suffix):
+            await Bot.send_message(channel, prefix+cchunk+suffix)
+            cchunk = ""
+        cchunk+=l+"\n"
+    await Bot.send_message(channel, prefix+cchunk+suffix)

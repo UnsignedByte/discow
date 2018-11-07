@@ -2,7 +2,7 @@
 # @Date:   15:30:46, 04-Nov-2018
 # @Filename: fileutils.py
 # @Last modified by:   edl
-# @Last modified time: 22:15:43, 06-Nov-2018
+# @Last modified time: 15:42:27, 07-Nov-2018
 
 import os
 import pickle
@@ -68,7 +68,7 @@ def nested_multiplication(to_mult, *keys, default=0):
 def nested_remove(value, *keys, **kwargs):
     kwargs['func'] = kwargs.get('func', None)
     v = nested_get(*keys)
-    if not v or isinstance(v, discord.Member):
+    if not v:
         return
     try:
         if not kwargs['func']:

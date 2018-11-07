@@ -2,13 +2,13 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 18:02:29, 05-Nov-2018
+# @Last modified time: 15:40:54, 07-Nov-2018
 
 from pprint import pformat
 import asyncio
 import pickle
 from utils import msgutils, strutils, datautils, userutils, objutils
-from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown
+from discow.handlers import add_message_handler, add_private_message_handler, flip_shutdown, add_regex_message_handler, bot_data
 from discord import Embed, NotFound, HTTPException
 import requests as req
 import re
@@ -175,7 +175,7 @@ async def purge(Bot, msg):
         try:
             await Bot.purge_from(msg.channel, limit=num, check=check)
             m = await Bot.send_message(msg.channel, strutils.format_response("**{_mention}** has cleared the last **{_number}** messages!", _msg=msg, _number=num-1))
-        except discord.HTTPException:
+        except HTTPException:
             m = await Bot.send_message(msg.channel, strutils.format_response("You cannot bulk delete messages that are over 14 days old!!"))
 
         await asyncio.sleep(2)
@@ -211,20 +211,40 @@ async def shutdown(Bot, msg):
     if istrue:
         await Bot.logout()
 
-async def getData(Bot, msg):
+async def getData(Bot, msg, reg):
     if (await userutils.is_mod(Bot, msg.author)):
-        dat = pformat(datautils.get_data())
-        a_l = 0
-        a_s = '```xml'
-        for a in dat.splitlines():
-            if a_l+len(a)+1 <= 1991:
-                a_l+=len(a)+1
-                a_s+='\n'+a
-            else:
-                await Bot.send_message(msg.channel, a_s+'```')
-                a_l = len(a)+1
-                a_s = '```xml\n'+a
-        await Bot.send_message(msg.channel, a_s+'```')
+        msgutils.send_large_message(Bot, msg.channel, pformat(datautils.get_data()), prefix='```xml\n',suffix='```')
+
+async def find(Bot, msg, reg):
+    if (await userutils.is_mod(Bot, msg.author)):
+        if reg.group('key') == '*':
+            await Bot.send_message(msg.channel, '`' + str(list(bot_data.keys())) + '`')
+            return
+        await msgutils.send_large_message(Bot, msg.channel, pformat(bot_data[reg.group('key')]), prefix='```xml\n',suffix='```')
+    else:
+        await Bot.send_message(msg.channel, 'You are not mod!')
+
+async def delete_data(Bot, msg, reg):
+    if (await userutils.is_mod(Bot, msg.author)):
+        keys = reg.group('path').split()
+        if isinstance(datautils.nested_get(*keys[:-1]), dict):
+            datautils.nested_pop(*keys)
+        elif isinstance(datautils.nested_get(*keys[:-1]), list):
+            datautils.nested_remove(keys[-1], *keys[:-1])
+        await save(None, None, overrideperms=True)
+
+async def makeMod(Bot, msg, reg):
+    if msg.author == (await userutils.get_owner(Bot)):
+        datautils.nested_append(msg.mentions[0], 'global_data', 'moderators')
+        await save(None, None, overrideperms=True)
+    else:
+        await Bot.send_message(msg.channel, 'You are not owner!')
+async def removeMod(Bot, msg, reg):
+    if msg.author == (await userutils.get_owner(Bot)):
+        datautils.nested_remove(msg.mentions[0], 'global_data', 'moderators')
+        await save(None, None, overrideperms=True)
+    else:
+        await Bot.send_message(msg.channel, 'You are not owner!')
 
 add_message_handler(info, "hi")
 add_message_handler(info, "info")
@@ -236,6 +256,11 @@ add_message_handler(purge, "clear")
 add_message_handler(quote, "quote")
 add_message_handler(dictionary, "define")
 add_message_handler(dictionary, "dictionary")
-add_message_handler(getData, "getdata")
 add_message_handler(execute, "exec")
 add_private_message_handler(execute, "exec")
+
+add_regex_message_handler(getData, r'getdata\Z')
+add_regex_message_handler(delete_data, r'(?:remove|delete)\s+(?P<path>.*)\Z')
+add_regex_message_handler(find, r'sub\s+(?P<key>.*)\Z')
+add_regex_message_handler(makeMod, r'make (?P<user><@!?(?P<userid>[0-9]+)>) mod\Z')
+add_regex_message_handler(removeMod, r'del (?P<user><@!?(?P<userid>[0-9]+)>) mod\Z')
