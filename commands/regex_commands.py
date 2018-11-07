@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 21:54:53, 06-Nov-2018
+# @Last modified time: 22:37:24, 06-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -22,7 +22,7 @@ async def last_mention(Bot, msg, reg):
     if not mmsg:
         await Bot.send_message(msg.channel, "No mentions logged!")
         return
-    em = Embed(title="Last mention for "+msg.author.mention, description=mmsg.content, colour=mmsg.author.colour)
+    em = Embed(title="Last mention for "+msg.author.display_name, description='%s\n\n\n[Jump to Message](https://discordapp.com/channels/%s/%s/%s)' % (mmsg.content, mmsg.server.id, mmsg.channel.id, mmsg.id), colour=mmsg.author.colour)
     em.set_footer(text=mmsg.author.display_name, icon_url=mmsg.author.avatar_url)
     await Bot.send_message(msg.channel, embed=em)
     return
