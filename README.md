@@ -77,3 +77,6 @@ Remember to delete `{}` and `()`.
 |buy|`cow stock buy {name}`|Buy virtual stocks|`buy`, `invest`|
 |sell|`cow stock sell {name}`|Sell virtual stocks.|`sell`|
 |get|`cow stock get {name}`|View realtime stock information from the nasdaq website.|`get`, `info`|
+
+### Ping Logging
+Test
