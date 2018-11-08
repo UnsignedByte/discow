@@ -10,6 +10,7 @@ Add this bot to your server [here](https://discordapp.com/api/oauth2/authorize?c
   * Moderation!
   * Gambling!
   * And more!
+  * Ping logging!
 
 ## Commands
 Prefix: `cow`
