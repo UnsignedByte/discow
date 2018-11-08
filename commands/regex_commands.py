@@ -12,20 +12,39 @@ from discord import Embed
 from utils import msgutils, strutils, datautils
 from discow.handlers import add_regex_message_handler
 import re
+import pytz, datetime
 
 
 async def echo(Bot, msg, reg):
     await Bot.send_message(msg.channel, reg.group(1))
 
 async def last_mention(Bot, msg, reg):
-    mmsg = datautils.nested_get('user_data', msg.author.id, 'last_mention')
-    if not mmsg:
-        await Bot.send_message(msg.channel, "No mentions logged!")
-        return
-    em = Embed(title="Last mention for "+msg.author.display_name, description='%s\n\n\n[Jump to Message](https://discordapp.com/channels/%s/%s/%s)\nNote: Message may have been deleted' % (mmsg.content, mmsg.server.id, mmsg.channel.id, mmsg.id), colour=mmsg.author.colour)
-    em.set_footer(text=mmsg.author.display_name, icon_url=mmsg.author.avatar_url)
+    mmsg = datautils.nested_get('user_data', msg.author.id, 'mentions')
+    out = 'Jump to message may not work if message is deleted.\nType `clear ping` to clear mentions.\n\n'
+    if mmsg and len(mmsg) > 0:
+        for mention in mmsg:
+            zone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+            time = pytz.utc.localize(mention.timestamp, is_dst=None).astimezone(zone)
+            link = '(https://discordapp.com/channels/%s/%s/%s)' % (mention.server.id, mention.channel.id, mention.id)
+            out += '[**Jump**]' + link + ' `' + str(time)[:16] +\
+                   '` **' + mention.author.display_name + '**: ' + mention.content
+            if mention.edited_timestamp:
+                out += ' `(edited)`'
+            out += '\n'
+    else:
+        out += 'No pings logged!'
+    em = Embed(title="Mentions for " + msg.author.display_name, description=out, colour=msg.author.colour)
+    em.set_footer(text=msg.author.display_name, icon_url=msg.author.avatar_url)
     await Bot.send_message(msg.channel, embed=em)
     return
 
+
+async def clear_ping(Bot, msg, reg):
+    datautils.nested_set([], 'user_data', msg.author.id, 'mentions')
+    em = Embed(title="Mentions cleared", description='Type `who ping` to view mentions', colour=msg.author.colour)
+    em.set_footer(text=msg.author.display_name, icon_url=msg.author.avatar_url)
+    await Bot.send_message(msg.channel, embed=em)
+
 add_regex_message_handler(echo, r'echo:(.*)')
 add_regex_message_handler(last_mention, r'who\s*ping.*')
+add_regex_message_handler(clear_ping, r'clear\s*ping.*')

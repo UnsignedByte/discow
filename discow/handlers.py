@@ -96,12 +96,14 @@ async def on_message(Bot, msg):
     if not msg.author.bot:
         if msg.role_mentions or msg.mention_everyone:
             for m in msg.server.members:
-                if not m.bot and m.mentioned_in(msg):
-                    datautils.nested_set(msg, 'user_data', m.id, 'last_mention')
+                if not m.bot and m.mentioned_in(msg) and (not datautils.nested_get('user_data', m.id, 'mentions')
+                                                          or msg not in datautils.nested_get('user_data', m.id, 'mentions')):
+                    datautils.nested_append(msg, 'user_data', m.id, 'mentions')
         else:
             for m in msg.mentions:
-                if not m.bot:
-                    datautils.nested_set(msg, 'user_data', m.id, 'last_mention')
+                if not m.bot and (not datautils.nested_get('user_data', m.id, 'mentions')
+                                  or msg not in datautils.nested_get('user_data', m.id, 'mentions')):
+                    datautils.nested_append(msg, 'user_data', m.id, 'mentions')
         if not msg.content.startswith(discow_prefix):
             for a in regex_message_handlers:
                 reg = re.compile(a, re.I).match(msg.content)
