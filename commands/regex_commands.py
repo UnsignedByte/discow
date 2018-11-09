@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 22:47:28, 06-Nov-2018
+# @Last modified time: 17:21:14, 08-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -20,9 +20,9 @@ async def echo(Bot, msg, reg):
 
 async def last_mention(Bot, msg, reg):
     mmsg = datautils.nested_get('user_data', msg.author.id, 'mentions')
-    out = 'Jump to message may not work if message is deleted.\nType `clear ping` to clear mentions.\n\n'
+    out = 'Jump to message may not work if message is deleted.\nType `clear ping` to clear mentions.\nMessage may be split up if length exceeds 1024 characters, and may be truncated if the total length exceeds 5120 characters.\n\n'
     if mmsg and len(mmsg) > 0:
-        for mention in mmsg:
+        for mention in mmsg[::-1]:
             zone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
             time = pytz.utc.localize(mention.timestamp, is_dst=None).astimezone(zone)
             link = '(https://discordapp.com/channels/%s/%s/%s)' % (mention.server.id, mention.channel.id, mention.id)
@@ -33,8 +33,15 @@ async def last_mention(Bot, msg, reg):
             out += '\n'
     else:
         out += 'No pings logged!'
-    em = Embed(title="Mentions for " + msg.author.display_name, description=out, colour=msg.author.colour)
-    em.set_footer(text=msg.author.display_name, icon_url=msg.author.avatar_url)
+    outl = strutils.split_str_chunks(out[:5120], 1023)
+    em = Embed(title="Mentions for " + msg.author.display_name, colour=msg.author.colour)
+    if len(outl) == 1:
+        em.description=outl[0]
+    else:
+        em.description=outl[0]+"\n"+outl[1]
+        for i in outl[2:]:
+            em.add_field(name="\u200D", value=i)
+        em.set_footer(text=msg.author.display_name, icon_url=msg.author.avatar_url)
     await Bot.send_message(msg.channel, embed=em)
     return
 

@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 15:40:54, 07-Nov-2018
+# @Last modified time: 17:22:22, 08-Nov-2018
 
 from pprint import pformat
 import asyncio
@@ -196,7 +196,7 @@ async def save(Bot, msg, overrideperms = False):
                 pickle.dump(v, f)
         if not overrideperms:
             em.description = "Complete!"
-            msg = await msgutils.send_embed(Bot, msg, embed=em)
+            msg = await msgutils.edit_embed(Bot, msg, embed=em)
             await asyncio.sleep(0.5)
             await Bot.delete_message(msg)
         return True

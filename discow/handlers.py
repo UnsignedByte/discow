@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 15:44:16, 07-Nov-2018
+# @Last modified time: 17:15:54, 08-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -99,11 +99,13 @@ async def on_message(Bot, msg):
                 if not m.bot and m.mentioned_in(msg) and (not datautils.nested_get('user_data', m.id, 'mentions')
                                                           or msg not in datautils.nested_get('user_data', m.id, 'mentions')):
                     datautils.nested_append(msg, 'user_data', m.id, 'mentions')
+                    bot_data['user_data'][m.id]['mentions'] = bot_data['user_data'][m.id]['mentions'][-10:]
         else:
             for m in msg.mentions:
                 if not m.bot and (not datautils.nested_get('user_data', m.id, 'mentions')
                                   or msg not in datautils.nested_get('user_data', m.id, 'mentions')):
                     datautils.nested_append(msg, 'user_data', m.id, 'mentions')
+                    bot_data['user_data'][m.id]['mentions'] = bot_data['user_data'][m.id]['mentions'][-10:]
         if not msg.content.startswith(discow_prefix):
             for a in regex_message_handlers:
                 reg = re.compile(a, re.I).match(msg.content)

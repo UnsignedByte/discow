@@ -2,13 +2,14 @@
 # @Date:   10:01:53, 03-Nov-2018
 # @Filename: msgutils.py
 # @Last modified by:   edl
-# @Last modified time: 15:36:12, 07-Nov-2018
+# @Last modified time: 16:43:03, 08-Nov-2018
 
 import asyncio
 import datetime
 from pytz import timezone
 import pytz
 from discord import ServerRegion, Forbidden
+from utils import strutils
 
 def convertTime(time, msg):
     if msg.channel.is_private:
@@ -68,10 +69,6 @@ async def edit_embed(Bot, msg, embed, time=datetime.datetime.utcnow(), usr=None)
     return m
 
 async def send_large_message(Bot, channel, content, prefix='', suffix=''):
-    cchunk = ""
-    for l in content.splitlines():
-        if len(cchunk)+len(l)> 2000-len(prefix)-len(suffix):
-            await Bot.send_message(channel, prefix+cchunk+suffix)
-            cchunk = ""
-        cchunk+=l+"\n"
-    await Bot.send_message(channel, prefix+cchunk+suffix)
+    clist = strutils.split_str_chunks(content, 2000, prefix=prefix, suffix=suffix)
+    for l in clist:
+        await Bot.send_message(channel, l)
