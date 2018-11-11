@@ -79,4 +79,7 @@ Remember to delete `{}` and `()`.
 |get|`cow stock get {name}`|View realtime stock information from the nasdaq website.|`get`, `info`|
 
 ### Ping Logging
-Test
+| **Name** | **Usage** | **Description** | **Aliases** |
+|:-:|:-:|:-:|:-:|
+|who ping|`who ping`|Check pings|None|
+|clear ping|`clear ping`|Clear saved pings|None|
