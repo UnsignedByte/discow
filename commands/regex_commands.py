@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 08:55:03, 11-Nov-2018
+# @Last modified time: 09:33:48, 11-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -23,10 +23,8 @@ async def last_mention(Bot, msg, reg):
     out = 'Jump to message may not work if message is deleted.\nType `clear ping` to clear mentions.\nMessage may be split up if length exceeds 1024 characters, and may be truncated if the total length exceeds 5120 characters.\n\n'
     if mmsg and len(mmsg) > 0:
         for mention in mmsg[::-1]:
-            zone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-            time = pytz.utc.localize(mention.timestamp, is_dst=None).astimezone(zone)
             link = '(https://discordapp.com/channels/%s/%s/%s)' % (mention.server.id, mention.channel.id, mention.id)
-            out += '[**Jump**]' + link + ' `' + str(time)[:16] +\
+            out += '[**Jump**]' + link + ' `' + msgutils.convertTime(mention.timestamp, mention, format='%d %b %y %H:%M %Z') +\
                    '` **' + mention.author.display_name + '**: ' + strutils.escape_markdown(mention.content)
             if mention.edited_timestamp:
                 out += ' `(edited)`'

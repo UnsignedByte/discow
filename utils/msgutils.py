@@ -2,7 +2,7 @@
 # @Date:   10:01:53, 03-Nov-2018
 # @Filename: msgutils.py
 # @Last modified by:   edl
-# @Last modified time: 16:43:03, 08-Nov-2018
+# @Last modified time: 09:26:48, 11-Nov-2018
 
 import asyncio
 import datetime
@@ -11,7 +11,7 @@ import pytz
 from discord import ServerRegion, Forbidden
 from utils import strutils
 
-def convertTime(time, msg):
+def convertTime(time, msg, format='%Y-%m-%d at %H:%M:%S %Z'):
     if msg.channel.is_private:
         zone = timezone("Europe/London")
     else:
@@ -35,7 +35,7 @@ def convertTime(time, msg):
         zone = timezone(timezones[msg.server.region])
     time_naive = time.replace(tzinfo=pytz.utc)
     loctime = time_naive.astimezone(zone)
-    fmt = '%Y-%m-%d at %H:%M:%S %Z'
+    fmt = format
     return loctime.strftime(fmt)
 
 def nickname(usr, srv):
