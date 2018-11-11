@@ -2,9 +2,10 @@
 # @Date:   10:01:28, 03-Nov-2018
 # @Filename: strutils.py
 # @Last modified by:   edl
-# @Last modified time: 17:06:59, 08-Nov-2018
+# @Last modified time: 08:35:32, 11-Nov-2018
 
 from discow.handlers import discow_prefix
+import re
 
 def format_response(string, **kwargs):
     if "_msg" in kwargs:
@@ -45,3 +46,6 @@ def split_str_chunks(content, maxlen, prefix='', suffix=''):
         cchunk+=l+"\n"
     clist.append(prefix+cchunk+suffix)
     return clist
+
+def escape_markdown(s):
+    return re.sub(r'(?:`|\(|\\|\[|\]|\)|\*|~|_)', r'\\\g<0>', s)

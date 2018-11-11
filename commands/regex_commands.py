@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 17:21:14, 08-Nov-2018
+# @Last modified time: 08:35:42, 11-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -27,7 +27,7 @@ async def last_mention(Bot, msg, reg):
             time = pytz.utc.localize(mention.timestamp, is_dst=None).astimezone(zone)
             link = '(https://discordapp.com/channels/%s/%s/%s)' % (mention.server.id, mention.channel.id, mention.id)
             out += '[**Jump**]' + link + ' `' + str(time)[:16] +\
-                   '` **' + mention.author.display_name + '**: ' + mention.content
+                   '` **' + mention.author.display_name + '**: ' + strutils.escape_markdown(mention.content)
             if mention.edited_timestamp:
                 out += ' `(edited)`'
             out += '\n'
