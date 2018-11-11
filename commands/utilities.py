@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 17:22:22, 08-Nov-2018
+# @Last modified time: 14:59:43, 11-Nov-2018
 
 from pprint import pformat
 import asyncio
@@ -235,8 +235,9 @@ async def delete_data(Bot, msg, reg):
 
 async def makeMod(Bot, msg, reg):
     if msg.author == (await userutils.get_owner(Bot)):
-        datautils.nested_append(msg.mentions[0], 'global_data', 'moderators')
-        await save(None, None, overrideperms=True)
+        if msg.mentions[0] not in datautils.nested_get('global_data', 'moderators', default=[]):
+            datautils.nested_append(msg.mentions[0], 'global_data', 'moderators')
+            await save(None, None, overrideperms=True)
     else:
         await Bot.send_message(msg.channel, 'You are not owner!')
 async def removeMod(Bot, msg, reg):
