@@ -2,14 +2,14 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 08:35:42, 11-Nov-2018
+# @Last modified time: 08:55:03, 11-Nov-2018
 
 #Special commands using regex rather than prefix
 
 
 import asyncio
 from discord import Embed
-from utils import msgutils, strutils, datautils
+from utils import msgutils, strutils, datautils, userutils
 from discow.handlers import add_regex_message_handler
 import re
 import pytz, datetime
@@ -34,7 +34,7 @@ async def last_mention(Bot, msg, reg):
     else:
         out += 'No pings logged!'
     outl = strutils.split_str_chunks(out[:5120], 1023)
-    em = Embed(title="Mentions for " + msg.author.display_name, colour=msg.author.colour)
+    em = Embed(title="Mentions for " + msg.author.display_name, colour=userutils.get_user_color(msg.author))
     if len(outl) == 1:
         em.description=outl[0]
     else:
