@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: economy.py
 # @Last modified by:   edl
-# @Last modified time: 22:16:45, 06-Nov-2018
+# @Last modified time: 18:18:03, 11-Nov-2018
 
 
 import asyncio
@@ -13,7 +13,6 @@ import time
 from random import randint
 from bs4 import BeautifulSoup
 import requests as req
-from commands.utilities import save
 import re
 
 print("\tInitializing Economy")
@@ -68,7 +67,6 @@ async def transfer(Bot, msg):
         if amt <= bot_data['user_data'][msg.author.id]["money"]:
             give(amt, msg.mentions[0].id)
             give(-1*amt, msg.author.id)
-            await save(Bot, msg, overrideperms=True)
             em = Embed(title="Money Transfer", description='{0:.2f}'.format(amt/100)+" mooney given to "+msg.mentions[0].mention, colour=0xffd747)
             await msgutils.send_embed(Bot, msg, em)
         else:
@@ -85,7 +83,6 @@ async def addMooney(Bot, msg):
         try:
             amt = int(float(strutils.strip_command(msg.content).split(' ', 1)[0])*100)
             give(amt, msg.mentions[0].id)
-            await save(Bot, msg, overrideperms=True)
             em = Embed(title="Money Added", description='{0:.2f}'.format(amt/100)+" mooney given to "+msg.mentions[0].mention, colour=0xffd747)
             await msgutils.send_embed(Bot, msg, em)
         except (ValueError, TypeError):
@@ -104,7 +101,6 @@ async def interest():
     for a in bot_data['user_data']:
         bbal = datautils.nested_get('user_data', a, 'bank', default=0)
         bbal += round(bbal*interest_rate)
-    await save(None, None, overrideperms=True)
 
 
 async def economy(Bot, msg):
@@ -126,7 +122,6 @@ async def daily(Bot, msg):
             bot_data['user_data'][msg.author.id]["money"]+=addedmoney
             bot_data['user_data'][msg.author.id]["daily"]=round(time.time())
             await Bot.send_message(msg.channel, "Added "+'{0:.2f}'.format(addedmoney/100)+" Mooney to your balance, "+msg.author.mention+"!\nYour daily streak is `"+str(bot_data['user_data'][msg.author.id]["streak"])+"`")
-            await save(Bot, msg, overrideperms=True)
         else:
             seconds = 86400-(round(time.time())-bot_data['user_data'][msg.author.id]["daily"])
             m, s = divmod(seconds, 60)
@@ -145,7 +140,6 @@ async def work(Bot, msg):
             bot_data['user_data'][msg.author.id]["money"]+=addedmoney
             bot_data['user_data'][msg.author.id]["work"]=round(time.time())
             await Bot.send_message(msg.channel, "You were paid "+'{0:.2f}'.format(addedmoney/100)+" Mooney for working, "+msg.author.mention+"!")
-            await save(Bot, msg, overrideperms=True)
         else:
             seconds = 3600-(round(time.time())-bot_data['user_data'][msg.author.id]["work"])
             m, s = divmod(seconds, 60)
@@ -169,7 +163,6 @@ async def deposit(Bot, msg):
             datautils.nested_addition(amount, 'user_data', msg.author.id, 'bank', default=0)
             bot_data['user_data'][msg.author.id]["money"]-=amount
             await Bot.send_message(msg.channel, "Deposited `"+'{0:.2f}'.format(amount/100)+"` Mooney to your Bovine Bank account.\nYour new bank balance is `"+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["bank"]/100)+"` Mooney.")
-            await save(Bot, msg, overrideperms=True)
         else:
             await Bot.send_message(msg.channel, "You can't deposit that much money, you only have `"+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["money"]/100)+'`!')
     else:
@@ -190,7 +183,6 @@ async def withdraw(Bot, msg):
             bot_data['user_data'][msg.author.id]["bank"] -= amount
             bot_data['user_data'][msg.author.id]["money"] += amount
             await Bot.send_message(msg.channel, "Withdrew "+'{0:.2f}'.format(amount/100)+" from your Bovine Bank account.\nYour new bank balance is "+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["bank"]/100)+".")
-            await save(Bot, msg, overrideperms=True)
         else:
             await Bot.send_message(msg.channel, "You can't withdraw that much money, you only have `"+'{0:.2f}'.format(bot_data['user_data'][msg.author.id]["bank"]/100)+'` in your bank!')
     else:
@@ -231,7 +223,6 @@ async def convert(Bot, msg):
     else:
         await Bot.send_message(msg.channel, "Convert successful! "+'{0:.2f}'.format(convertm/100)+" Mooney has been converted to "+info[1]+".")
         bot_data['user_data'][msg.author.id]["money"]-=convertm
-        await save(Bot, msg, overrideperms=True)
 
 
 async def recieveconvert(Bot, msg):
@@ -247,7 +238,6 @@ async def recieveconvert(Bot, msg):
             bot_data['user_data'][usr.id]["money"]+=round(float(info[1])/rate*100)
         else:
             bot_data['user_data'][usr.id] = {"usr": usr, "bank": 0, "streak": 0, "work": 0, "money":round(float(info[1])/rate*100), "daily":0}
-        await save(Bot, msg, overrideperms=True)
         await Bot.add_reaction(msg, "👌")
 
 
@@ -258,7 +248,6 @@ async def leaderboard(Bot, msg):
             bot_data['user_data'][a]["usr"] = await Bot.get_user_info(a)
         em.description+="**"+bot_data['user_data'][a]["usr"].name+"**: "+'{0:.2f}'.format((bot_data['user_data'][a]["money"]+(bot_data['user_data'][a]["bank"] if "bank" in bot_data['user_data'][a] else 0))/100)+' total Mooney\n'
     await msgutils.send_embed(Bot, msg, em)
-    await save(Bot, msg, overrideperms=True)
 
 
 async def money(Bot, msg):
@@ -479,7 +468,6 @@ async def stock(Bot, msg):
         em = Embed(title="Invalid Input", description="Your input was invalid", colour=0xd32323)
         stockmsg = await msgutils.edit_embed(Bot, stockmsg, embed=em)
         return
-    await save(Bot, msg, overrideperms=True)
 
 add_message_handler(stock, "stocks")
 add_message_handler(stock, "stock")

@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: utilities.py
 # @Last modified by:   edl
-# @Last modified time: 14:59:43, 11-Nov-2018
+# @Last modified time: 18:18:55, 11-Nov-2018
 
 from pprint import pformat
 import asyncio
@@ -185,7 +185,7 @@ async def purge(Bot, msg):
         await msgutils.send_embed(Bot, msg, em)
 
 async def save(Bot, msg, overrideperms = False):
-    if overrideperms or msg.author.id == "418827664304898048":
+    if overrideperms or userutils.is_mod(msg.author):
         if not overrideperms:
             em = Embed(title="Saving Data...", description="Saving...", colour=0xd32323)
             msg = await msgutils.send_embed(Bot, msg, em)
@@ -204,12 +204,6 @@ async def save(Bot, msg, overrideperms = False):
         em = Embed(title="Insufficient Permissions", description=strutils.format_response("{_mention} does not have sufficient permissions to perform this task.", _msg=msg), colour=0xd32323)
         await msgutils.send_embed(Bot, msg, em)
         return False
-
-async def shutdown(Bot, msg):
-    flip_shutdown()
-    istrue = await save(Bot, msg)
-    if istrue:
-        await Bot.logout()
 
 async def getData(Bot, msg, reg):
     if (await userutils.is_mod(Bot, msg.author)):
@@ -231,26 +225,21 @@ async def delete_data(Bot, msg, reg):
             datautils.nested_pop(*keys)
         elif isinstance(datautils.nested_get(*keys[:-1]), list):
             datautils.nested_remove(keys[-1], *keys[:-1])
-        await save(None, None, overrideperms=True)
 
 async def makeMod(Bot, msg, reg):
     if msg.author == (await userutils.get_owner(Bot)):
         if msg.mentions[0] not in datautils.nested_get('global_data', 'moderators', default=[]):
             datautils.nested_append(msg.mentions[0], 'global_data', 'moderators')
-            await save(None, None, overrideperms=True)
     else:
         await Bot.send_message(msg.channel, 'You are not owner!')
 async def removeMod(Bot, msg, reg):
     if msg.author == (await userutils.get_owner(Bot)):
         datautils.nested_remove(msg.mentions[0], 'global_data', 'moderators')
-        await save(None, None, overrideperms=True)
     else:
         await Bot.send_message(msg.channel, 'You are not owner!')
 
 add_message_handler(info, "hi")
 add_message_handler(info, "info")
-add_message_handler(shutdown, "close")
-add_message_handler(shutdown, "shutdown")
 add_message_handler(save, "save")
 add_message_handler(purge, "purge")
 add_message_handler(purge, "clear")

@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: quiz.py
 # @Last modified by:   edl
-# @Last modified time: 18:02:11, 05-Nov-2018
+# @Last modified time: 18:18:27, 11-Nov-2018
 
 
 import asyncio
@@ -10,7 +10,6 @@ from discord import Embed
 from discow.handlers import add_message_handler, bot_data
 from utils import msgutils, strutils, objutils
 from collections import OrderedDict
-from commands.utilities import save
 from commands.economy import give
 from random import shuffle, randint
 
@@ -211,7 +210,6 @@ async def add(Bot, msg):
     em.set_field_at(0, name="Question Category", value=cat, inline=False)
     quest = await editquestion(Bot, msg, qmsg, em, cat, question)
     bot_data['quiz_data'][msg.server.id][1][cat].append(quest)
-    await save(Bot, msg, overrideperms=True)
 
 async def editquestion(Bot, msg, qmsg, em, cat, question):
     responsesvalue = "Type `add (a)`, `remove (r)`, and `edit (e)` to add, remove, and edit responses.\nType `back` to go back and edit your category, `cancel` to leave the Question Wizard, or `done` to finish and publish your question."

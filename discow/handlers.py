@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 17:15:54, 08-Nov-2018
+# @Last modified time: 18:16:59, 11-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -138,8 +138,6 @@ async def on_message(Bot, msg):
                 except KeyError:
                     if cmd in private_message_handlers:
                         await Bot.send_message(msg.channel, "The **"+cmd+"** command can only be used in private channels!")
-                if cmd != 'save' and randint(1,50)==1:
-                    await message_handlers["save"](Bot, msg, overrideperms=True)
         except IndexError:
             em = discord.Embed(title="Missing Inputs", description="Not enough inputs provided for **%s**." % strutils.parse_command(msg.content)[0], colour=0xd32323)
             await msgutils.send_embed(Bot, msg, em)
@@ -168,3 +166,7 @@ async def timed_msg(Bot):
             datautils.nested_set(date.today(), 'global_data', 'interest')
             await economy.interest()
         await asyncio.sleep(3600)
+async def timed_save(Bot):
+    while True:
+        await message_handlers["save"](Bot, None, overrideperms=True)
+        await asyncio.sleep(60)

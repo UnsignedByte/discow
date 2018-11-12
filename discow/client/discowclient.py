@@ -23,7 +23,7 @@ class BotClientClass(discord.Client):
                     special_emojis[a.name].append(a)
                 else:
                     special_emojis[a.name] = [a]
-        await discow.handlers.timed_msg(self)
+        await asyncio.gather(discow.handlers.timed_msg(self), discow.handlers.timed_save(self))
     async def on_message(self, message):
         await discow.handlers.on_message(self, message)
     async def on_message_edit(self, before, after):

@@ -2,7 +2,7 @@
 # @Date:   18:59:11, 18-Apr-2018
 # @Filename: trivia.py
 # @Last modified by:   edl
-# @Last modified time: 19:52:39, 04-Nov-2018
+# @Last modified time: 18:18:38, 11-Nov-2018
 
 
 import requests
@@ -13,7 +13,6 @@ from utils import msgutils, strutils
 import asyncio
 from discord import Embed
 from commands.economy import increment, give, set_element
-from commands.utilities import save
 from random import randint
 from commands.quiz import Question
 
@@ -100,7 +99,6 @@ async def trivia(Bot, msg):
         set_element(msg.author.id, "answerstreak", 0)
         em.description+='\n\nYour answer was incorrect! Your answer streak is now `0`.'
     await msgutils.edit_embed(Bot, msgEmbed, em)
-    await save(Bot, msg, overrideperms=True)
 
 add_message_handler(trivia, 'trivia')
 add_private_message_handler(trivia, 'trivia')
