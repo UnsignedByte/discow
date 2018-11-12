@@ -2,7 +2,7 @@
 # @Date:   21:24:19, 06-Nov-2018
 # @Filename: regex_commands.py
 # @Last modified by:   edl
-# @Last modified time: 09:38:25, 11-Nov-2018
+# @Last modified time: 20:36:45, 11-Nov-2018
 
 #Special commands using regex rather than prefix
 
@@ -16,7 +16,7 @@ import pytz, datetime
 
 
 async def echo(Bot, msg, reg):
-    await Bot.send_message(msg.channel, reg.group(1))
+    await Bot.send_message(msg.channel, "**"+msg.author.display_name+" says:** "+reg.group(1))
 
 async def last_mention(Bot, msg, reg):
     mmsg = datautils.nested_get('user_data', msg.author.id, 'mentions')
