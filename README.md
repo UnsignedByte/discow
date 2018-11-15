@@ -78,7 +78,7 @@ Remember to delete `{}` and `()`.
 |sell|`cow stock sell {name}`|Sell virtual stocks.|`sell`|
 |get|`cow stock get {name}`|View realtime stock information from the nasdaq website.|`get`, `info`|
 
-### Ping Logging
+#### Ping Logging
 | **Name** | **Usage** | **Description** | **Aliases** |
 |:-:|:-:|:-:|:-:|
 |who ping|`who ping`|Check pings|None|
