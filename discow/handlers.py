@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 20:50:12, 14-Nov-2018
+# @Last modified time: 23:09:37, 14-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -11,6 +11,7 @@ import re
 import os
 import pickle
 from random import randint
+from shutil import copyfile
 from utils import strutils, msgutils, datautils
 from datetime import date
 from commands.map.maputils import World
@@ -168,10 +169,10 @@ async def timed_msg(Bot):
         await asyncio.sleep(3600)
 async def timed_save(Bot):
     while True:
+        await asyncio.sleep(60)
         await message_handlers["save"](Bot, None, overrideperms=True)
         try:
             for i in bot_data.keys():
-                datautils.load_data_file(i+".txt")
-        except Exception:
-            pass
-        await asyncio.sleep(60)
+                copyfile('Data/'+i+".txt", 'Data/Backup/'+i+".txt")
+        except Exception as e:
+            print(e)
