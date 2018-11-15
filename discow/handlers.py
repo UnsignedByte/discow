@@ -2,7 +2,7 @@
 # @Date:   06:50:24, 02-May-2018
 # @Filename: handlers.py
 # @Last modified by:   edl
-# @Last modified time: 18:16:59, 11-Nov-2018
+# @Last modified time: 20:50:12, 14-Nov-2018
 
 bot_data = {}
 discow_prefix = "cow "
@@ -169,4 +169,9 @@ async def timed_msg(Bot):
 async def timed_save(Bot):
     while True:
         await message_handlers["save"](Bot, None, overrideperms=True)
+        try:
+            for i in bot_data.keys():
+                datautils.load_data_file(i+".txt")
+        except Exception:
+            pass
         await asyncio.sleep(60)
