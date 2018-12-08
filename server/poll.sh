@@ -1,6 +1,9 @@
 #!/bin/bash
 
-logs=$(dirname "$(pwd)")/logs
+
+home=$(dirname "$(pwd)")
+dat="$home"/Data
+logs="$home"/logs
 echo "Logging to $logs."
 echo "" > "$logs"/log.txt
 echo "Build started at $(date)." >> "$logs"/log.txt
@@ -61,6 +64,7 @@ do
        pkill -f test.py >> "$logs"/log.txt
 
        cd ..
+       mv "$dat"/Backup/user_data.txt "$dat"/user_data.txt 
        python3.6 -u test.py >> "$logs"/log.txt 2>&1 &
        pid=$!
        cd server
