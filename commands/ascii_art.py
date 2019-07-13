@@ -2,7 +2,7 @@
 # @Date:   17:50:00, 16-Oct-2018
 # @Filename: ascii_art.py
 # @Last modified by:   edl
-# @Last modified time: 17:14:59, 04-Nov-2018
+# @Last modified time: 09:15:33, 11-Nov-2018
 
 import asyncio
 from discow.handlers import add_message_handler
@@ -88,8 +88,11 @@ def tround(x):
 
 
 async def braille(Bot, msg):
-    args = map(lambda x: "=".split(x), parse_command(msg.content)[1:])
+    args = dict(map(lambda x: "=".split(x, 1), parse_command(msg.content)[1:]))
     if len(args) <= 4:
         return
+    else:
+        await Bot.send_message("Too many arguments!")
 
 add_message_handler(braille, "braille")
+add_message_handler(braille, "art")
